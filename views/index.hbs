@@ -1,0 +1,19 @@
+<section>
+    <div class="container mt-5">
+        <div class="row">
+            {{#each products}}
+            <div class="col-md-3">
+                <div class="card" style="width: 18rem;">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVS8XIoXpXRqay7k44NwvetLZJZezg3IcAMg&usqp=CAU"
+                        class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">{{this.t}}</h5>
+                        <p class="card-text">{{this.d}}</p>
+                        <a href="#" class="btn btn-primary">AED {{this.p}}</a>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+</section>

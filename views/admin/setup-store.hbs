@@ -1,0 +1,53 @@
+
+
+<section>
+  <div class="container mt-4">
+    <div class="col-lg-6 mb-2">
+
+      <h2 class="text-center">Setup Store</h2>
+
+      <form action="/admin/add-product" method="post" enctype="multipart/form-data ">
+        <div class="mb-3">
+          <label for="name" class="form-label">Store Name</label>
+          <input type="name" class="form-control" id="name" name="t">
+        </div>
+        
+        <div class="mb-3">
+          <label for="category" class="form-label">Location</label>
+          <button class="form-control">Set location here</button>
+        </div>
+
+    <div class="mb-3">
+          <label for="des" class="form-label">Store Contact Number</label>
+          <input type="name" class="form-control" id="des" name="d">
+        </div>
+
+        <div class="mb-3">
+          <label for="price" class="form-label">Owner / Manager Name</label>
+          <input type="name" class="form-control" id="price">
+        </div>
+
+        
+
+        <div class="mb-3">
+          <label for="des" class="form-label">Owner Contact Number</label>
+          <input type="name" class="form-control" id="des" name="d">
+        </div>
+
+        <div class="mb-3">
+          <label for="" class="form-label">Image</label>
+          <input type="file" class="form-control" accept="image/*" name="photo">
+        </div>
+
+        <div class="mb-3">
+          {{!-- must here --}}
+          <label for="" class="form-label">Menu Files</label>
+          <input type="file" class="form-control" accept="" name="photo">
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-4 ">Submit</button>
+      </form>
+    </div>
+
+  </div>
+</section>

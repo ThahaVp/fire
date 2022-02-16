@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <!-- Favicon-->
+    {{!-- <link rel="icon" type="image/x-icon" href="assets/favicon.ico" /> --}}
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <!-- <link href="css/styles.css" rel="stylesheet" /> -->
+    <link href="../stylesheets/style.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+</head>
+
+<body data-spy="scroll" data-target="#myScrollspy" data-offset="20">
+
+    <div class="row mb-3">
+  <div class="col-12 col-sm-5 col-md-4 pe-0 pt-0 pt-sm-3 ps-0 ps-sm-4 col-xxl-3">
+    <img src="/assets/img/logo.jpg" alt="log" class="src" width="100%">
+  </div>
+  <div class="col-12 col-sm-7 col-md-8 ps-4 pe-4 pe-sm-2 pt-3 pt-sm-3 col-xxl-9">
+    <h1 style="margin-bottom: 0;margin-top:0;">Jawas Restaurant</h1>
+    <p class="des-text">Indian cusines, Chineise cusines all your
+      delivious food available delivious food available</p>
+    <div>
+        <div class="icons text-center"><img src="/assets/svg/instagram.svg" width="60%" height="100%"/></div>
+        <div class="icons text-center"><img src="/assets/svg/whatsapp.svg" width="60%" height="100%"/></div>
+        <div class="icons text-center"><img src="/assets/svg/facebook.svg" width="60%" height="100%"/></div>
+        <div class="icons text-center"><img src="/assets/svg/map.svg" width="60%" height="100%"/></div>
+        <div class="icons text-center"><img src="/assets/svg/phone.svg" width="60%" height="100%"/></div>
+    </div>
+  </div>
+</div>
+
+<nav class="row p-1 overflow-hidden" id="myScrollspy" style="--bs-gutter-x:0;">
+  <hr style="margin:0; opacity:0.1">
+  <ul class="list01">
+     {{#each category}}
+    <a href="#section{{@index}}"><li id="{{@index}}">{{this}}</li></a>
+    {{/each}}
+  </ul>
+</nav>
+
+
+<div class="row ps-3 pe-3" style="background-color: #eef5f5;">
+<div class="container-fluid">
+  
+  {{#each menu}}
+  <h4 class="category-title mt-5" id="section{{@index}}">{{this.t}}</h4>
+  <div class="row row-cols-1 row-cols-md-2 gy-2">
+
+{{#each this.i}}
+    
+    <div class="col col-xxl-5 p-2">
+      <div class="food-card p-2" onclick="showModal('{{this.t}}','{{this.d}}','{{this.p}}')">
+        <div class="food-img"></div>
+        <div>
+          <h5 class="card-title" style="margin-bottom: 0;">{{this.t}}</h5>
+          <p style="margin:0">&#8377;{{this.p}}</p>
+          <p class="des-text">{{this.d}}</p>
+        </div>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+    {{/each}}
+
+  
+</div>
+</div>
+
+
+<div class="sticky-footer ps-4 pt-3 pb-3 pe-4" onclick="showCart('MyCart')">
+  <h6 style="margin-bottom: 0;float:left">4 Items | 109.0</h2>
+  <h6 style="margin-bottom: 0;float:right">VIEW CART</h2>
+</div>
+
+    <script src="../javascripts/scripts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="../javascripts/food-card-model.js"></script>
+
+<script>
+
+var viewableOffset = $("#myScrollspy").offset().top - $(window).scrollTop();
+  $(document).ready(function () {
+    
+
+    let section = document.querySelectorAll('h4.category-title');
+    let navLinks = document.querySelectorAll("ul.list01 li");
+
+    $(window).scroll(function () {
+
+      if (viewableOffset < 0)
+        viewableOffset = Math.abs(viewableOffset);
+
+  
+      if ($(window).scrollTop() > viewableOffset)
+          $('#myScrollspy').addClass('navbar-fixed');
+      else
+          $('#myScrollspy').removeClass('navbar-fixed');
+          
+
+      section.forEach(sec =>{
+        let top = window.scrollY;
+        let offset = sec.offsetTop;
+        let height = sec.offsetHeight;
+        let id = sec.getAttribute('id');
+
+        if (top >= offset && top < offset + height)
+        {
+          navLinks.forEach(links =>{
+            let linkID = "section"+links.getAttribute('id');
+            if (linkID == id)
+            {
+              links.classList.add('active');
+            }
+            else
+            {
+              links.classList.remove('active');
+            }
+          })
+        }
+      });
+
+    });
+  });
+
+</script>
+</body>
+
+</html>
+

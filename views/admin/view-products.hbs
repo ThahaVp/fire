@@ -1,0 +1,42 @@
+<section>
+    <div class="container">
+<div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+  <a href= "/admin/add-product"><button class="btn btn-success me-md-2" type="button">Add Product</button></a>
+  <button class="btn btn-secondary" type="button">Delete</button>
+</div>
+        
+
+        <table class="table mt-5">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Image</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each products}}
+                <tr>
+                    <th scope="row">{{@number}}</th>
+                    <td>{{this.t}}</td>
+                    <td><img style="width:60px;height:60px"
+                            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVS8XIoXpXRqay7k44NwvetLZJZezg3IcAMg&usqp=CAU"
+                            alt=""></td>
+                    <td>{{this.c}}</td>
+                    <td>AED {{this.p}}</td>
+                    <td>{{this.d}}</td>
+                    <td>
+                        <a href="/admin/edit-product/{{this._id}}" class="btn btn-primary btn-sm mb-1">Edit</a>
+                        <a href="/admin/delete-product/{{this._id}}" class="btn btn-danger btn-sm mb-1" onclick="return confirm('Are you sure to delete {{this.t}}')">Delete</a>
+                        </td>
+                </tr>
+                {{/each}}
+
+
+            </tbody>
+        </table>
+    </div>
+</section>

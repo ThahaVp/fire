@@ -1,0 +1,310 @@
+
+body
+{
+  margin: 0;
+  background-color: #047e27;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+a
+{
+  text-decoration: none;
+}
+
+.bytes-width
+{
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.sticky-footer
+{
+  background-color: rgb(5, 115, 161);
+    width: 90%;
+    border-radius: 10px;
+    position: fixed;
+    bottom: 0;
+    cursor: pointer;
+    color: white;
+    z-index: 900;
+    margin-left: 5%;
+    margin-bottom: 15px;
+}
+
+
+#myScrollspy
+{
+  background-color: white;
+  -webkit-box-shadow: 0 5px 6px -6px #777;
+  -moz-box-shadow: 0 5px 6px -6px #777;
+       box-shadow: 0 5px 6px -6px #777;
+}
+
+div.online-indicator {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    margin-top: 7px;
+    margin-right: 10px;
+    background-color: #0fcc45;
+    border-radius: 50%;
+    position: relative;
+  }
+
+  .navbar-fixed {
+    top: 0;
+    z-index: 100;
+    width: 100.5%; 
+    position: fixed;
+}
+
+.list01{
+  width: 100%;
+  float: left;
+  list-style: none;
+  padding: 15px 0;
+  margin: 0;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.list01::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.list01 {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+li {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 10px;
+  font-size: 13px;
+  color: rgb(209, 18, 18);
+  margin-left: 10px;
+  text-decoration: none;
+  }
+
+.list01 li.active,
+.list01 li:hover
+{
+  background-color: red;
+  color: white;
+}
+
+  div.offline-indicator {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    margin-right: 10px;
+    background-color: #d80a14;
+    border-radius: 50%;
+    position: relative;
+  }
+
+  span.blink {
+    display: block;
+    width: 15px;
+    height: 15px;
+    background-color: #0fcc45;
+    opacity: 0.7;
+    border-radius: 50%;
+    animation: blink 1s linear infinite;
+  }
+  
+  .online-text {
+    font-size: 20px;
+    position: relative;
+    color: #047e27;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+  }
+
+  .offline-text {
+    font-size: 20px;
+    position: relative;
+    color: #d80a14;
+    margin-top: -8px;
+    cursor: pointer;
+  }
+
+#wrapper {
+  overflow-x: hidden;
+}
+
+#sidebar-wrapper {
+  min-height: 100vh;
+  margin-left: -15rem;
+  transition: margin 0.25s ease-out;
+}
+
+#sidebar-wrapper .sidebar-heading {
+  padding: 0.875rem 1.25rem;
+  font-size: 1.2rem;
+}
+
+#sidebar-wrapper .list-group {
+  width: 15rem;
+}
+
+#page-content-wrapper {
+  min-width: 100vw;
+}
+
+body.sb-sidenav-toggled #wrapper #sidebar-wrapper {
+  margin-left: 0;
+}
+
+.icons
+{
+  width: 30px;
+  height: 30px;
+  float: left;
+  cursor: pointer;
+  margin-left: 10px;
+  border-radius: 3px;
+  background-color: red;
+}
+
+.icons:first-child
+{
+  margin-left: 0;
+}
+
+.food-img
+{
+  width:80px;
+  height: 80px;
+  border-radius: 4px;
+  float: left;
+  vertical-align: middle;
+  cursor: pointer;
+  margin-right: 15px;
+  background-color: red;
+}
+
+
+.food-card
+{
+  border-radius: 6px;
+  cursor: pointer;
+  max-height: 95px;
+  overflow: hidden;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px;
+  background-color: rgb(255, 255, 255);
+}
+
+.des-text
+{
+  font-size: 12px;
+  color: grey;
+  font-weight: 200;
+}
+
+
+
+@media (min-width: 768px) {
+  #sidebar-wrapper {
+    margin-left: 0;
+  }
+
+  #page-content-wrapper {
+    min-width: 0;
+    width: 100%;
+  }
+
+  body.sb-sidenav-toggled #wrapper #sidebar-wrapper {
+    margin-left: -15rem;
+  }
+
+  .icons
+{
+  width: 35px;
+  height: 35px;
+}
+
+.des-text
+{
+  font-size: 14px;
+}
+
+
+li {
+  font-size: 14px;
+  margin-left: 10px;
+  }
+
+  .food-img
+{
+  width:90px;
+  height: 90px;
+}
+
+.food-card
+{
+  max-height: 105px;
+}
+
+.bytes-width
+{
+  width: 90%;
+}
+
+}
+
+
+@media (min-width: 1200px) {
+  .icons
+{
+  width: 40px;
+  height: 40px;
+}
+
+.des-text
+{
+  font-size: 16px;
+}
+
+
+li {
+  font-size: 16px;
+  margin-left: 10px;
+  }
+
+  .food-img
+{
+  width:100px;
+  height: 100px;
+}
+
+.food-card
+{
+  max-height: 115px;
+}
+
+.sticky-footer
+{
+    width: 60%;
+    margin-left: 20%;
+  }
+
+  .bytes-width
+{
+  width: 75%;
+}
+
+}
+
+/*Animations*/
+
+@keyframes blink {
+    100% { transform: scale(2, 2); 
+            opacity: 0;
+          }
+  }

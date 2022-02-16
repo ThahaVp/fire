@@ -1,0 +1,37 @@
+<section>
+    <div class="container mt-5">
+        <div class="row">
+            {{#each products}}
+
+            {{!-- <div class="col-md-6 p-3">
+                <div class="card" style="heigh:25rem">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVS8XIoXpXRqay7k44NwvetLZJZezg3IcAMg&usqp=CAU"
+                        class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">{{this.t}}</h5>
+                        <p class="card-text">{{this.d}}</p>
+                        <a href="#" class="btn btn-primary">AED {{this.p}}</a>
+                    </div>
+                </div>
+            </div> --}}
+
+    
+    <div class="card mb-3 m-3 col-md-">
+  <div class="row">
+    <img src="..." class="col-4" alt="...">
+    <div class="col-8">
+      <div class="card-body">
+        <h5 class="card-title">Card title</h5>
+        <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+        <a href="/add-to-cart/{{this._id}}" class="btn btn-primary btn-sm mb-1">Add to Cart</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+          
+            {{/each}}
+        </div>
+    </div>
+</section>

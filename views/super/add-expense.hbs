@@ -1,0 +1,36 @@
+
+
+<section>
+  <div class="container mt-4">
+    <div class="col-lg-6 mb-2">
+
+      <h2 class="text-center">Add Company Expense</h2>
+
+      <form action="/su/add-expense" method="post" enctype="multipart/form-data ">
+        <div class="mb-3">
+          <label for="name" class="form-label">Expense Title</label>
+          <input type="name" class="form-control" id="name" name="title">
+        </div>
+      
+
+    <div class="mb-3">
+          <label for="des" class="form-label">Description</label>
+          <input type="text"  class="form-control" id="des" name="des">
+        </div>
+
+        <div class="mb-3">
+          <label for="price" class="form-label">Amount</label>
+          <input type="number" class="form-control" name="amount">
+        </div>
+
+        <div class="mb-3">
+          <label for="" class="form-label">Upload file</label>
+          <input type="file" class="form-control" accept="*" name="photo">
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-4 ">Submit</button>
+      </form>
+    </div>
+
+  </div>
+</section>
