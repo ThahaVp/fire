@@ -10,6 +10,7 @@ var db = require('./config/connection')
 var adminRouter = require('./routes/admin');
 var superRouter = require('./routes/super');
 var rvRouter = require('./routes/rv');
+var bytesRouter = require('./routes/bytes');
 var session = require('express-session')
 var vhost = require('vhost')
 
@@ -36,6 +37,7 @@ app.use('/', userRouter);
 app.use('/admin', adminRouter);
 app.use('/su', superRouter);
 app.use('/rv/api', rvRouter);
+app.use('/bytes/api', bytesRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
