@@ -47,23 +47,27 @@ router.post('/addExpense', (req,res)=>{
 })
 
 router.post('/getExpenseOnDate', (req,res)=>{
-  rvHelper.getExpenseOnDate(req.body.date).then((responce) =>
-  {
-    if (responce)
-    {
-      res.json({
-        status: 1,
-        result: responce
-      })
-    }
-    else
-    {
-      res.json({
-        status: 0,
-        result: []
-      })
-    }
+  res.json({
+    status: 1,
+    result: "working"
   })
+  // rvHelper.getExpenseOnDate(req.body.date).then((responce) =>
+  // {
+  //   if (responce)
+  //   {
+  //     res.json({
+  //       status: 1,
+  //       result: responce
+  //     })
+  //   }
+  //   else
+  //   {
+  //     res.json({
+  //       status: 0,
+  //       result: []
+  //     })
+  //   }
+  // })
 })
 
 router.get('/editExpense', (req,res)=>{
@@ -83,10 +87,6 @@ router.get('/editExpense', (req,res)=>{
     }
   })
 })
-
-
- 
-
 
 
 module.exports = router;
