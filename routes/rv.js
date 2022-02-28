@@ -47,7 +47,7 @@ router.post('/addExpense', (req,res)=>{
 })
 
 router.post('/getExpenseOnDate', (req,res)=>{
-  rvHelper.getExpenseOnDate(req.body.date).then((responce) =>
+  rvHelper.getExpenseOnDate(req.body.dt).then((responce) =>
   {
     if (responce)
     {
