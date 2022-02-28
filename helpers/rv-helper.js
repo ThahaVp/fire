@@ -39,6 +39,43 @@ module.exports = {
                  
             })
         })
+    },
+
+    getExpenseOnDate:(date) => {
+        return new Promise(async(resolve,reject)=>{
+            let products = await db.get().collection(constants.RV_EXPENSE).find({dt:date}).toArray()
+            resolve(products)
+        })
+    },
+
+    editExpense:(expId, newAmount) => {
+        return new Promise((resolve, reject)=>{
+            
+            // getting expense ed and amount
+            db.get().collection(constants.RV_EXPENSE).findOne({_id:objectId(expId)}).then((exp)=>{
+                var oldAmount = 0
+                if (exp.ed == 0)
+                {
+                    oldAmount = exp.a
+                }
+                else
+                {
+                    oldAmount = exp.ed
+                }
+
+                // updating expense 
+                db.get().collection(constants.RV_EXPENSE).updateOne({_id:objectId(expId)},
+                {
+                    $set:
+                    {
+                        a:newAmount,
+                        ed:oldAmount
+                    }
+                }).then((responce)=>{
+                    resolve(responce)
+                })
+            })
+        })
     }
 
     // checkKey:(superData)=>{

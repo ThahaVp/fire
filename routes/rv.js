@@ -46,6 +46,45 @@ router.post('/addExpense', (req,res)=>{
   })
 })
 
+router.post('/getExpenseOnDate', (req,res)=>{
+  rvHelper.getExpenseOnDate(req.body.date).then((responce) =>
+  {
+    if (responce)
+    {
+      res.json({
+        status: 1,
+        result: responce
+      })
+    }
+    else
+    {
+      res.json({
+        status: 0,
+        result: []
+      })
+    }
+  })
+})
+
+router.get('/editExpense', (req,res)=>{
+  rvHelper.editExpense(req.body).then((responce) =>
+  {
+    if (responce)
+    {
+      res.json({
+        status: 1
+      })
+    }
+    else
+    {
+      res.json({
+        status: 0
+      })
+    }
+  })
+})
+
+
  
 
 
