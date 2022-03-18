@@ -84,5 +84,23 @@ router.get('/editExpense', (req,res)=>{
   })
 })
 
+router.post('/addStock', (req,res)=>{
+  rvHelper.addStock(req.body).then((responce) =>
+  {
+    if (responce)
+    {
+      res.json({
+        status: responce
+      })
+    }
+    else
+    {
+      res.json({
+        status: 0
+      })
+    }
+  })
+})
+
 
 module.exports = router;

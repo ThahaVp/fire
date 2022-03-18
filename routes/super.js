@@ -39,6 +39,8 @@ router.post('/login', (req,res)=>{
   res.render('super/add-expense')
 })
 
+/// Adding expense
+
 router.post('/add-expense', (req, res) => {
 
   let ts = Date.now();
@@ -47,17 +49,18 @@ router.post('/add-expense', (req, res) => {
   req.body.date = date_ob.getDate() + "-" + month + "-" + date_ob.getFullYear()
   req.body.time = date_ob.getHours() + ":" + date_ob.getMinutes() + ":" + date_ob.getSeconds()
 
-
   suHelper.addExpense(req.body).then((responce) => {
 
-    if (responce) {
-      res.redirect('/su/expense')
-    }
-    else {
-      console.log("failed");
-    }
+    console.log(responce)
+    // if (responce) {
+    //   res.redirect('/su/expense')
+    // }
+    // else {
+    //   console.log("failed");
+    // }
   })
 })
+
 
 
 

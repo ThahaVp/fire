@@ -51,8 +51,8 @@ module.exports = {
     editExpense:(expId, newAmount) => {
         return new Promise((resolve, reject)=>{
             
-            // getting expense ed and amount
-            db.get().collection(constants.RV_EXPENSE).findOne({_id:objectId(expId)}).then((exp)=>{
+            var query = { _id: "pro_id" }
+            db.get().collection(constants.RV_EXPENSE).findOne(query).then((exp)=>{
                 var oldAmount = 0
                 if (exp.ed == 0)
                 {
@@ -76,7 +76,43 @@ module.exports = {
                 })
             })
         })
-    }
+    },
+
+
+    // STOCK
+
+    addStock:(data)=>{
+        return new Promise((resolve, reject)=>{
+            var myquery = { _id: "pro_id" }
+            var newvalues = { $inc: { "sec": 1 } }
+            var upsert = { upsert: true }
+
+            // combine these two functions to one
+
+            db.get().collection(constants.COUNTERS).update(myquery,newvalues,upsert,function(err, res){
+                db.get().collection(constants.COUNTERS).findOne(myquery).then((secV)=>{
+                    data.id = secV.sec
+                    db.get().collection(constants.RV_STOCK).insertOne(data).then((responce)=>{
+                        if (responce.insertedId != null)
+                        {
+                            let re = {
+                                "mid":responce.insertedId,
+                                "id":secV.sec
+                            }
+                           resolve(re)
+                        }
+                        else
+                        {
+                            reject()
+                        }
+                        
+                   })
+                })
+            })
+        })
+    },
+
+
 
     // checkKey:(superData)=>{
     //     return new Promise(async(resolve, reject)=>{

@@ -25,12 +25,15 @@ module.exports = {
         
     },
 
-    addExpense:(data)=>{
+    addStore:(data, others)=>{
         return new Promise((resolve, reject)=>{
-            db.get().collection(constants.EXPENSES_COLLECTION).insertOne(data).then((responce)=>{
+            db.get().collection(constants.STORE_COLLECTION).insertOne(data).then((responce)=>{
                  if (responce.insertedId != null)
                  {
-                    resolve(responce.insertedId)
+                    others._id = objectId(responce.insertedId)
+                    db.get().collection(constants.STORE_ADMIN_COLLECTION).insertOne(others).then((res)=>{
+                        resolve(responce.insertedId)
+                   })
                  }
                  else
                  {
@@ -40,7 +43,6 @@ module.exports = {
             })
         })
     },
-
 
     checkKey:(superData)=>{
         return new Promise(async(resolve, reject)=>{

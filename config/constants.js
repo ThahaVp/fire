@@ -5,10 +5,15 @@ module.exports = {
     CART_COLLECTION:'cart',
     EXPENSES_COLLECTION:'expense',
 
+    STORE_COLLECTION:'stores',
+    STORE_ADMIN_COLLECTION:'store_admin',
+
     RV_EXPENSE:'rv_expense',
     RV_SALE:'rv_sale',
     RV_STOCK:'rv_stock',
-    RV_SUPPLIER:'rv_supplier'
+    RV_SUPPLIER:'rv_supplier',
+
+    COUNTERS:'counters'
 
 
 }
