@@ -112,6 +112,12 @@ module.exports = {
         })
     },
 
+    getStock:() => {
+        return new Promise(async(resolve,reject)=>{
+            let stock = await db.get().collection(constants.RV_STOCK).find().toArray()
+            resolve(stock)
+        })
+    },
 
 
     // checkKey:(superData)=>{

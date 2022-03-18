@@ -90,13 +90,33 @@ router.post('/addStock', (req,res)=>{
     if (responce)
     {
       res.json({
-        status: responce
+        status: responce.id
       })
     }
     else
     {
       res.json({
         status: 0
+      })
+    }
+  })
+})
+
+router.get('/getStock', (req,res)=>{
+  rvHelper.getStock().then((responce) =>
+  {
+    if (responce)
+    {
+      res.json({
+        status: 1,
+        result: responce
+      })
+    }
+    else
+    {
+      res.json({
+        status: 0,
+        result: []
       })
     }
   })
