@@ -102,7 +102,7 @@ router.post('/addStock', (req,res)=>{
   })
 })
 
-router.get('/getStock', (req,res)=>{
+router.post('/getStock', (req,res)=>{
   rvHelper.getStock().then((responce) =>
   {
     if (responce)
