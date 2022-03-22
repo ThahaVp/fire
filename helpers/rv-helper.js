@@ -112,9 +112,10 @@ module.exports = {
         })
     },
 
-    getStock:() => {
+    getStock:(type) => {
         return new Promise(async(resolve,reject)=>{
-            let stock = await db.get().collection(constants.RV_STOCK).find().toArray()
+            var myquery = { c: type }
+            let stock = await db.get().collection(constants.RV_STOCK).find(myquery).toArray()
             resolve(stock)
         })
     },

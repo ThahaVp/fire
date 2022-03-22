@@ -85,7 +85,26 @@ router.get('/editExpense', (req,res)=>{
 })
 
 router.post('/addStock', (req,res)=>{
-  rvHelper.addStock(req.body).then((responce) =>
+
+  let ts = Date.now();
+  let date_ob = new Date(ts);
+  let month = date_ob.getMonth() + 1 
+  let time = date_ob.getHours() + ":" + date_ob.getMinutes() + ":" + date_ob.getSeconds()
+  let dateF = date_ob.getFullYear() + "-" + month + "-" + date_ob.getDate()
+  
+  var array = 
+  {
+    p : parseFloat(req.body.p),
+    rp : parseFloat(req.body.rp),
+    s : req.body.s,
+    c : req.body.c,
+    t : req.body.t,
+    q : parseInt(req.body.q),
+    ti : time,
+    dt : dateF
+  }
+
+  rvHelper.addStock(array).then((responce) =>
   {
     if (responce)
     {
@@ -103,9 +122,9 @@ router.post('/addStock', (req,res)=>{
 })
 
 router.post('/getStock', (req,res)=>{
-  rvHelper.getStock().then((responce) =>
+  rvHelper.getStock(req.body.type).then((responce) =>
   {
-    if (responce)
+    if (responce && responce.length > 0)
     {
       res.json({
         status: 1,
