@@ -109,13 +109,15 @@ router.post('/addStock', (req,res)=>{
     if (responce)
     {
       res.json({
-        status: responce.id
+        status: 1,
+        model: responce
       })
     }
     else
     {
       res.json({
-        status: 0
+        status: 0,
+        model: {}
       })
     }
   })
@@ -137,6 +139,33 @@ router.post('/getStock', (req,res)=>{
         status: 0,
         result: []
       })
+    }
+  })
+})
+
+router.post('/makeSale', (req,res)=>{
+
+  let ts = Date.now();
+  let date_ob = new Date(ts);
+  let month = date_ob.getMonth() + 1 
+  let time = date_ob.getHours() + ":" + date_ob.getMinutes() + ":" + date_ob.getSeconds()
+  let dateF = date_ob.getFullYear() + "-" + month + "-" + date_ob.getDate()
+
+  var array = 
+  {
+    json: JSON.parse(req.body.cart),
+    ti : time,
+    dt : dateF,
+    cu : req.body.cn,
+    cc : req.body.cp,
+    ad : req.body.admin_id
+  }
+
+  rvHelper.makeSale(array).then((responce) =>
+  {
+    if (responce)
+    {
+      res.json(responce)
     }
   })
 })

@@ -1,6 +1,7 @@
 var db = require('../config/connection')
 var constants = require('../config/constants')
 const bcrpt = require('bcrypt')
+const async = require('hbs/lib/async')
 var objectId = require('mongodb').ObjectId
 
 module.exports = {
@@ -95,11 +96,9 @@ module.exports = {
                     db.get().collection(constants.RV_STOCK).insertOne(data).then((responce)=>{
                         if (responce.insertedId != null)
                         {
-                            let re = {
-                                "mid":responce.insertedId,
-                                "id":secV.sec
-                            }
-                           resolve(re)
+                            data._id = responce.insertedId.toString()
+                            data.id = secV.sec
+                           resolve(data)
                         }
                         else
                         {
@@ -117,6 +116,130 @@ module.exports = {
             var myquery = { c: type }
             let stock = await db.get().collection(constants.RV_STOCK).find(myquery).toArray()
             resolve(stock)
+        })
+    },
+
+    makeSale:(data)=>{
+        return new Promise(async(resolve, reject)=>{
+
+            var idArray = []
+            const jsonArray = data.json
+            for (var i=0; i<jsonArray.length; i++)
+            {
+                idArray.push(objectId(jsonArray[i]._id))
+            }
+
+            var myquery = {_id: {$in: idArray}}            
+            let stock = await db.get().collection(constants.RV_STOCK).find(myquery, { projection: { q: 1 , id: 1} }).toArray()
+            
+            if (stock != null && stock.length == idArray.length)
+            {
+                var error = false;
+                for (var i=0;i<stock.length;i++)
+                {
+                    if (!stock[i]._id.equals(jsonArray[i]._id) 
+                        || stock[i].q < jsonArray[i].qty)
+                    {
+                        error = true
+                        break
+                    }
+                }
+
+                if (!error)
+                {
+                    var saleArray = []
+                    var newQtyArray = []
+                    var subTotal = 0
+                    for (var i=0; i<jsonArray.length; i++)
+                    {
+                        var totalA = jsonArray[i].qty * jsonArray[i].pr
+                        subTotal += totalA
+                        var obj = {"q": jsonArray[i].qty, "qb" : stock[i].q, "p":jsonArray[i].pr
+                        ,"_id": stock[i]._id, "id": stock[i].id, "t": totalA}
+                        saleArray.push(obj)
+
+                        var newQty = stock[i].q - jsonArray[i].qty
+                        var xx = {"_id": stock[i]._id, "q":newQty}
+                        newQtyArray.push(xx)
+                    }
+
+                    var finalSale = 
+                    {
+                        t: data.ti,
+                        d: data.dt,
+                        s: saleArray,
+                        cu: data.cu,
+                        cc: data.cc,
+                        ad: data.ad,
+                        ta: subTotal
+                    }
+
+                    db.get().collection(constants.RV_SALE).insertOne(finalSale).then((saleResp)=>{
+                        if (saleResp != null && saleResp.acknowledged)
+                        {
+                             // updating expense 
+                            for (var i=0; i<newQtyArray.length; i++)
+                            {
+                                db.get().collection(constants.RV_STOCK).updateOne({"_id":newQtyArray[i]._id},
+                                {
+                                    $set:
+                                    {
+                                        q:newQtyArray[i].q,
+                                        lo : saleResp.insertedId
+                                    }
+                                })
+                            }
+
+                            resolve({status: 1, oid:saleResp.insertedId})
+                        }
+                        else
+                        {resolve({status : 0,oid : 0,})}
+                    })
+                }
+                else
+                {resolve({status : -1,oid : 0,})} // no qty
+            }
+            else
+            {resolve({status : -2,oid : 0,})} // no item found
+            
+
+            // db.get().collection(constants.RV_STOCK).find(myquery, { projection: { q: 1, _id:0 } }).then((qty)=>{
+            
+            //     if (qty != null)
+            //     {
+            //         console.log(qty)
+            //         // if (qty.q < data.order_qty || data.order_qty < 1)
+            //         // {
+            //         //     var resppnce = 
+            //         //     {
+            //         //         status : 2,  // no stock found
+            //         //         oid : 0,
+            //         //     }
+            //         //     resolve(resppnce)
+            //         // }
+            //         // else
+            //         // {
+            //         //     // make sale
+            //         //     var resppnce = 
+            //         //     {
+            //         //         status : 1,  // no stock found
+            //         //         oid : 12,
+            //         //     }
+            //         //     resolve(resppnce)
+            //         // }
+            //     }
+            //     else
+            //     {
+            //         var resppnce = 
+            //             {
+            //                 status : 0,  // no item found
+            //                 oid : 0,
+            //                 message : "no item found"
+            //             }
+            //             resolve(resppnce)
+            //     }
+          
+            // })
         })
     },
 
