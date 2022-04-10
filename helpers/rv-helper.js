@@ -147,54 +147,55 @@ module.exports = {
 
                 if (!error)
                 {
-                    var saleArray = []
-                    var newQtyArray = []
-                    var subTotal = 0
-                    for (var i=0; i<jsonArray.length; i++)
-                    {
-                        var totalA = jsonArray[i].qty * jsonArray[i].pr
-                        subTotal += totalA
-                        var obj = {"q": jsonArray[i].qty, "qb" : stock[i].q, "p":jsonArray[i].pr
-                        ,"_id": stock[i]._id, "id": stock[i].id, "t": totalA}
-                        saleArray.push(obj)
+                    resolve({status : -2,oid : 0,mes:"no error"})
+                    // var saleArray = []
+                    // var newQtyArray = []
+                    // var subTotal = 0
+                    // for (var i=0; i<jsonArray.length; i++)
+                    // {
+                    //     var totalA = jsonArray[i].qty * jsonArray[i].pr
+                    //     subTotal += totalA
+                    //     var obj = {"q": jsonArray[i].qty, "qb" : stock[i].q, "p":jsonArray[i].pr
+                    //     ,"_id": stock[i]._id, "id": stock[i].id, "t": totalA}
+                    //     saleArray.push(obj)
 
-                        var newQty = stock[i].q - jsonArray[i].qty
-                        var xx = {"_id": stock[i]._id, "q":newQty}
-                        newQtyArray.push(xx)
-                    }
+                    //     var newQty = stock[i].q - jsonArray[i].qty
+                    //     var xx = {"_id": stock[i]._id, "q":newQty}
+                    //     newQtyArray.push(xx)
+                    // }
 
-                    var finalSale = 
-                    {
-                        t: data.ti,
-                        d: data.dt,
-                        s: saleArray,
-                        cu: data.cu,
-                        cc: data.cc,
-                        ad: data.ad,
-                        ta: subTotal
-                    }
+                    // var finalSale = 
+                    // {
+                    //     t: data.ti,
+                    //     d: data.dt,
+                    //     s: saleArray,
+                    //     cu: data.cu,
+                    //     cc: data.cc,
+                    //     ad: data.ad,
+                    //     ta: subTotal
+                    // }
 
-                    db.get().collection(constants.RV_SALE).insertOne(finalSale).then((saleResp)=>{
-                        if (saleResp != null && saleResp.acknowledged)
-                        {
-                             // updating expense 
-                            for (var i=0; i<newQtyArray.length; i++)
-                            {
-                                db.get().collection(constants.RV_STOCK).updateOne({"_id":newQtyArray[i]._id},
-                                {
-                                    $set:
-                                    {
-                                        q:newQtyArray[i].q,
-                                        lo : saleResp.insertedId
-                                    }
-                                })
-                            }
+                    // db.get().collection(constants.RV_SALE).insertOne(finalSale).then((saleResp)=>{
+                    //     if (saleResp != null && saleResp.acknowledged)
+                    //     {
+                    //          // updating 
+                    //         for (var i=0; i<newQtyArray.length; i++)
+                    //         {
+                    //             db.get().collection(constants.RV_STOCK).updateOne({"_id":newQtyArray[i]._id},
+                    //             {
+                    //                 $set:
+                    //                 {
+                    //                     q:newQtyArray[i].q,
+                    //                     lo : saleResp.insertedId
+                    //                 }
+                    //             })
+                    //         }
 
-                            resolve({status: 1, oid:saleResp.insertedId})
-                        }
-                        else
-                        {resolve({status : 0,oid : 0,})}
-                    })
+                    //         resolve({status: 1, oid:saleResp.insertedId})
+                    //     }
+                    //     else
+                    //     {resolve({status : 0,oid : 0,})}
+                    // })
                 }
                 else
                 {resolve({status : -1,oid : 0,})} // no qty
