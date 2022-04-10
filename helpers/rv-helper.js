@@ -145,9 +145,10 @@ module.exports = {
                     }
                 }
 
+                resolve({status : -2,oid : 0,mes:"no error",stock:stock,json:jsonArray, idArray:idArray})
                 if (!error)
                 {
-                    resolve({status : -2,oid : 0,mes:"no error",stock:stock,json:jsonArray})
+                    resolve({status : -2,oid : 0,mes:"no error",stock:stock,json:jsonArray, idArray:idArray})
                     // var saleArray = []
                     // var newQtyArray = []
                     // var subTotal = 0
