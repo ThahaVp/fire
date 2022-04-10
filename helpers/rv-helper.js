@@ -135,17 +135,23 @@ module.exports = {
             if (stock != null && stock.length == idArray.length)
             {
                 var error = false;
+                var map = {}
+                
+                for (var i=0; i<jsonArray.length; i++)
+                {
+                    map.jsonArray[i]._id = jsonArray[i]
+                }
+
                 for (var i=0;i<stock.length;i++)
                 {
-                    if (!stock[i]._id.equals(jsonArray[i]._id) 
-                        || stock[i].q < jsonArray[i].qty)
+                    const qtyFromJson = map.stock[i]._id
+                    if (stock[i].q < qtyFromJson)
                     {
                         error = true
                         break
                     }
                 }
 
-                resolve({status : -2,oid : 0,mes:"no error",stock:stock,json:jsonArray, idArray:idArray})
                 if (!error)
                 {
                     resolve({status : -2,oid : 0,mes:"no error",stock:stock,json:jsonArray, idArray:idArray})
