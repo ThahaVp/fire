@@ -16,8 +16,30 @@ router.post('/addExpense', (req,res)=>{
   let ts = Date.now();
   let date_ob = new Date(ts);
   let month = date_ob.getMonth() + 1 
-  let time = date_ob.getHours() + ":" + date_ob.getMinutes() + ":" + date_ob.getSeconds()
-  let dateF = date_ob.getFullYear() + "-" + month + "-" + date_ob.getDate()
+  
+  let monthString = ""
+  if (month<10){monthString = "0"+month}
+  else {monthString = month.toString()}
+
+  let dayString = ""
+  if (date_ob.getDate() < 10) { dayString = "0"+date_ob.getDate()}
+  else {dayString = date_ob.getDate().toString()}
+
+  let hourString = ""
+  if (date_ob.getHours() < 10) { hourString = "0"+date_ob.getHours()}
+  else {hourString = date_ob.getHours().toString()}
+  
+  let minuteString = ""
+  if (date_ob.getMinutes() < 10) { minuteString = "0"+date_ob.getMinutes()}
+  else {minuteString = date_ob.getMinutes().toString()}
+
+  let secondString = ""
+  if (date_ob.getSeconds() < 10) { secondString = "0"+date_ob.getSeconds()}
+  else {secondString = date_ob.getSeconds().toString()}
+
+  let time = hourString + ":" + minuteString + ":" + secondString
+  let dateF = date_ob.getFullYear() + "-" + monthString + "-" + dayString
+
   req.body.dt = dateF
   req.body.ti = time
   req.body.ed = 0
@@ -89,8 +111,29 @@ router.post('/addStock', (req,res)=>{
   let ts = Date.now();
   let date_ob = new Date(ts);
   let month = date_ob.getMonth() + 1 
-  let time = date_ob.getHours() + ":" + date_ob.getMinutes() + ":" + date_ob.getSeconds()
-  let dateF = date_ob.getFullYear() + "-" + month + "-" + date_ob.getDate()
+  
+  let monthString = ""
+  if (month<10){monthString = "0"+month}
+  else {monthString = month.toString()}
+
+  let dayString = ""
+  if (date_ob.getDate() < 10) { dayString = "0"+date_ob.getDate()}
+  else {dayString = date_ob.getDate().toString()}
+
+  let hourString = ""
+  if (date_ob.getHours() < 10) { hourString = "0"+date_ob.getHours()}
+  else {hourString = date_ob.getHours().toString()}
+  
+  let minuteString = ""
+  if (date_ob.getMinutes() < 10) { minuteString = "0"+date_ob.getMinutes()}
+  else {minuteString = date_ob.getMinutes().toString()}
+
+  let secondString = ""
+  if (date_ob.getSeconds() < 10) { secondString = "0"+date_ob.getSeconds()}
+  else {secondString = date_ob.getSeconds().toString()}
+
+  let time = hourString + ":" + minuteString + ":" + secondString
+  let dateF = date_ob.getFullYear() + "-" + monthString + "-" + dayString
   
   var array = 
   {
@@ -148,8 +191,29 @@ router.post('/makeSale', (req,res)=>{
   let ts = Date.now();
   let date_ob = new Date(ts);
   let month = date_ob.getMonth() + 1 
-  let time = date_ob.getHours() + ":" + date_ob.getMinutes() + ":" + date_ob.getSeconds()
-  let dateF = date_ob.getFullYear() + "-" + month + "-" + date_ob.getDate()
+  
+  let monthString = ""
+  if (month<10){monthString = "0"+month}
+  else {monthString = month.toString()}
+
+  let dayString = ""
+  if (date_ob.getDate() < 10) { dayString = "0"+date_ob.getDate()}
+  else {dayString = date_ob.getDate().toString()}
+
+  let hourString = ""
+  if (date_ob.getHours() < 10) { hourString = "0"+date_ob.getHours()}
+  else {hourString = date_ob.getHours().toString()}
+  
+  let minuteString = ""
+  if (date_ob.getMinutes() < 10) { minuteString = "0"+date_ob.getMinutes()}
+  else {minuteString = date_ob.getMinutes().toString()}
+
+  let secondString = ""
+  if (date_ob.getSeconds() < 10) { secondString = "0"+date_ob.getSeconds()}
+  else {secondString = date_ob.getSeconds().toString()}
+
+  let time = hourString + ":" + minuteString + ":" + secondString
+  let dateF = date_ob.getFullYear() + "-" + monthString + "-" + dayString
 
   var array = 
   {
@@ -166,6 +230,26 @@ router.post('/makeSale', (req,res)=>{
     if (responce)
     {
       res.json(responce)
+    }
+  })
+})
+
+router.post('/getSale', (req,res)=>{
+  rvHelper.getSale(req.body.date).then((responce) =>
+  {
+    if (responce && responce.length > 0)
+    {
+      res.json({
+        status: 1,
+        list: responce
+      })
+    }
+    else
+    {
+      res.json({
+        status: 0,
+        list: []
+      })
     }
   })
 })

@@ -119,6 +119,14 @@ module.exports = {
         })
     },
 
+    getSale:(data) => {
+        return new Promise(async(resolve,reject)=>{
+            var myquery = { d: data }
+            let stock = await db.get().collection(constants.RV_SALE).find(myquery).toArray()
+            resolve(stock)
+        })
+    },
+
     makeSale:(data)=>{
         return new Promise(async(resolve, reject)=>{
 
