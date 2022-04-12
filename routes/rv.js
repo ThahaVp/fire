@@ -166,6 +166,24 @@ router.post('/addStock', (req,res)=>{
   })
 })
 
+router.post('/updateStock', (req,res)=>{
+  rvHelper.updateStock(req.body).then((responce) =>
+  {
+    if (responce != null)
+    {
+      res.json({
+        status: responce
+      })
+    }
+    else
+    {
+      res.json({
+        status: 0
+      })
+    }
+  })
+})
+
 router.post('/getStock', (req,res)=>{
   rvHelper.getStock(req.body.type).then((responce) =>
   {

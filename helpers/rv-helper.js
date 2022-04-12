@@ -111,6 +111,25 @@ module.exports = {
         })
     },
 
+    updateStock:(data) => {
+        return new Promise((resolve, reject)=>{
+            
+            // updating stock
+            db.get().collection(constants.RV_STOCK).updateOne({_id:objectId(data._id)},
+            {
+                $set:
+                {
+                    q: data.q,
+                    t: data.t,
+                    rp: data.rp,
+                    p: data.p,
+                }
+            }).then((responce)=>{
+                resolve(responce.modifiedCount)
+            })
+        })
+    },
+
     getStock:(type) => {
         return new Promise(async(resolve,reject)=>{
             var myquery = { c: type }
@@ -189,7 +208,6 @@ module.exports = {
                         ta: subTotal
                     }
 
-                    console.log(finalSale)
 
                     db.get().collection(constants.RV_SALE).insertOne(finalSale).then((saleResp)=>{
                         if (saleResp != null && saleResp.acknowledged)
