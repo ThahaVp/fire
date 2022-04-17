@@ -32,12 +32,12 @@ module.exports = {
                  {
                     others._id = objectId(responce.insertedId)
                     db.get().collection(constants.STORE_ADMIN_COLLECTION).insertOne(others).then((res)=>{
-                        resolve(responce.insertedId)
+                        resolve({id: responce.insertedId, status: 1})
                    })
                  }
                  else
                  {
-                     reject()
+                    resolve({id: "", status: 0})
                  }
                  
             })

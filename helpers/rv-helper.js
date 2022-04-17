@@ -132,9 +132,17 @@ module.exports = {
 
     getStock:(type) => {
         return new Promise(async(resolve,reject)=>{
-            var myquery = { c: type }
-            let stock = await db.get().collection(constants.RV_STOCK).find(myquery).toArray()
-            resolve(stock)
+            if (type = "")
+            {
+                let stock = await db.get().collection(constants.RV_STOCK).find().toArray()
+                resolve(stock)
+            }
+            else
+            {
+                var myquery = { c: type }
+                let stock = await db.get().collection(constants.RV_STOCK).find(myquery).toArray()
+                resolve(stock)
+            }
         })
     },
 
@@ -189,7 +197,7 @@ module.exports = {
                         var totalA = jsonArray[i].qty * jsonArray[i].pr
                         subTotal += totalA
                         var obj = {"q": jsonArray[i].qty, "qb" : stock[i].q, "p":jsonArray[i].pr
-                        ,"_id": stock[i]._id, "id": stock[i].id, "t": totalA}
+                        ,"_id": stock[i]._id, "id": stock[i].id, "t": totalA, "ti": jsonArray[i].ti}
                         saleArray.push(obj)
 
                         var newQty = stock[i].q - jsonArray[i].qty

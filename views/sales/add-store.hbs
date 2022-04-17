@@ -39,15 +39,15 @@
 
       <h3 class="text-center">Registering Store</h3>
 
-      <form action="/sales/add-store" method="post" enctype="multipart/form-data" class="mt-5">
+<form>
         <div class="mb-3">
           <label for="name" class="form-label">Restaurant Name</label>
           <input type="name" class="form-control" id="name" name="t">
         </div>
 
         <div class="mb-3">
-          <label for="name" class="form-label">Restaurant Description (optional)</label>
-          <input type="name" class="form-control" id="name" name="d">
+          <label for="name" class="form-label">Restaurant Description</label>
+          <input type="name" class="form-control" id="description" name="d" placeholder="eg: Indian & Arabic">
         </div>
         
         <div class="mb-3">
@@ -61,39 +61,40 @@
 
     <div class="mb-3">
           <label for="des" class="form-label">Contact Number (for customer)</label>
-          <input type="text" pattern="\d*" maxlength="10" class="form-control" id="des" name="cc">
+          <input type="text" maxlength="10" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" class="form-control" id="co1"/>
+        
         </div>
 
         <div class="mb-3">
           <label for="des" class="form-label">Contact Number 2 (optional)</label>
-          <input type="text" pattern="\d*" maxlength="10" class="form-control" id="des" name="c2">
+          <input type="text" maxlength="10" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" class="form-control" id="co2"/>
         </div>
 
         <div class="mb-3">
           <label for="des" class="form-label">Whatsapp Number</label>
-          <input type="text" pattern="\d*" maxlength="10" class="form-control" id="des" name="wt">
+          <input type="text" maxlength="10" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" class="form-control" id="wh"/>
         </div>
 
         <div class="mb-3">
           <label for="des" class="form-label">Facebook link</label>
-          <input type="text" pattern="\d*"  class="form-control" id="des" name="fb">
+          <input type="text" class="form-control" id="fb">
         </div>
 
         <div class="mb-3">
           <label for="des" class="form-label">Instagram link</label>
-          <input type="text" pattern="\d*" class="form-control" id="des" name="in">
+          <input type="text" class="form-control" id="in">
         </div>
 
         <div class="mb-3">
           <label for="price" class="form-label">Owner / Manager Name</label>
-          <input type="name" class="form-control" id="price" name="admin_name">
+          <input type="name" class="form-control" id="price" name="manager_name">
         </div>
 
         
 
         <div class="mb-3">
           <label for="des" class="form-label">Owner Contact Number</label>
-          <input type="text" pattern="\d*" maxlength="10" class="form-control" id="des" name="admin_contact">
+          <input type="text" maxlength="10" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" class="form-control" id="manager_contact"/>
         </div>
 
         <div class="mb-3">
@@ -111,7 +112,7 @@
 
         <div class="mb-3">
           <label for="des" class="form-label">Minimum order amount</label>
-          <input type="text" pattern="\d*" maxlength="10" class="form-control" id="des" name="mo">
+          <input type="text" maxlength="3" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" class="form-control" id="mo"/>
         </div>
 
         <div class="mb-3">
@@ -123,7 +124,7 @@
 
         <div class="mb-3">
           <label for="des" class="form-label">Delivery Charge</label>
-          <input type="text" pattern="\d*" maxlength="10" class="form-control" id="des" name="dc">
+          <input type="text" maxlength="3" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" class="form-control" id="dc"/>
         </div>
 
         <div class="form-check">
@@ -133,7 +134,7 @@
   </label>
 </div>
 
-        <button type="submit" class="btn btn-primary mt-4 ">Submit</button>
+        <button type="button" onclick="submitStoreData()" class="btn btn-primary mt-4 ">Submit</button>
       </form>
     </div>
 
