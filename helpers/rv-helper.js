@@ -132,7 +132,8 @@ module.exports = {
 
     getStock:(type) => {
         return new Promise(async(resolve,reject)=>{
-            if (type = "")
+            
+            if (type == "")
             {
                 let stock = await db.get().collection(constants.RV_STOCK).find().toArray()
                 resolve(stock)
