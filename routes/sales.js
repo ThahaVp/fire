@@ -8,6 +8,16 @@ router.get("/add-store", (req,res)=>{
   res.render('sales/add-store', {logged:true,});
 })
 
+
+router.get("/add-billing/:ww/:lat/:lng/", (req,res)=>{
+    res.render('sales/add-billing', {logged:true, ww: req.params.ww, lat: req.params.lat,
+    lng: req.params.lng});  
+})
+
+router.get("/choose-theme/:ww", (req,res)=>{
+  res.render('sales/choose-theme', {logged:true, ww: req.params.ww});  
+})
+
 router.post('/add-store', (req, res) => {
 
   let ts = Date.now();
@@ -56,17 +66,30 @@ router.post('/add-store', (req, res) => {
   console.log(req.body)
   console.log(otherDetails)
 
-  res.json(req.body)
+  salesHelper.addStore(req.body, otherDetails).then((responce) => {
 
-  // salesHelper.addStore(req.body, otherDetails).then((responce) => {
+    if (responce != null) {
+      res.json(responce)
+    }
+    else {
+      res.json({id: "", status: 0})
+    }
+  })
+})
 
-  //   if (responce != null) {
-  //     res.json(responce)
-  //   }
-  //   else {
-  //     res.json({id: "", status: 0})
-  //   }
-  // })
+router.post('/add-order-billing', (req, res) => {
+
+  console.log(req.body)
+  salesHelper.addOrderBilling(req.body).then((responce) => {
+
+    if (responce != null) {
+      res.json({status: responce})
+    }
+    else {
+      res.json({status: 0})
+    }
+  })
+
 })
 
 

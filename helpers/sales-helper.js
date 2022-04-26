@@ -44,6 +44,23 @@ module.exports = {
         })
     },
 
+    addOrderBilling:(data)=>{
+        return new Promise((resolve, reject)=>{
+
+            // updating store
+            db.get().collection(constants.STORE_COLLECTION).updateOne({_id:objectId(data._id)},
+            {
+                $set:
+                {
+                    ra: data.ra,
+                    mo: data.mo
+                }
+            }).then((responce)=>{
+                resolve(responce.modifiedCount)
+            })
+        })
+    },
+
     checkKey:(superData)=>{
         return new Promise(async(resolve, reject)=>{
             var responce = {}

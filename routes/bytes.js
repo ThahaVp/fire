@@ -4,6 +4,36 @@ var router = express.Router();
 var pdf = require('html-pdf');
 var options = { format: 'A4' };
 
+
+var admin = require("firebase-admin");
+
+var serviceAccount = require("../delivery-58fd5-firebase-adminsdk-pxhyn-f6c803d34a.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://delivery-58fd5.firebaseio.com"
+});
+
+router.get('/getExpenses', (req,res)=>{
+
+const db = admin.database();
+const ref = db.ref('Area/ponnani/expenses');
+
+// Attach an asynchronous callback to read the data at our posts reference
+ref.on('value', (snapshot) => {
+  res.json({
+    status: 1,
+    list: snapshot.val()
+  })
+}, (errorObject) => {
+  res.json({
+    status: 0
+  })
+}); 
+
+})
+
+
 router.get('/test', (req,res)=>{
   res.json({
     status: 1,

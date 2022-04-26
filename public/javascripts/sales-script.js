@@ -1,6 +1,6 @@
 var modalWrap = null;
 var map = null;
-var lat = null, lng = null, street_address = null;
+var lat = null, lng = null, street_address = null, street = null;
 
 const setLoc = () => {
 
@@ -14,29 +14,37 @@ function submitStoreData() {
 
   if (lat != null && lng != null && street_address != null) {
 
-    const storeName = document.getElementById("name").value.trim()
-    const storeDescription = document.getElementById("description").value.trim()
+    const storeName = document.getElementById("name").value.trim().replace(/(^\w|\s\w)/g, m => m.toUpperCase())
+    const storePlace = document.getElementById("place").value.trim().replace(/(^\w|\s\w)/g, m => m.toUpperCase())
+    const storeDescription = document.getElementById("description").value.trim().replace(/(^\w|\s\w)/g, m => m.toUpperCase())
     const co1 = document.getElementById("co1").value.trim()
     const co2 = document.getElementById("co2").value.trim()
     const whatsppNum = document.getElementById("wh").value.trim()
-    const ManagerName = document.getElementById("manager_name").value.trim()
+    const ManagerName = document.getElementById("manager_name").value.trim().replace(/(^\w|\s\w)/g, m => m.toUpperCase())
     const ManagerContact = document.getElementById("manager_contact").value.trim()
     const fb = document.getElementById("fb").value.trim()
     const inst = document.getElementById("in").value.trim()
 
-    if (storeName != "" && storeDescription != "" && co1.length == 10) {
+    if (storeName != "" && storeDescription != "" && co1.length == 10 && storePlace!= "") {
 
       var xhr = new XMLHttpRequest();
       xhr.open("POST", 'http://localhost:3000/sales/add-store', true);
       xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
       xhr.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-          console.log(this.response)
+          var res = JSON.parse(this.response)
+          console.log(res)
+          if (res.status == 1)
+          {
+            window.open("/sales/add-billing/"+res.id+"/"+lat+"/"+lng, "_self");
+          }
+          
+
         }
       }
 
       xhr.send(
-        "ad=" + street_address +
+        "pl=" + storePlace +
         "&lat=" + lat +
         "&lng=" + lng +
         "&title=" + storeName +
@@ -58,6 +66,9 @@ function submitStoreData() {
 }
 
 function getAddress() {
+  document.getElementById("location-div").innerHTML = "Set Location"
+  street_address = null
+  street = null
   return new Promise(function (resolve, reject) {
     var request = new XMLHttpRequest();
 
@@ -70,22 +81,52 @@ function getAddress() {
       if (request.readyState == 4) {
         if (request.status == 200) {
           var data = JSON.parse(request.responseText).results;
-          console.log(data)
+          
           for (var i = 0; i < data.length; i++) {
             var types = data[i].types
             if (types[0] == "street_address") {
               street_address = data[i].formatted_address
-              document.getElementById("location-div").innerHTML = "Location : <br>" + street_address
-
-              var reqBody = {
-                'Body': street_address
-              };
-
+              var address_compo = data[i].address_components
+              for (var j=0;j<address_compo.length;j++)
+              {
+                var addressTypes = address_compo[j].types
+                if (addressTypes.includes("political"))
+                {
+                  street = address_compo[j].long_name
+                  break
+                }
+              }
 
             }
             else
               continue
           }
+
+          if (street_address == null)
+          {
+            for (var i = 0; i < data.length; i++) {
+              var types = data[i].types
+              if (types[0] == "route") {
+                street_address = data[i].formatted_address
+  
+                var address_compo = data[i].address_components
+                for (var j=0;j<address_compo.length;j++)
+                {
+                  var addressTypes = address_compo[j].types
+                  if (addressTypes.includes("political"))
+                  {
+                    street = address_compo[j].long_name
+                    break
+                  }
+                }
+              }
+              else
+                continue
+            }
+          }
+
+          document.getElementById("location-div").innerHTML = "Location : <br>" + street_address
+          document.getElementById("place").value = street
 
 
         }
@@ -98,7 +139,7 @@ function getAddress() {
   });
 };
 
-const showModal = () => {
+function showModal()  {
   if (modalWrap !== null) {
     modalWrap.remove();
   }

@@ -2,33 +2,29 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <!-- Favicon-->
-    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
-    <!-- Core theme CSS (includes Bootstrap)-->
-    <!-- <link href="css/styles.css" rel="stylesheet" /> -->
-    <link href="../stylesheets/style.css" rel="stylesheet" />
-    <link href="../stylesheets/map-styles.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+  
+  
+  <link href="/stylesheets/map-styles.css" rel="stylesheet" />
+  <link href="/stylesheets/bootstrap.min.css" rel="stylesheet" />
+  <script src="/javascripts/bootstrap.bundle.min.js"></script>
+
+
+
 </head>
 
 <style>
-
-  html
-  {
-    -webkit-font-smoothing:antialiased;
-    text-rendering:optimizeLegibility;
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
 
-  body
-  {
+  body {
     color: #4a4a4a;
   }
-
-
 </style>
 
 <body>
@@ -37,56 +33,176 @@
   <div class="container mt-4">
     <div class="col-lg-6 mb-2">
 
-      <h3 class="text-center">Billing Details</h3>
+      <h3 class="text-center">Order Billing Details</h3>
 
-<form>
-      
+      <form>
+
+        <div class="mb-3">
+          <input type="hidden" class="form-control" id="id" value="{{ww}}" disabled/>
+        </div>
+
         <div class="mb-3">
           <label for="des" class="form-label">Minimum order amount</label>
-          <input type="text" maxlength="3" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" class="form-control" id="mo"/>
+          <input type="text" maxlength="3"
+            oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+            class="form-control" id="mo" />
         </div>
 
         <div class="mb-3">
           <label for="des" class="form-label">Delivery Location</label>
-          <div class="form-control btn-primary" id="location-div" style="cursor: pointer;">
+          <div class="form-control btn-primary" id="location-div" style="cursor: pointer;" onclick="showMap()">
             Set Delivery Radius
-            </div>
+          </div>
         </div>
 
         <div class="mb-3">
           <label for="des" class="form-label">Delivery Charge</label>
-          <input type="text" maxlength="3" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');" class="form-control" id="dc"/>
+          <input type="text" maxlength="3"
+            oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');"
+            class="form-control" id="dc" />
         </div>
 
         <div class="form-check">
-  <input class="form-check-input" type="checkbox" value="" id="flexCheckIndeterminate">
-  <label class="form-check-label" for="flexCheckIndeterminate">
-   Collect tax from customer ?
-  </label>
-</div>
+          <input class="form-check-input" type="checkbox" value="" id="flexCheckIndeterminate">
+          <label class="form-check-label" for="flexCheckIndeterminate">
+            Collect tax from customer ?
+          </label>
+        </div>
 
-        <button type="button" onclick="submitStoreData()" class="btn btn-primary mt-4 ">Submit</button>
+        <button type="button" onclick="submitData()" class="btn btn-primary mt-4 ">Next</button>
       </form>
     </div>
 
   </div>
 
-
-
-    <script src="../javascripts/sales-script.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-
-<script
+  <script
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBaxdI9cgj-Cln97faKXvBHh4q-ccyTZNY&callback=initMap&libraries=&v=weekly"
       async
     ></script>
 
-    
+<script>
 
+var modalWrap = null, map = null, antennasCircle = null
+var radiusSlected = 0
+
+function showMap()  {
+  if (modalWrap !== null) {
+    modalWrap.remove();
+  }
+
+  modalWrap = document.createElement('div');
+  modalWrap.innerHTML = `
+  <div class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+
+        <div class="modal-header p-3">
+          <h6 class="modal-title">Set Location</h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding:0;">
+        <div id="map">
+        
+        </div>
+       
+        
+        <div class="modal-footer">
+          <input type="number" width="20px" onchange="setLoc()" id="counter" value=4>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-success" onclick="getRadius()" data-bs-dismiss="modal">Done</button></a>
+        </div>
+      </div>
+    </div>
+  </div>
+`;
+
+
+  document.body.append(modalWrap);
+
+  var modal = new bootstrap.Modal(modalWrap.querySelector('.modal'));
+  modal.show();
+
+  let infoWindow;
+  map = new google.maps.Map(document.getElementById("map"), {
+    center: { lat: {{lat}}, lng: {{lng}} },
+    zoom: 13,
+  });
+
+  new google.maps.Marker({
+    position: map.getCenter(),
+    map,
+    title: "Restaurant",
+  });
+
+  antennasCircle = new google.maps.Circle({
+      strokeColor: "#FF0000",
+      strokeOpacity: 0.6,
+      strokeWeight: 2,
+      fillColor: "#FF0000",
+      fillOpacity: 0.1,
+      map: map,
+      center: {
+        lat: {{lat}},
+        lng: {{lng}}
+      },
+      radius: 4000
+    });
+
+}
+
+function getRadius() {
   
+  var temp = document.getElementById("counter").value
+  document.getElementById("location-div").innerHTML = "Delivery Radius : "+temp+" KM"
+  radiusSlected = temp
+}
+
+
+function submitData() {
+
+const id = document.getElementById("id").value
+const mo = document.getElementById("mo").value.trim()
+
+  if (radiusSlected > 0 && mo != "" && id != "") {
+    
+   var xhr = new XMLHttpRequest();
+      xhr.open("POST", 'http://localhost:3000/sales/add-order-billing', true);
+      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+      xhr.onreadystatechange = function () {
+        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+          var res = JSON.parse(this.response)
+          console.log(res)
+          if (res.status == 1)
+          {
+            window.open("/sales/choose-theme/"+id, "_self");
+          }
+          
+
+        }
+      }
+
+      xhr.send(
+        "ra=" + radiusSlected +
+        "&mo=" + mo +
+        "&_id=" + id
+      ); 
+
+
+  }
+
+}
+
+function setLoc() {
+  
+  var counter = document.getElementById("counter")
+  var ra = counter.value * 1000
+  console.log(counter.value)
+  antennasCircle.setRadius(ra)
+}
+
+</script>
+
+
 </body>
 
 </html>
-
-
-
