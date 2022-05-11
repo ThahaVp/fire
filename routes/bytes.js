@@ -353,7 +353,9 @@ async function getResFromAreas(areaMap) {
       snapshot.forEach((child) => {
         if (tempArray.includes(child.val().c))
         {
-          resList.push(child.val())
+          var obj = child.val()
+          obj.status = 2
+          resList.push(obj)
         }        
         
       })
