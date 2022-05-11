@@ -8,6 +8,7 @@ var options = { format: 'A4' };
 var admin = require("firebase-admin");
 
 var serviceAccount = require("../delivery-58fd5-firebase-adminsdk-pxhyn-f6c803d34a.json");
+const async = require('hbs/lib/async');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -30,6 +31,163 @@ router.get('/getExpenses', (req, res) => {
       status: 0
     })
   });
+
+})
+
+router.post('/getRestaurants', (req, res) => {
+
+  const db = admin.database();
+  const ref = db.ref('res_list');
+  var userLat = req.body.lat
+  var userLng = req.body.lng
+
+  ref.once('value', (snapshot) => {
+    var areaMap = {}
+    snapshot.forEach((child) => {
+      var resLat = child.val().lat
+      var resLng = child.val().lng
+      var resLimit = child.val().l
+      var resArea = child.val().a
+      var resID = child.val().id
+      var distance = getDistanceFromLatLonInKm(userLat, userLng, resLat, resLng)
+
+      if (distance <= resLimit) {
+        var temp = areaMap[resArea]
+        if (temp == null) { temp = [] }
+
+        temp.push(resID)
+        areaMap[resArea] = temp
+
+      }
+    })
+
+
+
+    if (areaMap != null && Object.keys(areaMap).length > 0) {
+
+      // ASYNC AWAIT FETCHING
+
+      let resList = getResFromAreas(areaMap)
+
+      resList.then(function (result) {
+        res.json({
+          status: 1,
+          list: result
+        })
+      })
+
+    }
+    else {
+
+      res.json({
+        status: 1,
+        msg: "no restaurants",
+        list:[]
+      })
+    }
+
+  }, (errorObject) => {
+    res.json({
+      status: 1,
+      msg: "firebase error " + errorObject,
+      list:[]
+    })
+  });
+
+})
+
+
+router.post('/acceptOrder', (req, res) => {
+
+  var minutesToAdd = req.body.time;
+  var res_id = req.body.res_id
+  var area = req.body.area
+  var orderKey = req.body.key
+  var fcm = req.body.fcm
+  var customer = req.body.customer
+  var res_order_key = req.body.res_order_key
+
+  // Map<String,Object> map = new HashMap<>();
+  // map.put("key", key);
+  // map.put("accepted", "");
+  // reference.child("Area").child(area).child("shop_order").child(Rest_id).child(res_key).updateChildren(map);
+
+  // currently doing this to stop sound in restaurant
+
+  if (minutesToAdd == null) {
+    minutesToAdd = 30
+  }
+
+  var currentDate = new Date();
+  var date_ob = new Date(currentDate.getTime() + minutesToAdd * 60000);
+
+  var hours = date_ob.getHours();
+  var minutes = date_ob.getMinutes();
+  var ampm = hours >= 12 ? 'pm' : 'am';
+  hours = hours % 12;
+  hours = hours ? hours : 12; // the hour '0' should be '12'
+  minutes = minutes < 10 ? '0' + minutes : minutes;
+  var time = hours + ':' + minutes + ' ' + ampm;
+
+
+  if (area != null && orderKey != null && res_id != null) {
+    const db = admin.database();
+    const ref = db.ref('testing/' + orderKey + '/status');
+    // const ref = db.ref('Area/' + area + '/testing/' + orderKey + '/status');
+
+    ref.once('value', (snapshot) => {
+      if (snapshot.val() != null) {
+        var orderStatus = snapshot.val().split(',')
+        if (orderStatus[0] != 0) {
+          var message = {
+            notification: {
+              title: "Order Accepted",
+              body: "Hi " + customer + ", Your order is has accepted and will be delivered as soon its ready !"
+            },
+            android: {
+              notification: {
+                channel_id: "Order Accepted"
+              }
+            },
+            token: fcm
+          }
+
+          ref.set("1," + time).then(function () {
+            console.log('Upload succeeded');
+
+            res.json({
+              status: 1
+            })
+
+            // admin.messaging().send(message)
+            sendOrderToRider(orderKey, area)
+
+          }).catch(function (error) {
+            console.log('Upload failed ' + error);
+          });
+
+        }
+        else {
+          res.json({
+            status: 0
+          })
+        }
+      }
+      else {
+        res.json({
+          status: 0
+        })
+      }
+
+    }, (errorObject) => {
+    });
+  }
+  else {
+    res.json({
+      status: 0
+    })
+  }
+
 
 })
 
@@ -56,21 +214,12 @@ router.post('/sendNotification', (req, res) => {
     .catch((error) => {
       res.json({
         status: 1,
-        msg:error
+        msg: error
       })
     });
 
 })
 
-
-
-router.get('/test', (req, res) => {
-  res.json({
-    status: 1,
-    time: "test",
-    date: "done"
-  })
-})
 
 router.post('/generateInvoice', (req, res) => {
 
@@ -126,9 +275,33 @@ router.post('/generateInvoice', (req, res) => {
 })
 
 
-
-
 module.exports = router;
+
+function sendOrderToRider(key, area) {
+
+  const db = admin.database();
+  const ref = db.ref('Area/' + area + '/riders');
+
+  ref.once('value', (snapshot) => {
+    if (snapshot.val() != null) {
+      var riderMap = {}
+      snapshot.forEach((child) => {
+        if (child.val().status == 1) {
+          if (child.hasChild("pending")) {
+            riderMap[child.key] = Object.keys(child.val().pending).length
+          }
+          else {
+            riderMap[child.key] = 0
+          }
+        }
+
+      })
+      console.log(riderMap)
+    }
+  }, (errorObject) => {
+  });
+
+}
 
 
 var a = ['', 'one ', 'two ', 'three ', 'four ', 'five ', 'six ', 'seven ', 'eight ', 'nine ', 'ten ', 'eleven ', 'twelve ', 'thirteen ', 'fourteen ', 'fifteen ', 'sixteen ', 'seventeen ', 'eighteen ', 'nineteen '];
@@ -148,4 +321,48 @@ function inWords(num) {
   str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'hundred ' : '';
   str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) + 'only ' : '';
   return str;
+}
+
+
+function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+  var R = 6371; // Radius of the earth in km
+  var dLat = deg2rad(lat2 - lat1);  // deg2rad below
+  var dLon = deg2rad(lon2 - lon1);
+  var a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2)
+    ;
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  var d = R * c; // Distance in km
+  return d;
+}
+
+function deg2rad(deg) {
+  return deg * (Math.PI / 180)
+}
+
+async function getResFromAreas(areaMap) {
+
+  var resList = []
+  for (const each in areaMap) {
+
+    var tempArray = areaMap[each]
+    const rrr = admin.database().ref('Area/' + each + '/shop')
+    await rrr.once('value', (snapshot) => {
+      snapshot.forEach((child) => {
+        if (tempArray.includes(child.val().c))
+        {
+          resList.push(child.val())
+        }        
+        
+      })
+
+
+
+    }, (errorObject) => {
+      // return error
+    });
+  }
+  return resList
 }
