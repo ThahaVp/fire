@@ -72,7 +72,9 @@ router.post('/getRestaurants', (req, res) => {
       resList.then(function (result) {
         res.json({
           status: 1,
-          list: result
+          oData: {
+            res_in_city: result
+          }
         })
       })
 
