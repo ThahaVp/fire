@@ -53,9 +53,9 @@ router.post('/getRestaurants', (req, res) => {
 
       if (distance <= resLimit) {
         var temp = areaMap[resArea]
-        if (temp == null) { temp = [] }
+        if (temp == null) { temp = {} }
 
-        temp.push(resID)
+        temp[resID] = distance
         areaMap[resArea] = temp
 
       }
@@ -350,13 +350,16 @@ async function getResFromAreas(areaMap) {
   for (const each in areaMap) {
 
     var tempArray = areaMap[each]
+    var keys = Object.keys(tempArray);
     const rrr = admin.database().ref('Area/' + each + '/shop')
     await rrr.once('value', (snapshot) => {
       snapshot.forEach((child) => {
-        if (tempArray.includes(child.val().c))
+
+        if (keys.includes(child.val().c))
         {
           var obj = child.val()
           obj.status = 2
+          obj.dis = tempArray[child.val().c]
           resList.push(obj)
         }        
         
