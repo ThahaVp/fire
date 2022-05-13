@@ -34,6 +34,54 @@ router.get('/getExpenses', (req, res) => {
 
 })
 
+router.post('/getFoods', (req, res) => {
+
+  var resID = req.body.id
+  var area = req.body.area
+
+  const db = admin.database();
+  const ref = db.ref('Area/'+area+"/products/"+resID);
+  
+  ref.once('value', (snapshot) => {
+
+    var list = []
+    snapshot.forEach((child) => {
+      var show = child.val().sh
+      if (show == 1)
+      {
+        var obj = child.val()
+        obj.qty = 0
+        obj.key = child.key
+        list.push(obj)
+      }
+    })
+
+    if (list.length > 0)
+    {
+      res.json({
+        status: 1,
+        list: list,
+        res_status: 1
+      })
+    }
+    else
+    {
+      res.json({
+        status: 0,
+        list: [],
+        msg: "empty"
+      })
+    }
+
+}, (errorObject) => {
+    res.json({
+      status: 0,
+      msg: "firebase error " + errorObject,
+      list:[]
+    })
+  });
+})
+
 router.post('/getRestaurants', (req, res) => {
 
   const db = admin.database();
@@ -359,7 +407,11 @@ async function getResFromAreas(areaMap) {
         {
           var obj = child.val()
           obj.status = 2
-          obj.dis = tempArray[child.val().c]
+          
+          var dd = tempArray[child.val().c]
+          var rounded = Math.round(dd * 10) / 10
+          obj.dis = rounded
+          obj.an = each
           resList.push(obj)
         }        
         
