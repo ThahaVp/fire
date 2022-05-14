@@ -34,6 +34,54 @@ router.get('/getExpenses', (req, res) => {
 
 })
 
+router.get('/testing', (req,res) => {
+
+  const db = admin.database();
+  const ref = db.ref('Area/ponnani/shop');
+
+  ref.on('value', (snapshot) => {
+    
+    var map = {}
+
+    // snapshot.forEach((child) => {
+    //   child.val().forEach((sub) => {
+      
+    //     map[sub.key] = "1"
+  
+    //   })
+    // })
+
+    var obj = snapshot.val()
+    var keys = Object.keys(obj)
+    
+
+    for (var i=0; i<keys.length; i++)
+    {
+      
+      var k = keys[i]
+      k = k.replace(/\s+/g,'%20');
+      map[keys[i]+"/i"] = k+".webp"
+      
+      
+      
+    }
+
+    res.json({
+      status: 1,
+      list: map
+    })
+     ref.update(map)
+
+    
+    
+
+  }, (errorObject) => {
+    console.log("Error "+errorObject)
+
+})
+
+})
+
 router.post('/getFoods', (req, res) => {
 
   var resID = req.body.id
@@ -115,13 +163,14 @@ router.post('/getRestaurants', (req, res) => {
 
       // ASYNC AWAIT FETCHING
 
-      let resList = getResFromAreas(areaMap)
+      let mm = getResFromAreas(areaMap)
 
-      resList.then(function (result) {
+      mm.then(function (result) {
         res.json({
           status: 1,
           oData: {
-            res_in_city: result
+            res_in_city: result.res,
+            slider: result.imgs
           }
         })
       })
@@ -395,10 +444,13 @@ function deg2rad(deg) {
 async function getResFromAreas(areaMap) {
 
   var resList = []
+  var imgs = {}
+  var allResArray = {}
   for (const each in areaMap) {
 
     var tempArray = areaMap[each]
     var keys = Object.keys(tempArray);
+    allResArray[each] = keys
     const rrr = admin.database().ref('Area/' + each + '/shop')
     await rrr.once('value', (snapshot) => {
       snapshot.forEach((child) => {
@@ -417,11 +469,45 @@ async function getResFromAreas(areaMap) {
         
       })
 
-
-
     }, (errorObject) => {
-      // return error
+      
+    });
+
+    // Getting Slider Images
+    const imgRef = admin.database().ref('Area/' + each + '/new_check/home_image')
+    await imgRef.once('value', (snapshot) => {
+    imgs[each] = JSON.parse(snapshot.val())
+    }, (errorObject) => {
+      
     });
   }
-  return resList
+
+  let imgKeys = Object.keys(imgs)
+  var imgArray = []
+  for (var i=0;i<imgKeys.length;i++)
+  {
+    var ob = imgs[imgKeys[i]]
+    let subKey = Object.keys(ob)
+    let resArr = allResArray[imgKeys[i]]
+
+    for (var j=0; j<subKey.length; j++)
+    {
+      var subOb = ob[subKey[j]]
+      if (subOb.type == 'restaurant' && !resArr.includes(subOb.target))
+      {
+        continue
+      }
+
+      subOb["id"] = subKey[j]
+      subOb["an"] = imgKeys[i]
+      delete subOb.description
+      
+      imgArray.push(subOb)
+    }
+    
+  }
+
+  let mm = {res: resList,
+  imgs: imgArray}
+  return mm
 }
