@@ -37,7 +37,7 @@ router.get('/getExpenses', (req, res) => {
 router.get('/testing', (req,res) => {
 
   const db = admin.database();
-  const ref = db.ref('Area/ponnani/shop');
+  const ref = db.ref('Area/ponnani/products/albaik');
 
   ref.on('value', (snapshot) => {
     
@@ -59,7 +59,7 @@ router.get('/testing', (req,res) => {
     {
       
       var k = keys[i]
-      k = k.replace(/\s+/g,'%20');
+      // k = k.replace(/\s+/g,'%20');
       map[keys[i]+"/i"] = k+".webp"
       
       
@@ -126,6 +126,60 @@ router.post('/getFoods', (req, res) => {
       status: 0,
       msg: "firebase error " + errorObject,
       list:[]
+    })
+  });
+})
+
+router.post('/getExtraInCart', (req, res) => {
+
+  var resID = req.body.id
+  var area = req.body.area
+  var foods = req.body.foods.split(",")
+
+  const db = admin.database();
+  const ref = db.ref('Area/'+area+"/products/"+resID);
+
+  ref.once('value', (snapshot) => {
+
+    var list = []
+    snapshot.forEach((child) => {
+      if (foods.includes(child.key))
+      {
+        var obj = 
+        {
+          p: child.val().p,
+          po: child.val().po,
+          a: child.val().a,
+          id: child.key
+        }
+
+        list.push(obj)
+      }
+     
+    })
+
+    if (list.length > 0)
+    {
+      res.json({
+        status: 1,
+        foods: list,
+        res_status: 1
+      })
+    }
+    else
+    {
+      res.json({
+        status: 0,
+        foods: [],
+        res_status: 0
+      })
+    }
+
+}, (errorObject) => {
+    res.json({
+      status: 0,
+      foods: [],
+      res_status: 0
     })
   });
 })
@@ -458,6 +512,8 @@ async function getResFromAreas(areaMap) {
         if (keys.includes(child.val().c))
         {
           var obj = child.val()
+
+          // check time and decide status 
           obj.status = 2
           
           var dd = tempArray[child.val().c]
