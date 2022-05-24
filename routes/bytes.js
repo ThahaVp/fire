@@ -535,7 +535,7 @@ router.post('/verifyOtp', (req, resp) => {
 
 })
 
-router.post('/addUser', (req, resp) => {
+router.post('/addUser', (req, res) => {
 
   let phone = req.body.id
   let email = req.body.e
