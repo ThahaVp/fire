@@ -13,6 +13,8 @@ module.exports = {
     RV_STOCK:'rv_stock',
     RV_SUPPLIER:'rv_supplier',
 
+    BYTES_USERS: 'bytes_users',
+
     COUNTERS:'counters'
 
 

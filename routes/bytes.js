@@ -1,6 +1,7 @@
 var express = require('express');
+const axios = require('axios');
 var router = express.Router();
-//var bytesHelper = require('../helpers/bytes-helper');
+var bytesHelper = require('../helpers/bytes-helper');
 var pdf = require('html-pdf');
 var options = { format: 'A4' };
 
@@ -427,8 +428,139 @@ router.post('/generateInvoice', (req, res) => {
   // })
 })
 
+router.post('/sendOtp', (req, resp) => {
+
+  let phone = req.body.phone
+  let apiKey = "7185fab5-db6e-11ec-9c12-0200cd936042"
+
+  axios.get('https://2factor.in/API/V1/'+apiKey+'/SMS/+91'+phone+'/AUTOGEN')
+  
+  // Show response data
+  .then(res => {
+    if (res.data.Status == "Success")
+    {
+      resp.json({
+        status: 1,
+        id: res.data.Details
+      })
+    }
+    else
+    {
+      resp.json({
+        status: 0,
+        id: ""
+      })
+    }
+  })
+  .catch(err => {
+    resp.json({
+      status: 0,
+      msg: err,
+      id: ""
+    })
+  })
+
+})
+
+
+router.post('/verifyOtp', (req, resp) => {
+
+  let phone = req.body.phone
+  let otp = req.body.otp
+  let id = req.body.id
+  let apiKey = "7185fab5-db6e-11ec-9c12-0200cd936042"
+
+  axios.get('https://2factor.in/API/V1/'+apiKey+'/SMS/VERIFY/'+id+'/'+otp)
+  
+  .then(res => {
+    if (res.data.Status == "Success")
+    {
+      bytesHelper.getUserWithNumber(phone).then((responce => {
+        console.log(responce)
+        if (responce != null)
+        {
+          resp.json({
+            status: 1,
+            user_status: 1,
+            user_data: responce
+          })
+        }
+        else
+        {
+          resp.json({
+            status: 1,
+            user_status: 0,
+            user_data: {}
+          })
+        }
+      }))
+
+    }
+    else
+    {
+      resp.json({
+        status: 2,
+        user_status: 0,
+        user_data: {},
+        msg: res.data.Status
+      })
+    }
+  })
+  .catch(err => {
+    resp.json({
+      status: 2,
+      msg: err,
+      user_status: 0,
+      user_data: {}
+    })
+  })
+
+})
+
+router.post('/addUser', (req, resp) => {
+
+  let phone = req.body.id
+  let email = req.body.e
+  let name = req.body.n
+  let surname = req.body.s
+  let type = req.body.t
+  let device_id = req.body.d
+  let fcm = req.body.f
+
+  let data = 
+  {
+    id: phone,
+    e: email,
+    n: name,
+    s: surname,
+    t: type,
+    d: device_id,
+    f: fcm
+  }
+
+  bytesHelper.addUser(data).then((responce => {
+    if (responce != null)
+    {
+      res.json({
+        status: 1,
+        string: responce
+      })
+    }
+    else
+    {
+      res.json({
+        status: 0,
+        string: ""
+      })
+    }
+  }))
+  
+
+})
 
 module.exports = router;
+
+
 
 function sendOrderToRider(key, area) {
 

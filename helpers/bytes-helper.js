@@ -19,7 +19,31 @@ module.exports = {
                  
             })
         })
+    },
+
+    getUserWithNumber:(phone) => {
+        return new Promise(async(resolve,reject)=>{
+            let user = await db.get().collection(constants.BYTES_USERS).findOne({id:phone})
+            resolve(user)
+        })
+    },
+
+    addUser:(data) => {
+        return new Promise(async(resolve,reject)=>{
+            db.get().collection(constants.BYTES_USERS).insertOne(data).then((responce)=>{
+                if (responce.insertedId != null)
+                {
+                   resolve(responce.insertedId.toString())
+                }
+                else
+                {
+                    reject()
+                }
+                
+           })
+        })
     }
+
 
     // checkKey:(superData)=>{
     //     return new Promise(async(resolve, reject)=>{
