@@ -523,7 +523,13 @@ router.post('/verifyOtp', (req, resp) => {
       status: 2,
       msg: err,
       user_status: 0,
-      user_data: {}
+      user_data: {
+        _id: "",
+        n: "",
+        e: "",
+        id: "",
+        s: ""
+      }
     })
   })
 
