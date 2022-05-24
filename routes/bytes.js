@@ -441,14 +441,14 @@ router.post('/sendOtp', (req, resp) => {
     {
       resp.json({
         status: 1,
-        id: res.data.Details
+        string: res.data.Details
       })
     }
     else
     {
       resp.json({
         status: 0,
-        id: ""
+        string: ""
       })
     }
   })
@@ -456,7 +456,7 @@ router.post('/sendOtp', (req, resp) => {
     resp.json({
       status: 0,
       msg: err,
-      id: ""
+      string: ""
     })
   })
 
