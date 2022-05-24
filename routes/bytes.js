@@ -491,7 +491,7 @@ router.post('/verifyOtp', (req, resp) => {
             status: 1,
             user_status: 0,
             user_data: {
-              id: "",
+              _id: "",
               n: "",
               e: "",
               id: "",
@@ -508,7 +508,7 @@ router.post('/verifyOtp', (req, resp) => {
         status: 2,
         user_status: 0,
         user_data: {
-          id: "",
+          _id: "",
           n: "",
           e: "",
           id: "",
