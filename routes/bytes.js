@@ -636,8 +636,8 @@ router.post('/addDeliveryAddress', (req, res) => {
   let data = 
   {
     id: aid,
-    t: req.body.tid,
-    a: req.body.aid,
+    t: req.body.t,
+    a: req.body.a,
     ty: parseInt(req.body.ty),
     s: req.body.s,
     n: req.body.n,
