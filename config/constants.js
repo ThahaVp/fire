@@ -14,6 +14,7 @@ module.exports = {
     RV_SUPPLIER:'rv_supplier',
 
     BYTES_USERS: 'bytes_users',
+    BYTES_ADDRESS: 'bytes_address',
 
     COUNTERS:'counters'
 

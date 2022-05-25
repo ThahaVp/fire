@@ -83,10 +83,38 @@ router.get('/testing', (req,res) => {
 
 })
 
+
+// Incomplete
+router.get('/findNoImages', (req,res) => {
+
+  const db = admin.database();
+  const ref = db.ref('Area/ponnani/products/albaik');
+
+  ref.on('value', (snapshot) => {
+    
+  
+    var obj = snapshot.val()
+    let mm = getNilImages(obj)
+    mm.then(function (result) {
+      res.json({
+        status: 1,
+        map: result
+      })
+    })
+    
+
+  }, (errorObject) => {
+    console.log("Error "+errorObject)
+
+})
+
+})
+
 router.post('/getFoods', (req, res) => {
 
   var resID = req.body.id
   var area = req.body.area
+  var resStatus = 1
 
   const db = admin.database();
   const ref = db.ref('Area/'+area+"/products/"+resID);
@@ -110,7 +138,7 @@ router.post('/getFoods', (req, res) => {
       res.json({
         status: 1,
         list: list,
-        res_status: 1
+        res_status: resStatus
       })
     }
     else
@@ -118,7 +146,8 @@ router.post('/getFoods', (req, res) => {
       res.json({
         status: 0,
         list: [],
-        msg: "empty"
+        msg: "empty",
+        res_status: resStatus
       })
     }
 
@@ -126,7 +155,8 @@ router.post('/getFoods', (req, res) => {
     res.json({
       status: 0,
       msg: "firebase error " + errorObject,
-      list:[]
+      list:[],
+      res_status: resStatus
     })
   });
 })
@@ -462,7 +492,6 @@ router.post('/sendOtp', (req, resp) => {
 
 })
 
-
 router.post('/verifyOtp', (req, resp) => {
 
   let phone = req.body.phone
@@ -541,7 +570,7 @@ router.post('/addUser', (req, res) => {
   let email = req.body.e
   let name = req.body.n
   let surname = req.body.s
-  let type = req.body.t
+  let type = parseInt(req.body.t)
   let device_id = req.body.d
   let fcm = req.body.f
 
@@ -569,6 +598,29 @@ router.post('/addUser', (req, res) => {
       res.json({
         status: 0,
         string: ""
+      })
+    }
+  }))
+  
+
+})
+
+router.post('/getDeliveryAddress', (req, res) => {
+
+  let uid = req.body.uid
+  bytesHelper.getDeliveryAddress(uid).then((responce => {
+    if (responce != null)
+    {
+      res.json({
+        status: 1,
+        list: responce
+      })
+    }
+    else
+    {
+      res.json({
+        status: 0,
+        list: []
       })
     }
   }))
@@ -643,6 +695,26 @@ function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
 
 function deg2rad(deg) {
   return deg * (Math.PI / 180)
+}
+
+async function getNilImages(obj) {
+
+  var map = {}
+    var keys = Object.keys(obj)
+    for (var i=0; i<keys.length; i++)
+    {
+      var k = keys[i]
+      await axios.get('https://firebasestorage.googleapis.com/v0/b/delivery-58fd5.appspot.com/o/ponnani%2Fimages%2Fnew_data%2F'+k+'.webp?alt=media')
+      .then(res => {
+        
+      })
+      .catch(err => {
+        map[keys[i]+"/i"] = ""
+        console.log("not found")
+      })  
+    }    
+
+  return map
 }
 
 async function getResFromAreas(areaMap) {

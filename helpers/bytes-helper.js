@@ -28,6 +28,13 @@ module.exports = {
         })
     },
 
+    getDeliveryAddress:(uid) => {
+        return new Promise(async(resolve,reject)=>{
+            let result = await db.get().collection(constants.BYTES_ADDRESS).findOne({_id:uid})
+            resolve(result)
+        })
+    },
+
     addUser:(data) => {
         return new Promise(async(resolve,reject)=>{
             db.get().collection(constants.BYTES_USERS).insertOne(data).then((responce)=>{
