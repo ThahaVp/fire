@@ -628,6 +628,47 @@ router.post('/getDeliveryAddress', (req, res) => {
 
 })
 
+router.post('/addDeliveryAddress', (req, res) => {
+
+  let data = 
+  {
+    uid: req.body.uid,
+    t: req.body.tid,
+    a: req.body.aid,
+    ty: req.body.ty,
+    s: req.body.s,
+    n: req.body.n,
+    f: req.body.f,
+    b: req.body.b,
+    ad: req.body.ad,
+    p: req.body.p,
+    se: req.body.se,
+    la: req.body.la,
+    ln: req.body.ln
+  }
+
+  res.json({obj:data})
+
+  // bytesHelper.addDeliveryAddress(data).then((responce => {
+  //   if (responce != null)
+  //   {
+  //     res.json({
+  //       status: 1,
+  //       string: responce
+  //     })
+  //   }
+  //   else
+  //   {
+  //     res.json({
+  //       status: 0,
+  //       string: ""
+  //     })
+  //   }
+  // }))
+  
+
+})
+
 module.exports = router;
 
 
