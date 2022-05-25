@@ -326,7 +326,7 @@ router.post('/acceptOrder', (req, res) => {
           var message = {
             notification: {
               title: "Order Accepted",
-              body: "Hi " + customer + ", Your order is has accepted and will be delivered as soon its ready !"
+              body: "Hi " + customer + ", Your order has accepted and will be delivered as soon its ready !"
             },
             android: {
               notification: {
@@ -521,7 +521,12 @@ router.post('/verifyOtp', (req, resp) => {
   .then(res => {
     if (res.data.Status == "Success")
     {
-      bytesHelper.getUserWithNumber(phone).then((responce => {
+      let dev_id = req.body.device_id
+      let type = parseInt(req.body.type)
+      let fcm = req.body.fcm
+      let ti = "time"
+
+      bytesHelper.getUserWithNumber(phone, dev_id, type, fcm, ti).then((responce => {
         console.log(responce)
         if (responce != null)
         {
@@ -599,7 +604,9 @@ router.post('/addUser', (req, res) => {
     s: surname,
     t: type,
     d: device_id,
-    f: fcm
+    f: fcm,
+    c: "created time",
+    l: "login time"
   }
 
   bytesHelper.addUser(data).then((responce => {

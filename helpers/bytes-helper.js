@@ -22,10 +22,18 @@ module.exports = {
         })
     },
 
-    getUserWithNumber:(phone) => {
+    getUserWithNumber:(phone, dev, ty, fcm, ti) => {
         return new Promise(async(resolve,reject)=>{
             let user = await db.get().collection(constants.BYTES_USERS).findOne({id:phone})
             resolve(user)
+
+            if (user != null)
+            {
+                db.get().collection(constants.BYTES_USERS).updateOne(
+                    { "_id": user._id }, 
+                    { $set: { "f": fcm, "t":ty, "d": dev, "l":ti } }
+                )
+            }
         })
     },
 
