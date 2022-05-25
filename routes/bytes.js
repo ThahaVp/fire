@@ -321,7 +321,8 @@ router.post('/acceptOrder', (req, res) => {
     ref.once('value', (snapshot) => {
       if (snapshot.val() != null) {
         var orderStatus = snapshot.val().split(',')
-        if (orderStatus[0] != 0) {
+        console.log(orderStatus)
+        if (orderStatus[0] == '0') {
           var message = {
             notification: {
               title: "Order Accepted",
@@ -339,7 +340,7 @@ router.post('/acceptOrder', (req, res) => {
 
             const resRef = db.ref('Area/' + area + '/shop_order/' + res_id + '/'+ res_order_key);
             let resMap = {
-              key: key,
+              key: orderKey,
               accepted: ""
             }
             resRef.set(resMap).then(function() {
@@ -349,38 +350,44 @@ router.post('/acceptOrder', (req, res) => {
             })
             
 
-            admin.messaging().send(message)
+            admin.messaging().send(message).catch(function (error) {
+              console.log("notification error : "+error)
+            })
            // sendOrderToRider(orderKey, area)
 
           }).catch(function (error) {
-            console.log('Upload failed ' + error);
             res.json({
-              status: 0
+              status: 0,
+              msg: "upload error "+error
             })
           });
 
         }
         else {
           res.json({
-            status: 0
+            status: 0,
+            msg: "order cancelled"
           })
         }
       }
       else {
         res.json({
-          status: 0
+          status: 0,
+          msg: "snapshot is null"
         })
       }
 
     }, (errorObject) => {
       res.json({
-        status: 0
+        status: 0,
+        msg: "no data found in db "+errorObject.message
       })
     });
   }
   else {
     res.json({
-      status: 0
+      status: 0,
+      msg: "params is null"
     })
   }
 
