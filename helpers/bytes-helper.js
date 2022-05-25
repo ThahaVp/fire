@@ -1,6 +1,7 @@
 var db = require('../config/connection')
 var constants = require('../config/constants')
 const bcrpt = require('bcrypt')
+const { ObjectId } = require('mongodb')
 var objectId = require('mongodb').ObjectId
 
 module.exports = {
@@ -30,8 +31,8 @@ module.exports = {
 
     getDeliveryAddress:(uid) => {
         return new Promise(async(resolve,reject)=>{
-            let result = await db.get().collection(constants.BYTES_ADDRESS).findOne({_id:uid})
-            resolve(result)
+            let result = await db.get().collection(constants.BYTES_ADDRESS).findOne({_id:ObjectId(uid)})
+            resolve(result.ad)
         })
     },
 
@@ -48,6 +49,49 @@ module.exports = {
                 }
                 
            })
+        })
+    },
+
+    addDeliveryAddress:(data, uid) => {
+        return new Promise(async(resolve,reject)=>{
+            db.get().collection(constants.BYTES_ADDRESS).updateOne(
+                { "_id": ObjectId(uid) }, 
+                { $push: { "ad": data } },
+                { upsert: true } 
+               ).then((responce)=>{
+                   resolve(responce)
+                })
+           
+        })
+    },
+
+
+
+    updateAddress:(data, uid) => {
+        return new Promise(async(resolve,reject)=>{
+            db.get().collection(constants.BYTES_ADDRESS).updateOne(
+                { "_id": ObjectId(uid),
+            "ad.id": data.id }, 
+                { $set: {
+                    "ad.$.t": data.t,
+                    "ad.$.a": data.a,
+                    "ad.$.ty": data.ty,
+                    "ad.$.s": data.s,
+                    "ad.$.n": data.n,
+                    "ad.$.f": data.f,
+                    "ad.$.b": data.b,
+                    "ad.$.ad": data.ad,
+                    "ad.$.p": data.p,
+                    "ad.$.se": data.se,
+                    "ad.$.la": data.la,
+                    "ad.$.ln": data.ln
+                }}
+                
+               ).then((responce)=>{
+                   console.log(responce)
+                   resolve(responce)
+                })
+           
         })
     }
 

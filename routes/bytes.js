@@ -10,6 +10,7 @@ var admin = require("firebase-admin");
 
 var serviceAccount = require("../delivery-58fd5-firebase-adminsdk-pxhyn-f6c803d34a.json");
 const async = require('hbs/lib/async');
+const { ObjectId } = require('mongodb');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -630,9 +631,11 @@ router.post('/getDeliveryAddress', (req, res) => {
 
 router.post('/addDeliveryAddress', (req, res) => {
 
+  let aid = req.body.id
+  let uid = req.body.uid
   let data = 
   {
-    uid: req.body.uid,
+    id: aid,
     t: req.body.tid,
     a: req.body.aid,
     ty: parseInt(req.body.ty),
@@ -647,25 +650,48 @@ router.post('/addDeliveryAddress', (req, res) => {
     ln: req.body.ln
   }
 
-  res.json({obj:data})
+  if (aid != "")
+  {
+    bytesHelper.updateAddress(data, uid).then((responce => {
+      if (responce != null)
+      {
+        res.json({
+          status: 1,
+          string: newAid
+        })
+      }
+      else
+      {
+        res.json({
+          status: 0,
+          string: ""
+        })
+      }
+    }))
+  }
+  else
+  {
+    var newAid = new Date().valueOf().toString()
+    data.id = newAid
+    
+    bytesHelper.addDeliveryAddress(data, uid).then((responce => {
+      if (responce != null)
+      {
+        res.json({
+          status: 1,
+          string: newAid
+        })
+      }
+      else
+      {
+        res.json({
+          status: 0,
+          string: ""
+        })
+      }
+    }))
 
-  // bytesHelper.addDeliveryAddress(data).then((responce => {
-  //   if (responce != null)
-  //   {
-  //     res.json({
-  //       status: 1,
-  //       string: responce
-  //     })
-  //   }
-  //   else
-  //   {
-  //     res.json({
-  //       status: 0,
-  //       string: ""
-  //     })
-  //   }
-  // }))
-  
+  }
 
 })
 
