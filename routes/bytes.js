@@ -84,7 +84,6 @@ router.get('/testing', (req,res) => {
 
 })
 
-
 // Incomplete
 router.get('/findNoImages', (req,res) => {
 
@@ -317,8 +316,7 @@ router.post('/acceptOrder', (req, res) => {
 
   if (area != null && orderKey != null && res_id != null) {
     const db = admin.database();
-    const ref = db.ref('testing/' + orderKey + '/status');
-    // const ref = db.ref('Area/' + area + '/testing/' + orderKey + '/status');
+    const ref = db.ref('Area/' + area + '/orders/' + orderKey + '/status');
 
     ref.once('value', (snapshot) => {
       if (snapshot.val() != null) {
@@ -338,17 +336,27 @@ router.post('/acceptOrder', (req, res) => {
           }
 
           ref.set("1," + time).then(function () {
-            console.log('Upload succeeded');
 
-            res.json({
+            const resRef = db.ref('Area/' + area + '/shop_order/' + res_id + '/'+ res_order_key);
+            let resMap = {
+              key: key,
+              accepted: ""
+            }
+            resRef.set(resMap).then(function() {
+              res.json({
               status: 1
             })
+            })
+            
 
-            // admin.messaging().send(message)
-            sendOrderToRider(orderKey, area)
+            admin.messaging().send(message)
+           // sendOrderToRider(orderKey, area)
 
           }).catch(function (error) {
             console.log('Upload failed ' + error);
+            res.json({
+              status: 0
+            })
           });
 
         }
@@ -365,6 +373,9 @@ router.post('/acceptOrder', (req, res) => {
       }
 
     }, (errorObject) => {
+      res.json({
+        status: 0
+      })
     });
   }
   else {
@@ -375,7 +386,6 @@ router.post('/acceptOrder', (req, res) => {
 
 
 })
-
 
 router.post('/sendNotification', (req, res) => {
   let topic = req.body.topic
@@ -404,7 +414,6 @@ router.post('/sendNotification', (req, res) => {
     });
 
 })
-
 
 router.post('/generateInvoice', (req, res) => {
 
