@@ -720,7 +720,7 @@ router.post('/addDeliveryAddress', (req, res) => {
       {
         res.json({
           status: 1,
-          string: newAid
+          string: ""
         })
       }
       else
