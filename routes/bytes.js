@@ -480,7 +480,7 @@ router.post('/sendOtp', (req, resp) => {
   let phone = req.body.phone
   let apiKey = "7185fab5-db6e-11ec-9c12-0200cd936042"
 
-  axios.get('https://2factor.in/API/V1/'+apiKey+'/SMS/+91'+phone+'/AUTOGEN')
+  axios.get('https://2factor.in/API/V1/'+apiKey+'/SMS/+91'+phone+'/AUTOGEN/Bytes App Otp Template')
   
   // Show response data
   .then(res => {
@@ -629,6 +629,32 @@ router.post('/addUser', (req, res) => {
 
 })
 
+router.post('/updateUser', (req, res) => {
+
+  let uid = req.body.id
+  let email = req.body.email
+  let name = req.body.name
+  let surname = req.body.surname
+  
+
+  bytesHelper.updateUser(uid, email, name, surname).then((responce => {
+    if (responce != null && responce.modifiedCount == 1)
+    {
+      res.json({
+        status: 1
+      })
+    }
+    else
+    {
+      res.json({
+        status: 0
+      })
+    }
+  }))
+  
+
+})
+
 router.post('/getDeliveryAddress', (req, res) => {
 
   let uid = req.body.uid
@@ -654,6 +680,7 @@ router.post('/getDeliveryAddress', (req, res) => {
 
 router.post('/addDeliveryAddress', (req, res) => {
 
+  
   let aid = req.body.id
   let uid = req.body.uid
   let data = 
@@ -672,15 +699,19 @@ router.post('/addDeliveryAddress', (req, res) => {
     la: req.body.la,
     ln: req.body.ln
   }
+  
 
   var keys = Object.keys(data)
   for (var i=0; i<keys.length; i++)
   {
-    if (data.keys[i] == null)
+    if (data[keys[i]] == null)
     {
-      data.key[i] = ""
+      data[keys[i]] = ""
     }
   }
+
+  console.log(data)
+  
 
   if (aid != "")
   {

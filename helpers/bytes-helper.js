@@ -101,6 +101,23 @@ module.exports = {
                 })
            
         })
+    },
+
+    updateUser:(uid, email, name, sur) => {
+        return new Promise(async(resolve,reject)=>{
+            db.get().collection(constants.BYTES_USERS).updateOne(
+                { "_id": ObjectId(uid)}, 
+                { $set: {
+                    "n": name,
+                    "s": sur,
+                    "e": email
+                }}
+                
+               ).then((responce)=>{
+                   resolve(responce)
+                })
+           
+        })
     }
 
 
