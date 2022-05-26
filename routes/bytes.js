@@ -183,7 +183,6 @@ router.post('/getExtraInCart', (req, res) => {
           a: child.val().a,
           id: child.key
         }
-
         list.push(obj)
       }
      
@@ -191,26 +190,61 @@ router.post('/getExtraInCart', (req, res) => {
 
     if (list.length > 0)
     {
+      const shopRef = db.ref('Area/'+area+"/shop/"+resID);
+      shopRef.once('value', (childshot) => {
+
+        let rStatus = 0
+        let rain = 0
+        let mainSwitch = childshot.val().status
+        let rainObj = childshot.val().rain
+
+        if (rainObj.ra == 1)
+        { rain = rainObj.rc}
+        else { rain = 0}
+
+        if (mainSwitch == "open")
+        {
+          // check time here
+          rStatus = 1
+        }
+        else {rStatus = 0}
+
+
       res.json({
         status: 1,
         foods: list,
-        res_status: 1
+        res_status: rStatus,
+        rain_charge: rain
       })
+     
+  
+  }, (errorObject) => {
+      res.json({
+        status: 0,
+        foods: [],
+        res_status: 0,
+        rain_charge: 0
+      })
+    });
+
     }
     else
     {
       res.json({
         status: 0,
         foods: [],
-        res_status: 0
+        res_status: 0,
+        rain_charge: 0
       })
     }
+
 
 }, (errorObject) => {
     res.json({
       status: 0,
       foods: [],
-      res_status: 0
+      res_status: 0,
+      rain_charge: 0
     })
   });
 })
