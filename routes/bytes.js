@@ -449,8 +449,13 @@ router.post('/muteOrder', (req, res) => {
   let res_key = req.body.res_key
 
   const db = admin.database();
-  const ref = db.ref('Area/'+area+'/shop_order/'+rid+'/'+res_key+'/mute');
-  ref.set(1).then(function () {
+  const ref = db.ref('Area/'+area+'/shop_order/'+rid+'/'+res_key);
+  let obj = {
+    key: key,
+    mute: 1,
+    accepted: ""
+  }
+  ref.set(obj).then(function () {
     res.json({
       status: 1
     })
