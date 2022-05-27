@@ -36,63 +36,90 @@ router.get('/getExpenses', (req, res) => {
 
 })
 
-router.get('/testing', (req,res) => {
+router.get('/testing', (req, res) => {
 
   const db = admin.database();
-  const ref = db.ref('Area/ponnani/products/albaik');
+  const ref = db.ref('Area/ponnani/products/harbour heritage');
 
   ref.on('value', (snapshot) => {
-    
+
     var map = {}
 
     // snapshot.forEach((child) => {
     //   child.val().forEach((sub) => {
-      
+
     //     map[sub.key] = "1"
-  
+
     //   })
     // })
 
     var obj = snapshot.val()
     var keys = Object.keys(obj)
-    
 
-    for (var i=0; i<keys.length; i++)
-    {
-      
+
+    for (var i = 0; i < keys.length; i++) {
+
       var k = keys[i]
       // k = k.replace(/\s+/g,'%20');
-      map[keys[i]+"/i"] = k+".webp"
-      
-      
-      
+      map[keys[i] + "/i"] = k + ".webp"
+
+
+
     }
 
     res.json({
       status: 1,
       list: map
     })
-     ref.update(map)
+    ref.update(map)
 
-    
-    
+
+
 
   }, (errorObject) => {
-    console.log("Error "+errorObject)
+    console.log("Error " + errorObject)
+
+  })
 
 })
+
+router.get('/refFix', (req, res) => {
+
+  const db = admin.database();
+  const ref = db.ref('Area/ponnani/shop_order/jawas restaurant');
+
+  ref.on('value', (snapshot) => {
+
+    var map = {}
+
+    var obj = snapshot.val()
+    var keys = Object.keys(obj)
+
+
+    for (var i = 0; i < keys.length; i++) {
+
+      var k = keys[i]
+      // if (obj)
+      // map[keys[i]+"/i"] = k+".webp"
+
+    }
+
+  }, (errorObject) => {
+    console.log("Error " + errorObject)
+
+  })
 
 })
 
 // Incomplete
-router.get('/findNoImages', (req,res) => {
+router.get('/findNoImages', (req, res) => {
 
   const db = admin.database();
   const ref = db.ref('Area/ponnani/products/albaik');
 
   ref.on('value', (snapshot) => {
-    
-  
+
+
     var obj = snapshot.val()
     let mm = getNilImages(obj)
     mm.then(function (result) {
@@ -101,12 +128,12 @@ router.get('/findNoImages', (req,res) => {
         map: result
       })
     })
-    
+
 
   }, (errorObject) => {
-    console.log("Error "+errorObject)
+    console.log("Error " + errorObject)
 
-})
+  })
 
 })
 
@@ -117,15 +144,14 @@ router.post('/getFoods', (req, res) => {
   var resStatus = 1
 
   const db = admin.database();
-  const ref = db.ref('Area/'+area+"/products/"+resID);
-  
+  const ref = db.ref('Area/' + area + "/products/" + resID);
+
   ref.once('value', (snapshot) => {
 
     var list = []
     snapshot.forEach((child) => {
       var show = child.val().sh
-      if (show == 1)
-      {
+      if (show == 1) {
         var obj = child.val()
         obj.qty = 0
         obj.key = child.key
@@ -133,16 +159,14 @@ router.post('/getFoods', (req, res) => {
       }
     })
 
-    if (list.length > 0)
-    {
+    if (list.length > 0) {
       res.json({
         status: 1,
         list: list,
         res_status: resStatus
       })
     }
-    else
-    {
+    else {
       res.json({
         status: 0,
         list: [],
@@ -151,11 +175,11 @@ router.post('/getFoods', (req, res) => {
       })
     }
 
-}, (errorObject) => {
+  }, (errorObject) => {
     res.json({
       status: 0,
       msg: "firebase error " + errorObject,
-      list:[],
+      list: [],
       res_status: resStatus
     })
   });
@@ -168,15 +192,14 @@ router.post('/getExtraInCart', (req, res) => {
   var foods = req.body.foods.split(",")
 
   const db = admin.database();
-  const ref = db.ref('Area/'+area+"/products/"+resID);
+  const ref = db.ref('Area/' + area + "/products/" + resID);
 
   ref.once('value', (snapshot) => {
 
     var list = []
     snapshot.forEach((child) => {
-      if (foods.includes(child.key))
-      {
-        var obj = 
+      if (foods.includes(child.key)) {
+        var obj =
         {
           p: child.val().p,
           po: child.val().po,
@@ -185,12 +208,11 @@ router.post('/getExtraInCart', (req, res) => {
         }
         list.push(obj)
       }
-     
+
     })
 
-    if (list.length > 0)
-    {
-      const shopRef = db.ref('Area/'+area+"/shop/"+resID);
+    if (list.length > 0) {
+      const shopRef = db.ref('Area/' + area + "/shop/" + resID);
       shopRef.once('value', (childshot) => {
 
         let rStatus = 0
@@ -198,48 +220,45 @@ router.post('/getExtraInCart', (req, res) => {
         let mainSwitch = childshot.val().status
         let rainObj = childshot.val().rain
 
-        if (rainObj.ra == 1)
-        { rain = rainObj.rc}
-        else { rain = 0}
+        if (rainObj.ra == 1) { rain = rainObj.rc }
+        else { rain = 0 }
 
-        if (mainSwitch == "open")
-        {
+        if (mainSwitch == "open") {
           // check time here
           rStatus = 1
         }
-        else {rStatus = 0}
+        else { rStatus = 0 }
 
 
+        res.json({
+          status: 1,
+          foods: list,
+          res_status: rStatus,
+          rain_charge: rain
+        })
+
+
+      }, (errorObject) => {
+        res.json({
+          status: 0,
+          foods: [],
+          res_status: 0,
+          rain_charge: 0
+        })
+      });
+
+    }
+    else {
       res.json({
-        status: 1,
-        foods: list,
-        res_status: rStatus,
-        rain_charge: rain
+        status: 0,
+        foods: [],
+        res_status: 0,
+        rain_charge: 0
       })
-     
-  
+    }
+
+
   }, (errorObject) => {
-      res.json({
-        status: 0,
-        foods: [],
-        res_status: 0,
-        rain_charge: 0
-      })
-    });
-
-    }
-    else
-    {
-      res.json({
-        status: 0,
-        foods: [],
-        res_status: 0,
-        rain_charge: 0
-      })
-    }
-
-
-}, (errorObject) => {
     res.json({
       status: 0,
       foods: [],
@@ -300,7 +319,7 @@ router.post('/getRestaurants', (req, res) => {
       res.json({
         status: 1,
         msg: "no restaurants",
-        list:[]
+        list: []
       })
     }
 
@@ -308,12 +327,13 @@ router.post('/getRestaurants', (req, res) => {
     res.json({
       status: 1,
       msg: "firebase error " + errorObject,
-      list:[]
+      list: []
     })
   });
 
 })
 
+/// RESTAURANT FUNCTIONS /////
 
 router.post('/acceptOrder', (req, res) => {
 
@@ -324,13 +344,6 @@ router.post('/acceptOrder', (req, res) => {
   var fcm = req.body.fcm
   var customer = req.body.customer
   var res_order_key = req.body.res_order_key
-
-  // Map<String,Object> map = new HashMap<>();
-  // map.put("key", key);
-  // map.put("accepted", "");
-  // reference.child("Area").child(area).child("shop_order").child(Rest_id).child(res_key).updateChildren(map);
-
-  // currently doing this to stop sound in restaurant
 
   if (minutesToAdd == null) {
     minutesToAdd = 30
@@ -354,8 +367,8 @@ router.post('/acceptOrder', (req, res) => {
 
     ref.once('value', (snapshot) => {
       if (snapshot.val() != null) {
+
         var orderStatus = snapshot.val().split(',')
-        console.log(orderStatus)
         if (orderStatus[0] == '0') {
           var message = {
             notification: {
@@ -372,27 +385,27 @@ router.post('/acceptOrder', (req, res) => {
 
           ref.set("1," + time).then(function () {
 
-            const resRef = db.ref('Area/' + area + '/shop_order/' + res_id + '/'+ res_order_key);
+            const resRef = db.ref('Area/' + area + '/shop_order/' + res_id + '/' + res_order_key);
             let resMap = {
               key: orderKey,
               accepted: ""
             }
-            resRef.set(resMap).then(function() {
+            resRef.set(resMap).then(function () {
               res.json({
-              status: 1
+                status: 1
+              })
             })
-            })
-            
+
 
             admin.messaging().send(message).catch(function (error) {
-              console.log("notification error : "+error)
+              console.log("notification error : " + error)
             })
-           // sendOrderToRider(orderKey, area)
+            // sendOrderToRider(orderKey, area)
 
           }).catch(function (error) {
             res.json({
               status: 0,
-              msg: "upload error "+error
+              msg: "upload error " + error
             })
           });
 
@@ -414,7 +427,7 @@ router.post('/acceptOrder', (req, res) => {
     }, (errorObject) => {
       res.json({
         status: 0,
-        msg: "no data found in db "+errorObject.message
+        msg: "no data found in db " + errorObject.message
       })
     });
   }
@@ -424,6 +437,24 @@ router.post('/acceptOrder', (req, res) => {
       msg: "params is null"
     })
   }
+
+
+})
+
+router.get('/muteOrder', (req, res) => {
+
+  let area = req.body.area
+  let rid = req.body.rid
+  let key = req.body.key
+  let res_key = req.body.res_key
+
+  const db = admin.database();
+  const ref = db.ref('Area/'+area+'/shop_order/'+rid+'/'+res_key+'/mute');
+  ref.set(1).then(function () {
+    res.json({
+      status: 1
+    })
+  })
 
 
 })
@@ -514,32 +545,30 @@ router.post('/sendOtp', (req, resp) => {
   let phone = req.body.phone
   let apiKey = "7185fab5-db6e-11ec-9c12-0200cd936042"
 
-  axios.get('https://2factor.in/API/V1/'+apiKey+'/SMS/+91'+phone+'/AUTOGEN/Bytes App Otp Template')
-  
-  // Show response data
-  .then(res => {
-    if (res.data.Status == "Success")
-    {
-      resp.json({
-        status: 1,
-        string: res.data.Details
-      })
-    }
-    else
-    {
+  axios.get('https://2factor.in/API/V1/' + apiKey + '/SMS/+91' + phone + '/AUTOGEN/Bytes App Otp Template')
+
+    // Show response data
+    .then(res => {
+      if (res.data.Status == "Success") {
+        resp.json({
+          status: 1,
+          string: res.data.Details
+        })
+      }
+      else {
+        resp.json({
+          status: 0,
+          string: ""
+        })
+      }
+    })
+    .catch(err => {
       resp.json({
         status: 0,
+        msg: err,
         string: ""
       })
-    }
-  })
-  .catch(err => {
-    resp.json({
-      status: 0,
-      msg: err,
-      string: ""
     })
-  })
 
 })
 
@@ -550,47 +579,59 @@ router.post('/verifyOtp', (req, resp) => {
   let id = req.body.id
   let apiKey = "7185fab5-db6e-11ec-9c12-0200cd936042"
 
-  axios.get('https://2factor.in/API/V1/'+apiKey+'/SMS/VERIFY/'+id+'/'+otp)
-  
-  .then(res => {
-    if (res.data.Status == "Success")
-    {
-      let dev_id = req.body.device_id
-      let type = parseInt(req.body.type)
-      let fcm = req.body.fcm
-      let ti = "time"
+  axios.get('https://2factor.in/API/V1/' + apiKey + '/SMS/VERIFY/' + id + '/' + otp)
 
-      bytesHelper.getUserWithNumber(phone, dev_id, type, fcm, ti).then((responce => {
-        console.log(responce)
-        if (responce != null)
-        {
-          resp.json({
-            status: 1,
-            user_status: 1,
-            user_data: responce
-          })
-        }
-        else
-        {
-          resp.json({
-            status: 1,
-            user_status: 0,
-            user_data: {
-              _id: "",
-              n: "",
-              e: "",
-              id: "",
-              s: ""
-            }
-          })
-        }
-      }))
+    .then(res => {
+      if (res.data.Status == "Success") {
+        let dev_id = req.body.device_id
+        let type = parseInt(req.body.type)
+        let fcm = req.body.fcm
+        let ti = "time"
 
-    }
-    else
-    {
+        bytesHelper.getUserWithNumber(phone, dev_id, type, fcm, ti).then((responce => {
+          console.log(responce)
+          if (responce != null) {
+            resp.json({
+              status: 1,
+              user_status: 1,
+              user_data: responce
+            })
+          }
+          else {
+            resp.json({
+              status: 1,
+              user_status: 0,
+              user_data: {
+                _id: "",
+                n: "",
+                e: "",
+                id: "",
+                s: ""
+              }
+            })
+          }
+        }))
+
+      }
+      else {
+        resp.json({
+          status: 2,
+          user_status: 0,
+          user_data: {
+            _id: "",
+            n: "",
+            e: "",
+            id: "",
+            s: ""
+          },
+          msg: res.data.Status
+        })
+      }
+    })
+    .catch(err => {
       resp.json({
         status: 2,
+        msg: err,
         user_status: 0,
         user_data: {
           _id: "",
@@ -598,25 +639,9 @@ router.post('/verifyOtp', (req, resp) => {
           e: "",
           id: "",
           s: ""
-        },
-        msg: res.data.Status
+        }
       })
-    }
-  })
-  .catch(err => {
-    resp.json({
-      status: 2,
-      msg: err,
-      user_status: 0,
-      user_data: {
-        _id: "",
-        n: "",
-        e: "",
-        id: "",
-        s: ""
-      }
     })
-  })
 
 })
 
@@ -630,7 +655,7 @@ router.post('/addUser', (req, res) => {
   let device_id = req.body.d
   let fcm = req.body.f
 
-  let data = 
+  let data =
   {
     id: phone,
     e: email,
@@ -644,22 +669,20 @@ router.post('/addUser', (req, res) => {
   }
 
   bytesHelper.addUser(data).then((responce => {
-    if (responce != null)
-    {
+    if (responce != null) {
       res.json({
         status: 1,
         string: responce
       })
     }
-    else
-    {
+    else {
       res.json({
         status: 0,
         string: ""
       })
     }
   }))
-  
+
 
 })
 
@@ -669,23 +692,21 @@ router.post('/updateUser', (req, res) => {
   let email = req.body.email
   let name = req.body.name
   let surname = req.body.surname
-  
+
 
   bytesHelper.updateUser(uid, email, name, surname).then((responce => {
-    if (responce != null && responce.modifiedCount == 1)
-    {
+    if (responce != null && responce.modifiedCount == 1) {
       res.json({
         status: 1
       })
     }
-    else
-    {
+    else {
       res.json({
         status: 0
       })
     }
   }))
-  
+
 
 })
 
@@ -693,31 +714,29 @@ router.post('/getDeliveryAddress', (req, res) => {
 
   let uid = req.body.uid
   bytesHelper.getDeliveryAddress(uid).then((responce => {
-    if (responce != null)
-    {
+    if (responce != null) {
       res.json({
         status: 1,
         list: responce
       })
     }
-    else
-    {
+    else {
       res.json({
         status: 0,
         list: []
       })
     }
   }))
-  
+
 
 })
 
 router.post('/addDeliveryAddress', (req, res) => {
 
-  
+
   let aid = req.body.id
   let uid = req.body.uid
-  let data = 
+  let data =
   {
     id: aid,
     t: req.body.t,
@@ -733,32 +752,27 @@ router.post('/addDeliveryAddress', (req, res) => {
     la: req.body.la,
     ln: req.body.ln
   }
-  
+
 
   var keys = Object.keys(data)
-  for (var i=0; i<keys.length; i++)
-  {
-    if (data[keys[i]] == null)
-    {
+  for (var i = 0; i < keys.length; i++) {
+    if (data[keys[i]] == null) {
       data[keys[i]] = ""
     }
   }
 
   console.log(data)
-  
 
-  if (aid != "")
-  {
+
+  if (aid != "") {
     bytesHelper.updateAddress(data, uid).then((responce => {
-      if (responce != null)
-      {
+      if (responce != null) {
         res.json({
           status: 1,
           string: ""
         })
       }
-      else
-      {
+      else {
         res.json({
           status: 0,
           string: ""
@@ -766,21 +780,18 @@ router.post('/addDeliveryAddress', (req, res) => {
       }
     }))
   }
-  else
-  {
+  else {
     var newAid = new Date().valueOf().toString()
     data.id = newAid
-    
+
     bytesHelper.addDeliveryAddress(data, uid).then((responce => {
-      if (responce != null)
-      {
+      if (responce != null) {
         res.json({
           status: 1,
           string: newAid
         })
       }
-      else
-      {
+      else {
         res.json({
           status: 0,
           string: ""
@@ -788,6 +799,138 @@ router.post('/addDeliveryAddress', (req, res) => {
       }
     }))
 
+  }
+
+})
+
+router.post('/makeOrder', (req, res) => {
+
+
+  // let aid = req.body.aid
+  // let uid = req.body.uid
+  let rid = req.body.rid
+  let area = req.body.cid
+  // let pm = req.body.pm
+  // let notes = req.body.notes
+  let order = req.body.order
+  // let xx = req.body.xx
+  var error = 0
+
+  var subTotal = 0
+
+
+
+  if (order != "") {
+    let foodArray = []
+    try { foodArray = JSON.parse(order) } catch (e) {
+      error = 1
+      console.log("error " + e)
+    }
+    let keys = foodArray.map(a => a.key);
+
+
+    const db = admin.database();
+    const ref = db.ref('Area/' + area + '/products/' + rid);
+
+    ref.on('value', (snapshot) => {
+
+      var foodListDb = []
+      snapshot.forEach((child) => {
+
+        if (keys.includes(child.key)) {
+          let obj = child.val()
+          let inde = keys.indexOf(child.key)
+          obj.qty = foodArray[inde].qty
+          obj.subid = foodArray[inde].subid
+          obj.key = foodArray[inde].key
+          foodListDb.push(obj)
+        }
+      })
+
+      if (foodListDb.length > 0) {
+
+        var itemTotal = 0
+        var finalArray = []
+        for (var j = 0; j < foodListDb.length; j++) {
+          
+          let po = foodListDb[j]['po']
+          let subid = foodListDb[j]['subid']
+          let qt = foodListDb[j]['qty']
+          let pr = 0
+          let ti = ""
+
+          if (po != "" && subid.includes(",")) {
+            let poArray = {}
+            
+            try { poArray = JSON.parse(po) } catch(e) { error = 1 }
+
+            let split = subid.split(",")[1]
+            let poKeys = Object.keys(poArray)
+            
+            ti = foodListDb[j]['t'] + " - " + poKeys[split]
+            pr = poArray[poKeys[split]].split(",")[0]
+            
+
+          }
+          else {
+            pr = foodListDb[j]['p']
+            ti = foodListDb[j]['t']
+          }
+
+          let to = pr * qt
+          itemTotal += to
+          let ob = {
+            t: ti,
+            p: pr,
+            q: qt,
+            i: foodListDb[j]['key'],
+            a: to // amount 
+          }
+
+          finalArray.push(ob)
+
+        }
+
+        let tax = 5
+        let dc = 10
+        subTotal = itemTotal + tax + dc
+
+      }
+      else { error = 1 }
+
+      if ( error == 0)
+      {
+        res.json({
+          status: 1,
+          list: finalArray
+        })
+      }
+      else
+      {
+        res.json({
+          status: 0,
+          list: []
+        })
+      }
+      
+
+    }, (errorObject) => {
+      error = 1
+      console.log("error " + errorObject)
+    });
+
+  }
+  else {
+    error = 1
+    console.log("empty")
+  }
+
+
+  if (error == 1) {
+    res.json({
+      status: 0,
+      list: []
+    })
   }
 
 })
@@ -864,19 +1007,18 @@ function deg2rad(deg) {
 async function getNilImages(obj) {
 
   var map = {}
-    var keys = Object.keys(obj)
-    for (var i=0; i<keys.length; i++)
-    {
-      var k = keys[i]
-      await axios.get('https://firebasestorage.googleapis.com/v0/b/delivery-58fd5.appspot.com/o/ponnani%2Fimages%2Fnew_data%2F'+k+'.webp?alt=media')
+  var keys = Object.keys(obj)
+  for (var i = 0; i < keys.length; i++) {
+    var k = keys[i]
+    await axios.get('https://firebasestorage.googleapis.com/v0/b/delivery-58fd5.appspot.com/o/ponnani%2Fimages%2Fnew_data%2F' + k + '.webp?alt=media')
       .then(res => {
-        
+
       })
       .catch(err => {
-        map[keys[i]+"/i"] = ""
+        map[keys[i] + "/i"] = ""
         console.log("not found")
-      })  
-    }    
+      })
+  }
 
   return map
 }
@@ -895,61 +1037,59 @@ async function getResFromAreas(areaMap) {
     await rrr.once('value', (snapshot) => {
       snapshot.forEach((child) => {
 
-        if (keys.includes(child.val().c))
-        {
+        if (keys.includes(child.val().c)) {
           var obj = child.val()
 
           // check time and decide status 
           obj.status = 2
-          
+
           var dd = tempArray[child.val().c]
           var rounded = Math.round(dd * 10) / 10
           obj.dis = rounded
           obj.an = each
           resList.push(obj)
-        }        
-        
+        }
+
       })
 
     }, (errorObject) => {
-      
+
     });
 
     // Getting Slider Images
     const imgRef = admin.database().ref('Area/' + each + '/new_check/home_image')
     await imgRef.once('value', (snapshot) => {
-    imgs[each] = JSON.parse(snapshot.val())
+      imgs[each] = JSON.parse(snapshot.val())
     }, (errorObject) => {
-      
+
     });
   }
 
   let imgKeys = Object.keys(imgs)
   var imgArray = []
-  for (var i=0;i<imgKeys.length;i++)
-  {
+  for (var i = 0; i < imgKeys.length; i++) {
     var ob = imgs[imgKeys[i]]
     let subKey = Object.keys(ob)
     let resArr = allResArray[imgKeys[i]]
 
-    for (var j=0; j<subKey.length; j++)
-    {
+    for (var j = 0; j < subKey.length; j++) {
       var subOb = ob[subKey[j]]
-      if (subOb.type == 'restaurant' && !resArr.includes(subOb.target))
-      {
+      if (subOb.type == 'restaurant' && !resArr.includes(subOb.target)) {
         continue
       }
 
       subOb["id"] = subKey[j]
       subOb["an"] = imgKeys[i]
       delete subOb.description
-      
+
       imgArray.push(subOb)
     }
-    
+
   }
 
-  let mm = {res: resList,
-  imgs: imgArray}
+  let mm = {
+    res: resList,
+    imgs: imgArray
+  }
   return mm
 }
