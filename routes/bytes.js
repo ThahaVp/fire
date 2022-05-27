@@ -441,7 +441,7 @@ router.post('/acceptOrder', (req, res) => {
 
 })
 
-router.get('/muteOrder', (req, res) => {
+router.post('/muteOrder', (req, res) => {
 
   let area = req.body.area
   let rid = req.body.rid
