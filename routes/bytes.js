@@ -1045,8 +1045,16 @@ async function getResFromAreas(areaMap) {
         if (keys.includes(child.val().c)) {
           var obj = child.val()
 
-          // check time and decide status 
-          obj.status = 2
+          if (obj.status == "open")
+          {
+            // check timings here
+            obj.status = 2
+          }
+          else
+          {
+            obj.status = 0 
+          }
+          
 
           var dd = tempArray[child.val().c]
           var rounded = Math.round(dd * 10) / 10
