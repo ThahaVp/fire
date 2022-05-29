@@ -987,7 +987,8 @@ router.post('/makeOrder', (req, res) => {
           res.json({
             status: 0,
             msg: "food db list is empty",
-            obj: snapshot.val()
+            obj: snapshot.val(),
+            asa: ref.toString()
           })
         }
   
