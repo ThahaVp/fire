@@ -836,155 +836,152 @@ router.post('/makeOrder', (req, res) => {
 
   var subTotal = 0
 
-  res.json({
-    status: 0,
-    list: req.body
-  })
+  if (order != "")
+  {
+    let foodArray = []
+    try { foodArray = JSON.parse(order) } catch (e) {
+      error = 1
+      console.log("error " + e)
+    }
 
+    if (error == 0)
+    {
+      let keys = foodArray.map(a => a.key);
 
+      const db = admin.database();
+      const ref = db.ref('Area/' + area + '/products/' + rid);
 
-  // if (order != "") {
-  //   let foodArray = []
-  //   try { foodArray = JSON.parse(order) } catch (e) {
-  //     error = 1
-  //     console.log("error " + e)
-  //   }
-  //   let keys = foodArray.map(a => a.key);
+      ref.on('value', (snapshot) => {
 
-
-  //   const db = admin.database();
-  //   const ref = db.ref('Area/' + area + '/products/' + rid);
-
-  //   ref.on('value', (snapshot) => {
-
-  //     var foodListDb = []
-  //     snapshot.forEach((child) => {
-
-  //       if (keys.includes(child.key)) {
-  //         let obj = child.val()
-  //         let inde = keys.indexOf(child.key)
-  //         obj.qty = foodArray[inde].qty
-  //         obj.subid = foodArray[inde].subid
-  //         obj.key = foodArray[inde].key
-  //         foodListDb.push(obj)
-  //       }
-  //     })
-
-  //     if (foodListDb.length > 0) {
-
-  //       var itemTotal = 0
-  //       var finalArray = []
-  //       for (var j = 0; j < foodListDb.length; j++) {
-          
-  //         let po = foodListDb[j]['po']
-  //         let subid = foodListDb[j]['subid']
-  //         let qt = foodListDb[j]['qty']
-  //         let Id = foodListDb[j]['key']
-  //         let pr = 0
-  //         let extra = ""
-
-  //         if (po != "" && subid.includes(",")) {
-  //           let poArray = {}
+        var foodListDb = []
+        snapshot.forEach((child) => {
+  
+          if (keys.includes(child.key)) {
+            let obj = child.val()
+            let inde = keys.indexOf(child.key)
+            obj.qty = foodArray[inde].qty
+            obj.subid = foodArray[inde].subid
+            obj.key = foodArray[inde].key
+            foodListDb.push(obj)
+          }
+        })
+  
+        if (foodListDb.length > 0) {
+  
+          var itemTotal = 0
+          var finalArray = []
+          for (var j = 0; j < foodListDb.length; j++) {
             
-  //           try { poArray = JSON.parse(po) } catch(e) { error = 1 }
-
-  //           let split = subid.split(",")[1]
-  //           let poKeys = Object.keys(poArray)
+            let po = foodListDb[j]['po']
+            let subid = foodListDb[j]['subid']
+            let qt = foodListDb[j]['qty']
+            let Id = foodListDb[j]['key']
+            let pr = 0
+            let extra = ""
+  
+            if (po != "" && subid.includes(",")) {
+              let poArray = {}
+              
+              try { poArray = JSON.parse(po) } catch(e) { error = 1 }
+  
+              let split = subid.split(",")[1]
+              let poKeys = Object.keys(poArray)
+              
+              extra = poKeys[split]
+              pr = poArray[poKeys[split]].split(",")[0]
+              
+  
+            }
+            else {
+              pr = foodListDb[j]['p']
+            }
+  
+            let to = pr * qt
+            itemTotal += to
             
-  //           extra = poKeys[split]
-  //           pr = poArray[poKeys[split]].split(",")[0]
-            
+  
+            let ob = {
+              Title: foodListDb[j]['t'],
+              Price: pr,
+              Extra: extra,
+              Id: Id,
+              subID: subid,
+              Qty: qt
+            }
+  
+            finalArray.push(ob)
+  
+          }
+  
+          let pc = 0
+          let tax = 5
+          let dc = 10
+          subTotal = itemTotal + tax + dc + pc
+  
+          if ( error == 0)
+          {
+                    // fetch address now
+  
+          bytesHelper.getSingleAddress(uid, aid).then((aidRes => {
+            if (aidRes != null)
+            {
+              let orderOb = {
+                address: aidRes,
+                comments: notes,
+                cust_order_id: "",
+                date: "",
+                dboy: "",
+                delivery: dc,
+                distance: 0,
+                duration: "",
+                fcm: "",
+                food: foodListDb,
+                home_name: "",
+                item_total: itemTotal,
+                name: "",
+                pc: pc,
+                phone_number: "",
+                place: "",
+                ra: 0,  // rain charge
+                res_id: rid,
+                res_title: "",
+                tax: tax,
+                time: "",
+                total_amount: subTotal,
+                type: "order",
+                dev: "ios"
+              }
+      
+              res.json(orderOb)
+            }
+            else {
+              res.json({
+                status: 0,
+                list: []
+              })
+              
+            }
+          }))        
+          }
+          else
+          {
+            error = 1
+          }
+  
+        }
+        else { error = 1 }
+  
+      }, (errorObject) => {
+        error = 1
+        console.log("error " + errorObject)
+      });
 
-  //         }
-  //         else {
-  //           pr = foodListDb[j]['p']
-  //         }
-
-  //         let to = pr * qt
-  //         itemTotal += to
-          
-
-  //         let ob = {
-  //           Title: foodListDb[j]['t'],
-  //           Price: pr,
-  //           Extra: extra,
-  //           Id: Id,
-  //           subID: subid,
-  //           Qty: qt
-  //         }
-
-  //         finalArray.push(ob)
-
-  //       }
-
-  //       let pc = 0
-  //       let tax = 5
-  //       let dc = 10
-  //       subTotal = itemTotal + tax + dc + pc
-
-  //       if ( error == 0)
-  //       {
-  //                 // fetch address now
-
-  //       bytesHelper.getSingleAddress(uid, aid).then((aidRes => {
-  //         if (aidRes != null)
-  //         {
-  //           let orderOb = {
-  //             address: aidRes,
-  //             comments: notes,
-  //             cust_order_id: "",
-  //             date: "",
-  //             dboy: "",
-  //             delivery: dc,
-  //             distance: 0,
-  //             duration: "",
-  //             fcm: "",
-  //             food: foodListDb,
-  //             home_name: "",
-  //             item_total: itemTotal,
-  //             name: "",
-  //             pc: pc,
-  //             phone_number: "",
-  //             place: "",
-  //             ra: 0,  // rain charge
-  //             res_id: rid,
-  //             res_title: "",
-  //             tax: tax,
-  //             time: "",
-  //             total_amount: subTotal,
-  //             type: "order",
-  //             dev: "ios"
-  //           }
-    
-  //           res.json(orderOb)
-  //         }
-  //         else {
-  //           res.json({
-  //             status: 0,
-  //             list: []
-  //           })
-            
-  //         }
-  //       }))        
-  //       }
-  //       else
-  //       {
-  //         error = 1
-  //       }
-
-  //     }
-  //     else { error = 1 }
-
-  //   }, (errorObject) => {
-  //     error = 1
-  //     console.log("error " + errorObject)
-  //   });
-
-  // }
-  // else {
-  //   error = 1
-  //   console.log("empty")
-  // }
+    }
+  }
+  else {
+    error = 1
+    console.log("empty")
+  }
 
 
   if (error == 1) {
