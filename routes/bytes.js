@@ -141,10 +141,23 @@ router.post('/getFoods', (req, res) => {
 
   var resID = req.body.id
   var area = req.body.area
-  var resStatus = 1
+  var resStatus = -1
 
   const db = admin.database();
   const ref = db.ref('Area/' + area + "/products/" + resID);
+  const resRef = db.ref('Area/' + area + "/shop/" + resID + "/status");
+
+  resRef.once('value', (snapshot) => {
+    if (snapshot.val() == 'open')
+    {
+      resStatus = 1
+    }
+    else
+    {
+      resStatus = 0
+    }
+  }, (errorObject) => {
+  });
 
   ref.once('value', (snapshot) => {
 
