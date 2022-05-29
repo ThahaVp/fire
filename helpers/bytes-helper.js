@@ -44,6 +44,15 @@ module.exports = {
         })
     },
 
+
+    getSingleAddress:(uid, aid) => {
+        return new Promise(async(resolve,reject)=>{
+            let result = await db.get().collection(constants.BYTES_ADDRESS).findOne({_id: ObjectId(uid)})
+            let mm = result.ad.find(id => aid)
+            resolve(mm)
+        })
+    },
+
     addUser:(data) => {
         return new Promise(async(resolve,reject)=>{
             db.get().collection(constants.BYTES_USERS).insertOne(data).then((responce)=>{

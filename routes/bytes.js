@@ -824,14 +824,14 @@ router.post('/addDeliveryAddress', (req, res) => {
 router.post('/makeOrder', (req, res) => {
 
 
-  // let aid = req.body.aid
-  // let uid = req.body.uid
+   let aid = req.body.aid
+   let uid = req.body.uid
   let rid = req.body.rid
   let area = req.body.cid
-  // let pm = req.body.pm
-  // let notes = req.body.notes
+  let pm = req.body.pm
+  let notes = req.body.notes
   let order = req.body.order
-  // let xx = req.body.xx
+  let xx = req.body.xx
   var error = 0
 
   var subTotal = 0
@@ -874,8 +874,9 @@ router.post('/makeOrder', (req, res) => {
           let po = foodListDb[j]['po']
           let subid = foodListDb[j]['subid']
           let qt = foodListDb[j]['qty']
+          let Id = foodListDb[j]['key']
           let pr = 0
-          let ti = ""
+          let extra = ""
 
           if (po != "" && subid.includes(",")) {
             let poArray = {}
@@ -885,52 +886,89 @@ router.post('/makeOrder', (req, res) => {
             let split = subid.split(",")[1]
             let poKeys = Object.keys(poArray)
             
-            ti = foodListDb[j]['t'] + " - " + poKeys[split]
+            extra = poKeys[split]
             pr = poArray[poKeys[split]].split(",")[0]
             
 
           }
           else {
             pr = foodListDb[j]['p']
-            ti = foodListDb[j]['t']
           }
 
           let to = pr * qt
           itemTotal += to
+          
+
           let ob = {
-            t: ti,
-            p: pr,
-            q: qt,
-            i: foodListDb[j]['key'],
-            a: to // amount 
+            Title: foodListDb[j]['t'],
+            Price: pr,
+            Extra: extra,
+            Id: Id,
+            subID: subid,
+            Qty: qt
           }
 
           finalArray.push(ob)
 
         }
 
+        let pc = 0
         let tax = 5
         let dc = 10
-        subTotal = itemTotal + tax + dc
+        subTotal = itemTotal + tax + dc + pc
+
+        if ( error == 0)
+        {
+                  // fetch address now
+
+        bytesHelper.getSingleAddress(uid, aid).then((aidRes => {
+          if (aidRes != null)
+          {
+            let orderOb = {
+              address: aidRes,
+              comments: notes,
+              cust_order_id: "",
+              date: "",
+              dboy: "",
+              delivery: dc,
+              distance: 0,
+              duration: "",
+              fcm: "",
+              food: foodListDb,
+              home_name: "",
+              item_total: itemTotal,
+              name: "",
+              pc: pc,
+              phone_number: "",
+              place: "",
+              ra: 0,  // rain charge
+              res_id: rid,
+              res_title: "",
+              tax: tax,
+              time: "",
+              total_amount: subTotal,
+              type: "order",
+              dev: "ios"
+            }
+    
+            res.json(orderOb)
+          }
+          else {
+            res.json({
+              status: 0,
+              list: []
+            })
+            
+          }
+        }))        
+        }
+        else
+        {
+          error = 1
+        }
 
       }
       else { error = 1 }
-
-      if ( error == 0)
-      {
-        res.json({
-          status: 1,
-          list: finalArray
-        })
-      }
-      else
-      {
-        res.json({
-          status: 0,
-          list: []
-        })
-      }
-      
 
     }, (errorObject) => {
       error = 1
