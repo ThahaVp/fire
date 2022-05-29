@@ -857,17 +857,20 @@ router.post('/makeOrder', (req, res) => {
       ref.on('value', (snapshot) => {
 
         var foodListDb = []
-        snapshot.forEach((child) => {
+
+
+
+        // snapshot.forEach((child) => {
   
-          if (keys.includes(child.key)) {
-            let obj = child.val()
-            let inde = keys.indexOf(child.key)
-            obj.qty = foodArray[inde].qty
-            obj.subid = foodArray[inde].subid
-            obj.key = foodArray[inde].key
-            foodListDb.push(obj)
-          }
-        })
+        //   if (keys.includes(child.key)) {
+        //     let obj = child.val()
+        //     let inde = keys.indexOf(child.key)
+        //     obj.qty = foodArray[inde].qty
+        //     obj.subid = foodArray[inde].subid
+        //     obj.key = foodArray[inde].key
+        //     foodListDb.push(obj)
+        //   }
+        // })
   
         if (foodListDb.length > 0) {
   
@@ -983,7 +986,8 @@ router.post('/makeOrder', (req, res) => {
           error = 1
           res.json({
             status: 0,
-            msg: "food db list is empty"
+            msg: "food db list is empty",
+            obj: snapshot.val()
           })
         }
   
