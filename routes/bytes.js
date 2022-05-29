@@ -842,12 +842,15 @@ router.post('/makeOrder', (req, res) => {
     try { foodArray = JSON.parse(order) } catch (e) {
       error = 1
       console.log("error " + e)
+      res.json({
+        status: 0,
+        msg: "order parsing error"
+      })
     }
 
     if (error == 0)
     {
       let keys = foodArray.map(a => a.key);
-
       const db = admin.database();
       const ref = db.ref('Area/' + area + '/products/' + rid);
 
@@ -917,51 +920,57 @@ router.post('/makeOrder', (req, res) => {
           let tax = 5
           let dc = 10
           subTotal = itemTotal + tax + dc + pc
+
+          res.json({
+            status: 0,
+            msg: "okay",
+            total: subTotal
+          })
   
           if ( error == 0)
           {
                     // fetch address now
   
-          bytesHelper.getSingleAddress(uid, aid).then((aidRes => {
-            if (aidRes != null)
-            {
-              let orderOb = {
-                address: aidRes,
-                comments: notes,
-                cust_order_id: "",
-                date: "",
-                dboy: "",
-                delivery: dc,
-                distance: 0,
-                duration: "",
-                fcm: "",
-                food: foodListDb,
-                home_name: "",
-                item_total: itemTotal,
-                name: "",
-                pc: pc,
-                phone_number: "",
-                place: "",
-                ra: 0,  // rain charge
-                res_id: rid,
-                res_title: "",
-                tax: tax,
-                time: "",
-                total_amount: subTotal,
-                type: "order",
-                dev: "ios"
-              }
+          // bytesHelper.getSingleAddress(uid, aid).then((aidRes => {
+          //   if (aidRes != null)
+          //   {
+          //     let orderOb = {
+          //       address: aidRes,
+          //       comments: notes,
+          //       cust_order_id: "",
+          //       date: "",
+          //       dboy: "",
+          //       delivery: dc,
+          //       distance: 0,
+          //       duration: "",
+          //       fcm: "",
+          //       food: foodListDb,
+          //       home_name: "",
+          //       item_total: itemTotal,
+          //       name: "",
+          //       pc: pc,
+          //       phone_number: "",
+          //       place: "",
+          //       ra: 0,  // rain charge
+          //       res_id: rid,
+          //       res_title: "",
+          //       tax: tax,
+          //       time: "",
+          //       total_amount: subTotal,
+          //       type: "order",
+          //       dev: "ios"
+          //     }
       
-              res.json(orderOb)
-            }
-            else {
-              res.json({
-                status: 0,
-                list: []
-              })
+          //     res.json(orderOb)
+          //   }
+          //   else {
+          //     res.json({
+          //       status: 0,
+          //       list: []
+          //     })
               
-            }
-          }))        
+          //   }
+          // }))        
           }
           else
           {
@@ -969,7 +978,14 @@ router.post('/makeOrder', (req, res) => {
           }
   
         }
-        else { error = 1 }
+        else
+        { 
+          error = 1
+          res.json({
+            status: 0,
+            msg: "food db list is empty"
+          })
+        }
   
       }, (errorObject) => {
         error = 1
@@ -977,17 +993,28 @@ router.post('/makeOrder', (req, res) => {
       });
 
     }
+    else
+    {
+      res.json({
+        status: 0,
+        msg: "order parsing error"
+      })
+    }
   }
   else {
     error = 1
-    console.log("empty")
+    res.json({
+      status: 0,
+      msg: "order string is empty"
+    })
+
   }
 
 
   if (error == 1) {
     res.json({
       status: 0,
-      list: []
+      msg: ""
     })
   }
 
