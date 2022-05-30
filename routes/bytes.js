@@ -462,9 +462,9 @@ router.post('/muteOrder', (req, res) => {
   let res_key = req.body.res_key
 
   const db = admin.database();
-  const ref = db.ref('Area/'+area+'/shop_order/'+rid+'/'+res_key);
+  const ref = db.ref('Area/'+area+'/shop_order/'+rid).push();
   let obj = {
-    key: key,
+    key: "abc",
     mute: 1,
     accepted: ""
   }
