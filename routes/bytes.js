@@ -899,12 +899,10 @@ router.post('/makeOrder', (req, res) => {
               
               try { poArray = JSON.parse(po) } catch(e) { error = 1 }
 
-              
-  
               let split = subid.split(",")[1]
               extra = split
-              let selected = poArray[split]
-              pr = poArray[selected].split(",")[0]
+              // let selected = poArray[split]
+              // pr = poArray[selected].split(",")[0]
               
   
             }
