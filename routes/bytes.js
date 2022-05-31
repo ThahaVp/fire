@@ -921,12 +921,6 @@ router.post('/makeOrder', (req, res) => {
           let tax = 5
           let dc = 10
           subTotal = itemTotal + tax + dc + pc
-
-          res.json({
-            status: 0,
-            msg: "okay",
-            total: subTotal
-          })
   
           if ( error == 0)
           {
