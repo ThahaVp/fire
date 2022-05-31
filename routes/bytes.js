@@ -939,7 +939,7 @@ router.post('/makeOrder', (req, res) => {
                 distance: 0,
                 duration: "",
                 fcm: "",
-                food: foodListDb,
+                food: finalArray,
                 home_name: "",
                 item_total: itemTotal,
                 name: "",
