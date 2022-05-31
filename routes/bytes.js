@@ -301,7 +301,9 @@ router.post('/getRestaurants', (req, res) => {
 
   ref.once('value', (snapshot) => {
     var areaMap = {}
-    snapshot.forEach((child) => {
+    var charges = snapshot.val().charges
+    var resList = snapshot.val().list
+    resList.forEach((child) => {
       var resLat = child.val().lat
       var resLng = child.val().lng
       var resLimit = child.val().l
@@ -328,6 +330,9 @@ router.post('/getRestaurants', (req, res) => {
       let mm = getResFromAreas(areaMap)
 
       mm.then(function (result) {
+        
+        
+
         res.json({
           status: 1,
           oData: {
