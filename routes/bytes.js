@@ -303,12 +303,14 @@ router.post('/getRestaurants', (req, res) => {
     var areaMap = {}
     var charges = snapshot.val().charges
     var resList = snapshot.val().list
-    resList.forEach((child) => {
-      var resLat = child.val().lat
-      var resLng = child.val().lng
-      var resLimit = child.val().l
-      var resArea = child.val().a
-      var resID = child.val().id
+
+    for (var i=0;i<resList.length;i++)
+    {
+      var resLat = resList[i].lat
+      var resLng = resList[i].lng
+      var resLimit = resList[i].l
+      var resArea = resList[i].a
+      var resID = resList[i].id
       var distance = getDistanceFromLatLonInKm(userLat, userLng, resLat, resLng)
 
       if (distance <= resLimit) {
@@ -319,8 +321,7 @@ router.post('/getRestaurants', (req, res) => {
         areaMap[resArea] = temp
 
       }
-    })
-
+    }
 
 
     if (areaMap != null && Object.keys(areaMap).length > 0) {
