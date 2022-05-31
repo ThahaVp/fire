@@ -164,16 +164,14 @@ router.post('/getFoods', (req, res) => {
     if (list.length > 0) {
 
       resRef.once('value', (snapshot) => {
-        if (snapshot.val() == 'open')
-        {
+        if (snapshot.val() == 'open') {
           res.json({
             status: 1,
             list: list,
             res_status: 1
           })
         }
-        else
-        {
+        else {
           res.json({
             status: 1,
             list: list,
@@ -188,7 +186,7 @@ router.post('/getFoods', (req, res) => {
         })
       });
 
-      
+
     }
     else {
       res.json({
@@ -299,24 +297,16 @@ router.post('/getRestaurants', (req, res) => {
   var userLat = req.body.lat
   var userLng = req.body.lng
   var areaMap = {}
-  var charges = {}
-  var resList = {}
-
-
+  let min_ch = 8
 
   ref.once('value', (snapshot) => {
-    
-    var charges = snapshot.val().charges
-    var resList = snapshot.val().list
 
-    let hjs = Object.keys(resList)
-    for (var i=0;i<hjs.length;i++)
-    {
-      var resLat = resList[hjs[i]].lat
-      var resLng = resList[hjs[i]].lng
-      var resLimit = resList[hjs[i]].l
-      var resArea = resList[hjs[i]].a
-      var resID = resList[hjs[i]].id
+    snapshot.forEach((child) => {
+      var resLat = child.val().lat
+      var resLng = child.val().lng
+      var resLimit = child.val().l
+      var resArea = child.val().a
+      var resID = child.val().id
       var distance = getDistanceFromLatLonInKm(userLat, userLng, resLat, resLng)
 
       if (distance <= resLimit) {
@@ -327,9 +317,8 @@ router.post('/getRestaurants', (req, res) => {
         areaMap[resArea] = temp
 
       }
+    })
 
-      
-    }
     if (areaMap != null && Object.keys(areaMap).length > 0) {
 
       // ASYNC AWAIT FETCHING
@@ -337,14 +326,13 @@ router.post('/getRestaurants', (req, res) => {
       let mm = getResFromAreas(areaMap)
 
       mm.then(function (result) {
-        
-        
 
         res.json({
           status: 1,
           oData: {
             res_in_city: result.res,
-            slider: result.imgs
+            slider: result.imgs,
+            min_ch: min_ch
           }
         })
       })
@@ -353,17 +341,23 @@ router.post('/getRestaurants', (req, res) => {
     else {
 
       res.json({
-        status: 1,
-        msg: "no restaurants",
-        list: []
+        status: 0,
+        oData: {
+          res_in_city: [],
+          slider: [],
+          min_ch: min_ch
+        }
       })
     }
 
   }, (errorObject) => {
     res.json({
-      status: 1,
-      msg: "firebase error " + errorObject,
-      list: []
+      status: 0,
+      oData: {
+        res_in_city: [],
+        slider: [],
+        min_ch: min_ch
+      }
     })
   });
 
@@ -485,7 +479,7 @@ router.post('/muteOrder', (req, res) => {
   let res_key = req.body.res_key
 
   const db = admin.database();
-  const ref = db.ref('Area/'+area+'/shop_order/'+rid).push();
+  const ref = db.ref('Area/' + area + '/shop_order/' + rid).push();
   let obj = {
     key: "abc",
     mute: 1,
@@ -851,16 +845,16 @@ router.post('/makeOrder', (req, res) => {
   let uid = req.body.uid
   let rid = req.body.rid
   let area = req.body.area
-  let pm = req.body.pm
+  let pm = parseInt(req.body.pm)
   let notes = req.body.notes
   let order = req.body.order
   let xx = req.body.xx
+  let duration = parseInt(req.body.dur)
   var error = 0
 
   var subTotal = 0
 
-  if (order != "")
-  {
+  if (order != "") {
     let foodArray = []
     try { foodArray = JSON.parse(order) } catch (e) {
       error = 1
@@ -871,8 +865,7 @@ router.post('/makeOrder', (req, res) => {
       })
     }
 
-    if (error == 0)
-    {
+    if (error == 0) {
       let keys = foodArray.map(a => a.key);
       const db = admin.database();
       const ref = db.ref('Area/' + area + '/products/' + rid);
@@ -882,7 +875,7 @@ router.post('/makeOrder', (req, res) => {
         var foodListDb = []
 
         snapshot.forEach((child) => {
-  
+
           if (keys.includes(child.key)) {
             let obj = child.val()
             let inde = keys.indexOf(child.key)
@@ -892,39 +885,39 @@ router.post('/makeOrder', (req, res) => {
             foodListDb.push(obj)
           }
         })
-  
+
         if (foodListDb.length > 0) {
-  
+
           var itemTotal = 0
           var finalArray = []
           for (var j = 0; j < foodListDb.length; j++) {
-            
+
             let po = foodListDb[j]['po']
             let subid = foodListDb[j]['subid']
             let qt = foodListDb[j]['qty']
             let Id = foodListDb[j]['key']
             let pr = 0
             let extra = ""
-  
+
             if (po != "" && subid.includes(",")) {
               let poArray = {}
-              
-              try { poArray = JSON.parse(po) } catch(e) { error = 1 }
+
+              try { poArray = JSON.parse(po) } catch (e) { error = 1 }
 
               let split = subid.split(",")[1]
               extra = split
               pr = poArray[split].split(",")[0]
-              
-  
+
+
             }
             else {
               pr = foodListDb[j]['p']
             }
-  
+
             let to = pr * qt
             itemTotal += to
-            
-  
+
+
             let ob = {
               Title: foodListDb[j]['t'],
               Price: pr,
@@ -933,89 +926,84 @@ router.post('/makeOrder', (req, res) => {
               subID: subid,
               Qty: qt
             }
-  
+
             finalArray.push(ob)
-  
+
           }
-  
+
           let pc = 0
           let tax = 5
           let dc = 10
           subTotal = itemTotal + tax + dc + pc
-  
-          if ( error == 0)
-          {
-                    // fetch address now
-  
-          bytesHelper.getSingleAddress(uid, aid).then((aidRes => {
-            if (aidRes != null)
-            {
-              let orderOb = {
-                address: aidRes,
-                comments: notes,
-                cust_order_id: "",
-                date: "",
-                dboy: "",
-                delivery: dc,
-                distance: 0,
-                duration: "",
-                fcm: "",
-                food: finalArray,
-                home_name: "",
-                item_total: itemTotal,
-                name: "",
-                pc: pc,
-                phone_number: "",
-                place: "",
-                ra: 0,  // rain charge
-                res_id: rid,
-                res_title: "",
-                tax: tax,
-                time: "",
-                total_amount: subTotal,
-                type: "order",
-                dev: "ios"
+
+          if (error == 0) {
+            // fetch address now
+
+            bytesHelper.getSingleAddress(uid, aid).then((aidRes => {
+              if (aidRes != null) {
+                let orderOb = {
+                  address: aidRes,
+                  comments: notes,
+                  cust_order_id: "",
+                  date: "",
+                  dboy: "",
+                  delivery: dc,
+                  distance: 0,
+                  duration: duration,
+                  fcm: "",
+                  food: finalArray,
+                  home_name: "",
+                  item_total: itemTotal,
+                  name: "",
+                  pc: pc,
+                  phone_number: "",
+                  place: "",
+                  ra: 0,  // rain charge
+                  res_id: rid,
+                  res_title: "",
+                  tax: tax,
+                  time: "",
+                  total_amount: subTotal,
+                  type: "order",
+                  dev: "ios"
+                }
+
+                res.json(orderOb)
               }
-      
-              res.json(orderOb)
-            }
-            else {
-              res.json({
-                status: 0,
-                list: [],
-                msg: "address is null"
-              })
-              
-            }
-          }))        
+              else {
+                res.json({
+                  status: 0,
+                  list: [],
+                  msg: "address is null"
+                })
+
+              }
+            }))
           }
-          else
-          {
+          else {
             error = 1
             res.json({
               status: 0,
               msg: "food db list is empty"
             })
           }
-  
+
         }
-        else
-        { 
+        else {
           error = 1
           res.json({
             status: 0,
             msg: "food db list is empty"
           })
         }
-  
+
       }, (errorObject) => {
         error = 1
         console.log("error " + errorObject)
       });
 
     }
-    else
-    {
+    else {
       res.json({
         status: 0,
         msg: "order parsing error"
@@ -1038,6 +1026,77 @@ router.post('/makeOrder', (req, res) => {
       msg: ""
     })
   }
+
+})
+
+router.post('/calcDeliveryCharge', (req, res) => {
+
+  let userLat = req.body.userLat
+  let userLng = req.body.userLng
+  let resLat = req.body.resLat
+  let resLng = req.body.resLng
+  let itemTotal = req.body.itemTotal
+  let minFree = req.body.minFree
+  let km_ch = req.body.km_ch
+  let km_ch_2 = req.body.km_ch_2
+
+  let min_ch = 8
+  let min_km = 1
+  let min_km_2 = 3
+
+  var distance = 0
+  var duration = 0
+  var deliveryCharge = 0
+
+
+    axios.get('https://maps.googleapis.com/maps/api/distancematrix/json?units=km&origins=' + resLat + ',' + resLng + '&destinations=' + userLat + ',' + userLng + '&key=AIzaSyBaxdI9cgj-Cln97faKXvBHh4q-ccyTZNY')
+      .then(mapRes => {
+        
+        if (mapRes.data.status == 'OK' && mapRes.data.rows[0].elements[0].status == 'OK') {
+          distance = parseFloat(((mapRes.data.rows[0].elements[0].distance.value)/1000).toFixed(1))
+          duration = Math.round((mapRes.data.rows[0].elements[0].duration.value)/60)
+        }
+        else {
+          distance = getDistanceFromLatLonInKm(userLat, userLng, resLat, resLng)
+        }
+
+        if (itemTotal < minFree)
+        {
+          deliveryCharge = calcDC(distance, min_ch, min_km, min_km_2, km_ch, km_ch_2)
+        }
+        else
+        {
+          deliveryCharge = 0
+        }
+        
+        res.json({
+          status: 1,
+          dc: deliveryCharge,
+          dis: distance,
+          dur: duration
+        })
+
+      })
+      .catch(err => {
+        distance = getDistanceFromLatLonInKm(userLat, userLng, resLat, resLng)
+        if (itemTotal < minFree)
+        {
+          deliveryCharge = calcDC(distance, min_ch, min_km, min_km_2, km_ch, km_ch_2)
+        }
+        else
+        {
+          deliveryCharge = 0
+        }
+
+        res.json({
+          status: 1,
+          dc: deliveryCharge,
+          dis: distance,
+          dur: duration
+        })
+
+      })
+
 
 })
 
@@ -1106,6 +1165,32 @@ function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
   return d;
 }
 
+function calcDC(distance, min_ch, min_km, min_km_2, km_ch, km_ch_2) {
+
+  var dc = 0
+  if (distance > min_km)
+  {
+    let extraKm = distance - min_km
+    if (extraKm > min_km_2)
+    {
+      let extraKm2 = extraKm - min_km_2
+      let extraCharge2 = extraKm2 * km_ch_2
+      let xcs = min_km_2 * km_ch
+      dc = min_ch + xcs + extraCharge2
+    }
+    else
+    {  
+      let extraCharge = extraKm * km_ch
+      dc = min_ch + extraCharge
+    }
+  }
+  else
+  {
+    dc = min_ch
+  }
+  return parseFloat(dc.toFixed(2));
+}
+
 function deg2rad(deg) {
   return deg * (Math.PI / 180)
 }
@@ -1146,16 +1231,14 @@ async function getResFromAreas(areaMap) {
         if (keys.includes(child.val().c)) {
           var obj = child.val()
 
-          if (obj.status == "open")
-          {
+          if (obj.status == "open") {
             // check timings here
             obj.status = 2
           }
-          else
-          {
-            obj.status = 0 
+          else {
+            obj.status = 0
           }
-          
+
 
           var dd = tempArray[child.val().c]
           var rounded = Math.round(dd * 10) / 10
