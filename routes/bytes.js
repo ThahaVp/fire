@@ -141,23 +141,12 @@ router.post('/getFoods', (req, res) => {
 
   var resID = req.body.id
   var area = req.body.area
-  var resStatus = -1
 
   const db = admin.database();
   const ref = db.ref('Area/' + area + "/products/" + resID);
   const resRef = db.ref('Area/' + area + "/shop/" + resID + "/status");
 
-  resRef.once('value', (snapshot) => {
-    if (snapshot.val() == 'open')
-    {
-      resStatus = 1
-    }
-    else
-    {
-      resStatus = 0
-    }
-  }, (errorObject) => {
-  });
+
 
   ref.once('value', (snapshot) => {
 
@@ -173,18 +162,40 @@ router.post('/getFoods', (req, res) => {
     })
 
     if (list.length > 0) {
-      res.json({
-        status: 1,
-        list: list,
-        res_status: resStatus
-      })
+
+      resRef.once('value', (snapshot) => {
+        if (snapshot.val() == 'open')
+        {
+          res.json({
+            status: 1,
+            list: list,
+            res_status: 1
+          })
+        }
+        else
+        {
+          res.json({
+            status: 1,
+            list: list,
+            res_status: 0
+          })
+        }
+      }, (errorObject) => {
+        res.json({
+          status: 1,
+          list: list,
+          res_status: 0
+        })
+      });
+
+      
     }
     else {
       res.json({
         status: 0,
         list: [],
         msg: "empty",
-        res_status: resStatus
+        res_status: 0
       })
     }
 
@@ -193,7 +204,7 @@ router.post('/getFoods', (req, res) => {
       status: 0,
       msg: "firebase error " + errorObject,
       list: [],
-      res_status: resStatus
+      res_status: 0
     })
   });
 })
