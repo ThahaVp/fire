@@ -901,8 +901,7 @@ router.post('/makeOrder', (req, res) => {
 
               let split = subid.split(",")[1]
               extra = split
-              // let selected = poArray[split]
-              // pr = poArray[selected].split(",")[0]
+              pr = poArray[split].split(",")[0]
               
   
             }
