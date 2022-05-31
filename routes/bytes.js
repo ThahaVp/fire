@@ -824,8 +824,8 @@ router.post('/addDeliveryAddress', (req, res) => {
 router.post('/makeOrder', (req, res) => {
 
 
-   let aid = req.body.aid
-   let uid = req.body.uid
+  let aid = req.body.aid
+  let uid = req.body.uid
   let rid = req.body.rid
   let area = req.body.area
   let pm = req.body.pm
@@ -858,19 +858,17 @@ router.post('/makeOrder', (req, res) => {
 
         var foodListDb = []
 
-
-
-        // snapshot.forEach((child) => {
+        snapshot.forEach((child) => {
   
-        //   if (keys.includes(child.key)) {
-        //     let obj = child.val()
-        //     let inde = keys.indexOf(child.key)
-        //     obj.qty = foodArray[inde].qty
-        //     obj.subid = foodArray[inde].subid
-        //     obj.key = foodArray[inde].key
-        //     foodListDb.push(obj)
-        //   }
-        // })
+          if (keys.includes(child.key)) {
+            let obj = child.val()
+            let inde = keys.indexOf(child.key)
+            obj.qty = foodArray[inde].qty
+            obj.subid = foodArray[inde].subid
+            obj.key = foodArray[inde].key
+            foodListDb.push(obj)
+          }
+        })
   
         if (foodListDb.length > 0) {
   
@@ -934,50 +932,55 @@ router.post('/makeOrder', (req, res) => {
           {
                     // fetch address now
   
-          // bytesHelper.getSingleAddress(uid, aid).then((aidRes => {
-          //   if (aidRes != null)
-          //   {
-          //     let orderOb = {
-          //       address: aidRes,
-          //       comments: notes,
-          //       cust_order_id: "",
-          //       date: "",
-          //       dboy: "",
-          //       delivery: dc,
-          //       distance: 0,
-          //       duration: "",
-          //       fcm: "",
-          //       food: foodListDb,
-          //       home_name: "",
-          //       item_total: itemTotal,
-          //       name: "",
-          //       pc: pc,
-          //       phone_number: "",
-          //       place: "",
-          //       ra: 0,  // rain charge
-          //       res_id: rid,
-          //       res_title: "",
-          //       tax: tax,
-          //       time: "",
-          //       total_amount: subTotal,
-          //       type: "order",
-          //       dev: "ios"
-          //     }
+          bytesHelper.getSingleAddress(uid, aid).then((aidRes => {
+            if (aidRes != null)
+            {
+              let orderOb = {
+                address: aidRes,
+                comments: notes,
+                cust_order_id: "",
+                date: "",
+                dboy: "",
+                delivery: dc,
+                distance: 0,
+                duration: "",
+                fcm: "",
+                food: foodListDb,
+                home_name: "",
+                item_total: itemTotal,
+                name: "",
+                pc: pc,
+                phone_number: "",
+                place: "",
+                ra: 0,  // rain charge
+                res_id: rid,
+                res_title: "",
+                tax: tax,
+                time: "",
+                total_amount: subTotal,
+                type: "order",
+                dev: "ios"
+              }
       
-          //     res.json(orderOb)
-          //   }
-          //   else {
-          //     res.json({
-          //       status: 0,
-          //       list: []
-          //     })
+              res.json(orderOb)
+            }
+            else {
+              res.json({
+                status: 0,
+                list: [],
+                msg: "address is null"
+              })
               
-          //   }
-          // }))        
+            }
+          }))        
           }
           else
           {
             error = 1
+            res.json({
+              status: 0,
+              msg: "food db list is empty"
+            })
           }
   
         }
@@ -986,9 +989,7 @@ router.post('/makeOrder', (req, res) => {
           error = 1
           res.json({
             status: 0,
-            msg: "food db list is empty",
-            obj: snapshot.val(),
-            asa: ref.toString()
+            msg: "food db list is empty"
           })
         }
   
