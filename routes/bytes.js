@@ -1011,11 +1011,12 @@ router.post('/makeOrder', (req, res) => {
                   dev: "ios",
                   uid: uid
                 }
-
-                const orderRef = db.ref('Area/' + area + '/orders').push()
-                orderOb.oid = orderRef
-
-                res.json(orderOb)
+                const orderRef = db.ref('Area/' + area + '/testing').push()
+                orderRef.set(orderOb).then(function () {
+                  res.json({
+                    status: orderRef.toString
+                  })
+                })
               }
               else {
                 res.json({
