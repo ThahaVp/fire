@@ -851,7 +851,7 @@ router.post('/makeOrder', (req, res) => {
   let xx = req.body.xx
   let duration = parseInt(req.body.dur)
 
-  let rainCharge = parseFloat(req.body.rc)
+  let rainCharge = parseInt(req.body.rc)
   let packingCharge = parseFloat(req.body.pc)
   let totalTax = parseFloat(req.body.tax)
   let dc = parseFloat(req.body.dc)
@@ -859,6 +859,7 @@ router.post('/makeOrder', (req, res) => {
   let fcm = req.body.fcm
   let resTitle = req.body.res_title
   let resPhone = req.body.res_phone
+  let dis = parseFloat(req.body.dis)
   
   var error = 0
 
@@ -906,6 +907,7 @@ router.post('/makeOrder', (req, res) => {
       let keys = foodArray.map(a => a.key);
       const db = admin.database();
       const ref = db.ref('Area/' + area + '/products/' + rid);
+
 
       ref.on('value', (snapshot) => {
 
@@ -968,11 +970,11 @@ router.post('/makeOrder', (req, res) => {
 
           }
 
-
           subTotal = itemTotal + totalTax + dc + packingCharge + rainCharge
 
           if (error == 0) {
             // fetch address now
+            // check res status before ordering
 
             bytesHelper.getSingleAddress(uid, aid).then((aidRes => {
               if (aidRes != null) {
@@ -983,26 +985,35 @@ router.post('/makeOrder', (req, res) => {
                   date: dateF,
                   dboy: "",
                   delivery: dc,
-                  distance: 0,
+                  idc: Math.round(dc),
+                  distance: dis,
+                  idis: Math.round(dis),
                   duration: duration,
                   fcm: fcm,
                   food: finalArray,
                   home_name: "",
                   item_total: itemTotal,
+                  iit: Math.round(itemTotal),
                   name: name,
                   pc: packingCharge,
+                  ipc: Math.round(pc),
                   phone_number: "",
                   place: "",
                   ra: rainCharge,  // rain charge
                   res_id: rid,
                   res_title: resTitle+','+resPhone,
                   tax: totalTax,
+                  itax: Math.round(totalTax),
                   time: timeF,
                   total_amount: subTotal,
+                  isub: Math.round(subTotal),
                   type: "order",
                   dev: "ios",
                   uid: uid
                 }
+
+                const orderRef = db.ref('Area/' + area + '/orders').push()
+                orderOb.oid = orderRef
 
                 res.json(orderOb)
               }
