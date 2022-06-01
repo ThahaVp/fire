@@ -850,7 +850,44 @@ router.post('/makeOrder', (req, res) => {
   let order = req.body.order
   let xx = req.body.xx
   let duration = parseInt(req.body.dur)
+
+  let rainCharge = parseFloat(req.body.rc)
+  let packingCharge = parseFloat(req.body.pc)
+  let totalTax = parseFloat(req.body.tax)
+  let dc = parseFloat(req.body.dc)
+  let name = req.body.name
+  let fcm = req.body.fcm
+  let resTitle = req.body.res_title
+  let resPhone = req.body.res_phone
+  
   var error = 0
+
+  let ts = Date.now();
+  let date_ob = new Date(ts);
+  let month = date_ob.getMonth() + 1 
+  
+  let monthString = ""
+  if (month<10){monthString = "0"+month}
+  else {monthString = month.toString()}
+
+  let dayString = ""
+  if (date_ob.getDate() < 10) { dayString = "0"+date_ob.getDate()}
+  else {dayString = date_ob.getDate().toString()}
+
+  let hourString = ""
+  if (date_ob.getHours() < 10) { hourString = "0"+date_ob.getHours()}
+  else {hourString = date_ob.getHours().toString()}
+  
+  let minuteString = ""
+  if (date_ob.getMinutes() < 10) { minuteString = "0"+date_ob.getMinutes()}
+  else {minuteString = date_ob.getMinutes().toString()}
+
+  let secondString = ""
+  if (date_ob.getSeconds() < 10) { secondString = "0"+date_ob.getSeconds()}
+  else {secondString = date_ob.getSeconds().toString()}
+
+  let timeF = hourString + ":" + minuteString + ":" + secondString
+  let dateF = dayString + "-" + monthString + "-" + date_ob.getFullYear()
 
   var subTotal = 0
 
@@ -931,10 +968,8 @@ router.post('/makeOrder', (req, res) => {
 
           }
 
-          let pc = 0
-          let tax = 5
-          let dc = 10
-          subTotal = itemTotal + tax + dc + pc
+
+          subTotal = itemTotal + totalTax + dc + packingCharge + rainCharge
 
           if (error == 0) {
             // fetch address now
@@ -945,27 +980,28 @@ router.post('/makeOrder', (req, res) => {
                   address: aidRes,
                   comments: notes,
                   cust_order_id: "",
-                  date: "",
+                  date: dateF,
                   dboy: "",
                   delivery: dc,
                   distance: 0,
                   duration: duration,
-                  fcm: "",
+                  fcm: fcm,
                   food: finalArray,
                   home_name: "",
                   item_total: itemTotal,
-                  name: "",
-                  pc: pc,
+                  name: name,
+                  pc: packingCharge,
                   phone_number: "",
                   place: "",
-                  ra: 0,  // rain charge
+                  ra: rainCharge,  // rain charge
                   res_id: rid,
-                  res_title: "",
-                  tax: tax,
-                  time: "",
+                  res_title: resTitle+','+resPhone,
+                  tax: totalTax,
+                  time: timeF,
                   total_amount: subTotal,
                   type: "order",
-                  dev: "ios"
+                  dev: "ios",
+                  uid: uid
                 }
 
                 res.json(orderOb)
