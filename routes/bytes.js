@@ -996,7 +996,7 @@ router.post('/makeOrder', (req, res) => {
                   iit: Math.round(itemTotal),
                   name: name,
                   pc: packingCharge,
-                  ipc: Math.round(pc),
+                  ipc: Math.round(packingCharge),
                   phone_number: "",
                   place: "",
                   ra: rainCharge,  // rain charge
