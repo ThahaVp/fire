@@ -979,7 +979,7 @@ router.post('/makeOrder', (req, res) => {
             bytesHelper.getSingleAddress(uid, aid).then((aidRes => {
               if (aidRes != null) {
                 let orderOb = {
-                  address: aidRes,
+                  address: JSON.stringify(aidRes),
                   comments: notes,
                   cust_order_id: "",
                   date: dateF,
@@ -990,7 +990,7 @@ router.post('/makeOrder', (req, res) => {
                   idis: Math.round(dis),
                   duration: duration,
                   fcm: fcm,
-                  food: finalArray,
+                  food: JSON.stringify(finalArray),
                   home_name: "",
                   item_total: itemTotal,
                   iit: Math.round(itemTotal),
@@ -1011,10 +1011,10 @@ router.post('/makeOrder', (req, res) => {
                   dev: "ios",
                   uid: uid
                 }
-                const orderRef = db.ref('Area/' + area + '/testing').push()
+                const orderRef = db.ref('Area/' + area + '/testing').push();
                 orderRef.set(orderOb).then(function () {
                   res.json({
-                    status: orderRef.toString
+                    status: orderRef.key
                   })
                 })
               }
