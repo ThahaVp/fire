@@ -53,6 +53,31 @@ module.exports = {
         })
     },
 
+
+    getOrderHistory:(uid, skip, limit) => {
+        return new Promise(async(resolve,reject)=>{
+            let result = await db.get().collection(constants.BYTES_ORDERS_KEYS).find({u: uid}, {limit:limit, skip:skip}).sort({$natural: -1}).toArray()
+            resolve(result)
+        })
+    },
+
+    addOrder:(data) => {
+        return new Promise(async(resolve,reject)=>{
+
+            db.get().collection(constants.BYTES_ORDERS_KEYS).insertOne(data).then((responce)=>{
+                if (responce.insertedId != null)
+                {
+                   resolve(responce.insertedId.toString())
+                }
+                else
+                {
+                    reject()
+                }
+                
+           })
+        })
+    },
+
     addUser:(data) => {
         return new Promise(async(resolve,reject)=>{
             db.get().collection(constants.BYTES_USERS).insertOne(data).then((responce)=>{

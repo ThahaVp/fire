@@ -4,6 +4,7 @@ var router = express.Router();
 var bytesHelper = require('../helpers/bytes-helper');
 var pdf = require('html-pdf');
 var options = { format: 'A4' };
+var razorpay = require('razorpay')
 
 
 var admin = require("firebase-admin");
@@ -16,6 +17,14 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: "https://delivery-58fd5.firebaseio.com"
 });
+
+const RKeyId = "rzp_live_zDcGNQ4ExDMwba"
+const RKetSecret = "GDrrlPrC4XijhpVQJXg963S9"
+
+const instance = new razorpay({
+  key_id: RKeyId,
+  key_secret: RKetSecret
+})
 
 router.get('/getExpenses', (req, res) => {
 
@@ -297,7 +306,7 @@ router.post('/getRestaurants', (req, res) => {
   var userLat = req.body.lat
   var userLng = req.body.lng
   var areaMap = {}
-  let min_ch = 8
+  let min_ch = 20
 
   ref.once('value', (snapshot) => {
 
@@ -848,7 +857,6 @@ router.post('/makeOrder', (req, res) => {
   let pm = parseInt(req.body.pm)
   let notes = req.body.notes
   let order = req.body.order
-  let xx = req.body.xx
   let duration = parseInt(req.body.dur)
 
   let rainCharge = parseInt(req.body.rc)
@@ -1008,22 +1016,44 @@ router.post('/makeOrder', (req, res) => {
                   total_amount: Math.round(subTotal),
                   isub: subTotal,
                   type: "order",
-                  dev: "ios",
+                  dev: 2,
                   userid: uid,
-                  status: "0,Order Placed"
+                  status: "0,Order Placed",
+                  paid: pm
                 }
+
                 const orderRef = db.ref('Area/' + area + '/testing').push();
+                const resOrderRef = db.ref('Area/' + area + '/shop_testing/'+rid).push();
                 orderRef.set(orderOb).then(function () {
+
                   res.json({
-                    status: orderRef.key
+                    status: 1,
+                    string: orderRef.key
                   })
-                })
+
+                  let userOrderData = {
+                    u: uid,
+                    k: orderRef.key,
+                    a: area,
+                    d: dateF
+                  }
+                  
+                  bytesHelper.addOrder(userOrderData)
+                  resOrderRef.set(orderRef.key)
+
+                }, (errorObject) => {
+                  
+                  res.json({
+                    status: 0,
+                    string: "firebase pushing error"
+                  })
+
+                });
               }
               else {
                 res.json({
                   status: 0,
-                  list: [],
-                  msg: "address is null"
+                  string: "address is null"
                 })
 
               }
@@ -1033,7 +1063,7 @@ router.post('/makeOrder', (req, res) => {
             error = 1
             res.json({
               status: 0,
-              msg: "food db list is empty"
+              string: "food db list is empty"
             })
           }
 
@@ -1042,7 +1072,7 @@ router.post('/makeOrder', (req, res) => {
           error = 1
           res.json({
             status: 0,
-            msg: "food db list is empty"
+            string: "food db list is empty"
           })
         }
 
@@ -1055,7 +1085,7 @@ router.post('/makeOrder', (req, res) => {
     else {
       res.json({
         status: 0,
-        msg: "order parsing error"
+        string: "order parsing error"
       })
     }
   }
@@ -1063,7 +1093,7 @@ router.post('/makeOrder', (req, res) => {
     error = 1
     res.json({
       status: 0,
-      msg: "order string is empty"
+      string: "order string is empty"
     })
 
   }
@@ -1072,7 +1102,7 @@ router.post('/makeOrder', (req, res) => {
   if (error == 1) {
     res.json({
       status: 0,
-      msg: ""
+      string: "error"
     })
   }
 
@@ -1089,7 +1119,7 @@ router.post('/calcDeliveryCharge', (req, res) => {
   let km_ch = req.body.km_ch
   let km_ch_2 = req.body.km_ch_2
 
-  let min_ch = 8
+  let min_ch = 20
   let min_km = 1
   let min_km_2 = 3
 
@@ -1148,6 +1178,86 @@ router.post('/calcDeliveryCharge', (req, res) => {
 
 
 })
+
+router.post('/razorOrder', (req, res) => {
+
+  var options = {
+    amount: 50000,  // amount in the smallest currency unit
+    currency: "INR",
+    receipt: "order_rcptid_11"
+  };
+  instance.orders.create(options, function(err, order) {
+    if (err)
+    {
+      console.log(err)
+    }
+    else
+    {
+      console.log(order)
+    }
+  });
+})
+
+router.post('/getOrderHistory', (req, res) => {
+
+  let uid = req.body.uid
+  let skip = req.body.skip
+  let limit = req.body.limit
+  var end = 0
+  var array = []
+  var status = 0
+
+  bytesHelper.getOrderHistory(uid, skip, limit).then((orderRes => {
+    if (orderRes != null)
+    {
+      status = 1
+      if (orderRes.length > 0)
+      {
+        array = orderRes
+        if (array.length < limit)
+        {end = 1}
+      }
+      else
+      {end = 1}
+    }
+    else
+    {
+      status = 0
+      end = 1
+    }
+
+    res.json({
+      status: status,
+      end: end,
+      list: array
+    })
+  }))
+
+
+})
+
+router.post('/addOrder', (req, res) => {
+
+  let uid = req.body.uid
+  let key = req.body.key
+  let area = req.body.area
+  let date = req.body.date
+
+  let data = {
+    u: uid,
+    k: key,
+    a: area,
+    d: date
+  }
+
+  bytesHelper.addOrder(data).then((orderRes => {
+    console.log(orderRes)
+  }))
+
+
+})
+
+
 
 module.exports = router;
 

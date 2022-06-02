@@ -15,6 +15,7 @@ module.exports = {
 
     BYTES_USERS: 'bytes_users',
     BYTES_ADDRESS: 'bytes_address',
+    BYTES_ORDERS_KEYS: 'bytes_order_keys',
 
     COUNTERS:'counters'
 
