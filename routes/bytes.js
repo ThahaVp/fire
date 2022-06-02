@@ -1480,19 +1480,15 @@ async function getOrdersFromArea(keyArray, monthString) {
 
   for (var i=0;i<keyArray.length;i++)
       {
-        if (keyArray[i].d != monthString)
+        let mon = (keyArray[i].d.split("-"))[1]
+        console.log("mon - "+mon)
+        if (mon == monthString)
         {
           const rrr = admin.database().ref('Area/' + keyArray[i].a + '/testing/' + keyArray[i].k)
-          console.log("ref - "+rrr.toString())
           await rrr.once('value', (snapshot) => {
             if (snapshot.val() != null)
             {
-              console.log("adding - " + snapshot.val().status)
               orderList.push(snapshot.val())
-            }
-            else
-            {
-              console.log("is null")
             }
             
           });
