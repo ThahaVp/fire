@@ -1481,13 +1481,15 @@ async function getOrdersFromArea(keyArray, monthString) {
   for (var i=0;i<keyArray.length;i++)
       {
         let mon = (keyArray[i].d.split("-"))[1]
-        console.log("mon - "+mon)
         if (mon == monthString)
         {
           const rrr = admin.database().ref('Area/' + keyArray[i].a + '/testing/' + keyArray[i].k)
           await rrr.once('value', (snapshot) => {
             if (snapshot.val() != null)
             {
+              var ob = snapshot.val()
+              ob.id = keyArray[i].k
+              ob.an = keyArray[i].a
               orderList.push(snapshot.val())
             }
             
@@ -1498,7 +1500,12 @@ async function getOrdersFromArea(keyArray, monthString) {
           const rrr = admin.database().ref('Area/' + keyArray[i].a + '/order_dumb/' + keyArray[i].k)
           await rrr.once('value', (snapshot) => {
             if (snapshot.val() != null)
-            {orderList.push(snapshot.val())}
+            {
+              var ob = snapshot.val()
+              ob.id = keyArray[i].k
+              ob.an = keyArray[i].a
+              orderList.push(snapshot.val())
+            }
           });
         }
       }
