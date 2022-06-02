@@ -1500,11 +1500,12 @@ async function getOrdersFromArea(keyArray, monthString) {
         }
         else
         {
-          const rrr = admin.database().ref('Area/' + keyArray[i].a + '/order_dumb/' + keyArray[i].k)
-          await rrr.once('value', (snapshot) => {
-            if (snapshot.val() != null)
-            {orderList.push(snapshot.val())}
-          });
+          orderList.push(keyArray[i])
+          // const rrr = admin.database().ref('Area/' + keyArray[i].a + '/order_dumb/' + keyArray[i].k)
+          // await rrr.once('value', (snapshot) => {
+          //   if (snapshot.val() != null)
+          //   {orderList.push(snapshot.val())}
+          // });
         }
       }
   return orderList
