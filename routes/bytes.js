@@ -1205,12 +1205,19 @@ router.post('/getOrderHistory', (req, res) => {
   let limit = req.body.limit
   var end = 0
   var array = []
-  var status = 0
+
+
+  let ts = Date.now();
+  let date_ob = new Date(ts);
+  let month = date_ob.getMonth() + 1 
+  
+  let monthString = ""
+  if (month<10){monthString = "0"+month}
+  else {monthString = month.toString()}
 
   bytesHelper.getOrderHistory(uid, skip, limit).then((orderRes => {
     if (orderRes != null)
     {
-      status = 1
       if (orderRes.length > 0)
       {
         array = orderRes
@@ -1222,15 +1229,32 @@ router.post('/getOrderHistory', (req, res) => {
     }
     else
     {
-      status = 0
       end = 1
     }
 
-    res.json({
-      status: status,
-      end: end,
-      list: array
-    })
+    if (array.length > 0)
+    {
+      let mm = getOrdersFromArea(array, monthString)
+
+      mm.then(function (result) {
+
+        res.json({
+          status: 1,
+          end: end,
+          list: result
+        })
+      })
+    }
+    else
+    {
+      res.json({
+        status: 0,
+        end: 0,
+        list: []
+      })
+    }
+
+    
   }))
 
 
@@ -1448,4 +1472,30 @@ async function getResFromAreas(areaMap) {
     imgs: imgArray
   }
   return mm
+}
+
+async function getOrdersFromArea(keyArray, monthString) {
+
+  var orderList = []
+
+  for (var i=0;i<keyArray.length;i++)
+      {
+        if (array[i].d == monthString)
+        {
+          const rrr = admin.database().ref('Area/' + array[i].a + '/testing/' + array[i].k)
+          await rrr.once('value', (snapshot) => {
+            if (snapshot.val() != null)
+            {orderList.push(snapshot.val())}
+          });
+        }
+        else
+        {
+          const rrr = admin.database().ref('Area/' + array[i].a + '/order_dumb/' + array[i].k)
+          await rrr.once('value', (snapshot) => {
+            if (snapshot.val() != null)
+            {orderList.push(snapshot.val())}
+          });
+        }
+      }
+  return orderList
 }
