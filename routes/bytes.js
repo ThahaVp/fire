@@ -1480,32 +1480,30 @@ async function getOrdersFromArea(keyArray, monthString) {
 
   for (var i=0;i<keyArray.length;i++)
       {
-        if (keyArray[i].d == monthString)
+        if (keyArray[i].d != monthString)
         {
-          orderList.push(keyArray[i])
-          // const rrr = admin.database().ref('Area/' + keyArray[i].a + '/testing/' + keyArray[i].k)
-          // console.log("ref - "+rrr.toString())
-          // await rrr.once('value', (snapshot) => {
-          //   if (snapshot.val() != null)
-          //   {
-          //     console.log("adding - " + snapshot.val().status)
-          //     orderList.push(snapshot.val())
-          //   }
-          //   else
-          //   {
-          //     console.log("is null")
-          //   }
+          const rrr = admin.database().ref('Area/' + keyArray[i].a + '/testing/' + keyArray[i].k)
+          console.log("ref - "+rrr.toString())
+          await rrr.once('value', (snapshot) => {
+            if (snapshot.val() != null)
+            {
+              console.log("adding - " + snapshot.val().status)
+              orderList.push(snapshot.val())
+            }
+            else
+            {
+              console.log("is null")
+            }
             
-          // });
+          });
         }
         else
         {
-          orderList.push(keyArray[i])
-          // const rrr = admin.database().ref('Area/' + keyArray[i].a + '/order_dumb/' + keyArray[i].k)
-          // await rrr.once('value', (snapshot) => {
-          //   if (snapshot.val() != null)
-          //   {orderList.push(snapshot.val())}
-          // });
+          const rrr = admin.database().ref('Area/' + keyArray[i].a + '/order_dumb/' + keyArray[i].k)
+          await rrr.once('value', (snapshot) => {
+            if (snapshot.val() != null)
+            {orderList.push(snapshot.val())}
+          });
         }
       }
   return orderList
