@@ -1480,9 +1480,9 @@ async function getOrdersFromArea(keyArray, monthString) {
 
   for (var i=0;i<keyArray.length;i++)
       {
-        if (array[i].d == monthString)
+        if (keyArray[i].d == monthString)
         {
-          const rrr = admin.database().ref('Area/' + array[i].a + '/testing/' + array[i].k)
+          const rrr = admin.database().ref('Area/' + keyArray[i].a + '/testing/' + keyArray[i].k)
           await rrr.once('value', (snapshot) => {
             if (snapshot.val() != null)
             {orderList.push(snapshot.val())}
@@ -1490,7 +1490,7 @@ async function getOrdersFromArea(keyArray, monthString) {
         }
         else
         {
-          const rrr = admin.database().ref('Area/' + array[i].a + '/order_dumb/' + array[i].k)
+          const rrr = admin.database().ref('Area/' + keyArray[i].a + '/order_dumb/' + keyArray[i].k)
           await rrr.once('value', (snapshot) => {
             if (snapshot.val() != null)
             {orderList.push(snapshot.val())}
