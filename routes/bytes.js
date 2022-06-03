@@ -1490,6 +1490,7 @@ async function getOrdersFromArea(keyArray, monthString) {
               var ob = snapshot.val()
               ob['id'] = keyArray[i].k
               ob['an'] = keyArray[i].a
+              ob['loc'] = "orders"
               orderList.push(ob)
             }
             
@@ -1504,6 +1505,7 @@ async function getOrdersFromArea(keyArray, monthString) {
               var ob = snapshot.val()
               ob['id'] = keyArray[i].k
               ob['an'] = keyArray[i].a
+              ob['loc'] = "order_dumb"
               orderList.push(ob)
             }
           });
