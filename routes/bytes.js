@@ -1295,7 +1295,7 @@ router.post('/CancelOrderCustomer', (req, res) => {
   const db = admin.database();
   const ref = db.ref('Area/' + area + '/testing/' + oid + "/status");
 
-  ref.on('value', (snapshot) => {
+  ref.once('value', (snapshot) => {
     let split = snapshot.val().split(",")
     if (split[0] == '0')
     {
@@ -1313,7 +1313,7 @@ router.post('/CancelOrderCustomer', (req, res) => {
           accepted: "",
           mute: 1
         }
-        ref.set(mm)
+        resRef.set(mm)
 
       }, (errorObject) => {
         
