@@ -1260,26 +1260,105 @@ router.post('/getOrderHistory', (req, res) => {
 
 })
 
-router.post('/addOrder', (req, res) => {
+router.post('/CancelOrderCustomer', (req, res) => {
 
-  let uid = req.body.uid
-  let key = req.body.key
+  let oid = req.body.id
+  let rid = req.body.rid
   let area = req.body.area
-  let date = req.body.date
 
-  let data = {
-    u: uid,
-    k: key,
-    a: area,
-    d: date
+  let ts = Date.now();
+  let date_ob = new Date(ts);
+  let hourString = ""
+  var am = ""
+
+  if (date_ob.getHours() >= 12)
+  { 
+    let hh = date_ob.getHours() - 12
+    am = "pm"
+    if (hh < 10) {hourString = "0"+hh.toString()}
+    else {hourString = hh.toString()}
   }
+  else
+  {
+    am = "am"
+    if (date_ob.getHours() < 10) {hourString = "0"+date_ob.getHours()}
+    else {hourString = date_ob.getHours().toString()}
+  }
+  
+  let minuteString = ""
+  if (date_ob.getMinutes() < 10) { minuteString = "0"+date_ob.getMinutes()}
+  else {minuteString = date_ob.getMinutes().toString()}
 
-  bytesHelper.addOrder(data).then((orderRes => {
-    console.log(orderRes)
-  }))
+  let timeF = hourString + ":" + minuteString +  " "+am
+  console.log(timeF)  
+
+  const db = admin.database();
+  const ref = db.ref('Area/' + area + '/testing/' + oid + "/status");
+
+  ref.on('value', (snapshot) => {
+    let split = snapshot.val().split(",")
+    if (split[0] == '0')
+    {
+      
+      ref.set("4,Cancelled by Customer").then(function () {
+
+        res.json({
+          status: 1,
+          string: ""
+        })
+
+        const resRef = db.ref('Area/' + area + '/shop_testing/' + rid).push();
+        let mm = {
+          key: "abc",
+          accepted: "",
+          mute: 1
+        }
+        ref.set(mm)
+
+      }, (errorObject) => {
+        
+        res.json({
+          status: 0,
+          string: "Some Error Occurred, Please try again or contact Bytes Support"
+        })
+
+      });
+
+    }
+    else if (split[0] == '1')
+    {
+      res.json({
+        status: 2,
+        string: "Sorry ! Restaurant had confirmed your order just now. Please contact restaurant for cancellation"
+      })
+    }
+    else if (split[0] == '4')
+    {
+      res.json({
+        status: 2,
+        string: "Sorry ! Your order is already cancelled."
+      })
+    }
+    else
+    {
+      res.json({
+        status: 0,
+        string: "Some Error Occurred, Please try again or contact Bytes Support"
+      })
+    }
+  
+
+  }, (errorObject) => {
+    res.json({
+      status: 0,
+      string: "Some Error Occurred, Please try again or contact Bytes Support"
+    })
+  });
 
 
 })
+
+
 
 
 
