@@ -54,7 +54,7 @@ module.exports = {
             ).then((responce)=>{
                 if (responce != null)
                 {
-                   console.log(responce)
+                   resolve(responce)
                 }
                 else
                 {

@@ -783,10 +783,17 @@ router.post('/deleteDeliveryAddress', (req, res) => {
 
   bytesHelper.deleteDeliveryAddress(uid, did).then((responce => {
     if (responce != null) {
-      
+      res.json({
+        status: 1,
+        res: responce,
+        string: ""
+      })
     }
     else {
-      
+      res.json({
+        status: 0,
+        string: ""
+      })
     }
   }))
 
