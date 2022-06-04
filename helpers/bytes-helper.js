@@ -46,7 +46,7 @@ module.exports = {
 
     deleteDeliveryAddress:(uid, aid) => {
         return new Promise(async(resolve,reject)=>{
-            db.mycollection.update(
+            db.get().collection(constants.BYTES_ADDRESS).updateOne(
                 { '_id': ObjectId(uid) }, 
                 { $pull: { ad: { id: aid } } },
                 false, // Upsert

@@ -779,7 +779,7 @@ router.post('/getDeliveryAddress', (req, res) => {
 router.post('/deleteDeliveryAddress', (req, res) => {
 
   let uid = req.body.uid
-  let did = req.body.did
+  let did = req.body.aid
 
   bytesHelper.deleteDeliveryAddress(uid, did).then((responce => {
     if (responce != null) {
