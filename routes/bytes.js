@@ -1290,17 +1290,20 @@ router.post('/CancelOrderCustomer', (req, res) => {
   else {minuteString = date_ob.getMinutes().toString()}
 
   let timeF = hourString + ":" + minuteString +  " "+am
-  console.log(timeF)  
 
   const db = admin.database();
-  const ref = db.ref('Area/' + area + '/testing/' + oid + "/status");
+  const ref = db.ref('Area/' + area + '/testing/' + oid);
 
   ref.once('value', (snapshot) => {
-    let split = snapshot.val().split(",")
+    let split = snapshot.val().status.split(",")
     if (split[0] == '0')
     {
       
-      ref.set("4,Cancelled by Customer").then(function () {
+      let mao = {
+        '/status': '4,Cancelled by Customer',
+        '/clt': timeF
+      }
+      ref.update(mao).then(function () {
 
         res.json({
           status: 1,
