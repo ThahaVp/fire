@@ -775,6 +775,24 @@ router.post('/getDeliveryAddress', (req, res) => {
 
 })
 
+
+router.post('/deleteDeliveryAddress', (req, res) => {
+
+  let uid = req.body.uid
+  let did = req.body.did
+
+  bytesHelper.deleteDeliveryAddress(uid, did).then((responce => {
+    if (responce != null) {
+      
+    }
+    else {
+      
+    }
+  }))
+
+
+})
+
 router.post('/addDeliveryAddress', (req, res) => {
 
 
@@ -1019,7 +1037,11 @@ router.post('/makeOrder', (req, res) => {
                   dev: 2,
                   userid: uid,
                   status: "0,Order Placed",
-                  paid: pm
+                  paid: pm,
+                  clt: "",
+                  alt: "",
+                  dlt: "",
+                  olt: ""
                 }
 
                 const orderRef = db.ref('Area/' + area + '/testing').push();

@@ -44,6 +44,27 @@ module.exports = {
         })
     },
 
+    deleteDeliveryAddress:(uid, aid) => {
+        return new Promise(async(resolve,reject)=>{
+            db.mycollection.update(
+                { '_id': ObjectId(uid) }, 
+                { $pull: { ad: { id: aid } } },
+                false, // Upsert
+                true, // Multi
+            ).then((responce)=>{
+                if (responce != null)
+                {
+                   console.log(responce)
+                }
+                else
+                {
+                    reject()
+                }
+                
+           })
+        })
+    },
+
 
     getSingleAddress:(uid, aid) => {
         return new Promise(async(resolve,reject)=>{
