@@ -893,32 +893,32 @@ router.post('/makeOrder', (req, res) => {
   let resTitle = req.body.res_title
   let resPhone = req.body.res_phone
   let dis = parseFloat(req.body.dis)
-  
+
   var error = 0
 
   let ts = Date.now();
   let date_ob = new Date(ts);
-  let month = date_ob.getMonth() + 1 
-  
+  let month = date_ob.getMonth() + 1
+
   let monthString = ""
-  if (month<10){monthString = "0"+month}
-  else {monthString = month.toString()}
+  if (month < 10) { monthString = "0" + month }
+  else { monthString = month.toString() }
 
   let dayString = ""
-  if (date_ob.getDate() < 10) { dayString = "0"+date_ob.getDate()}
-  else {dayString = date_ob.getDate().toString()}
+  if (date_ob.getDate() < 10) { dayString = "0" + date_ob.getDate() }
+  else { dayString = date_ob.getDate().toString() }
 
   let hourString = ""
-  if (date_ob.getHours() < 10) { hourString = "0"+date_ob.getHours()}
-  else {hourString = date_ob.getHours().toString()}
-  
+  if (date_ob.getHours() < 10) { hourString = "0" + date_ob.getHours() }
+  else { hourString = date_ob.getHours().toString() }
+
   let minuteString = ""
-  if (date_ob.getMinutes() < 10) { minuteString = "0"+date_ob.getMinutes()}
-  else {minuteString = date_ob.getMinutes().toString()}
+  if (date_ob.getMinutes() < 10) { minuteString = "0" + date_ob.getMinutes() }
+  else { minuteString = date_ob.getMinutes().toString() }
 
   let secondString = ""
-  if (date_ob.getSeconds() < 10) { secondString = "0"+date_ob.getSeconds()}
-  else {secondString = date_ob.getSeconds().toString()}
+  if (date_ob.getSeconds() < 10) { secondString = "0" + date_ob.getSeconds() }
+  else { secondString = date_ob.getSeconds().toString() }
 
   let timeF = hourString + ":" + minuteString + ":" + secondString
   let dateF = dayString + "-" + monthString + "-" + date_ob.getFullYear()
@@ -1034,7 +1034,7 @@ router.post('/makeOrder', (req, res) => {
                   place: "",
                   ra: rainCharge,  // rain charge
                   res_id: rid,
-                  res_title: resTitle+','+resPhone,
+                  res_title: resTitle + ',' + resPhone,
                   tax: Math.round(totalTax),
                   itax: totalTax,
                   time: timeF,
@@ -1048,43 +1048,109 @@ router.post('/makeOrder', (req, res) => {
                   clt: "",
                   alt: "",
                   dlt: "",
-                  olt: ""
+                  olt: "",
+                  pm_id: ""
                 }
 
-                const orderRef = db.ref('Area/' + area + '/testing').push();
-                const resOrderRef = db.ref('Area/' + area + '/shop_testing/'+rid).push();
-                orderRef.set(orderOb).then(function () {
+                if (pm == 2)
+                {
+                  const mainRef = db.ref('Area/' + area + '/testing').push();
+                  const tempRef = db.ref('Area/' + area + '/temp_orders/' + mainRef.key);
+                  tempRef.set(orderOb).then(function () {
 
-                  res.json({
-                    status: 1,
-                    string: orderRef.key
-                  })
+                    let razorAm = subTotal * 100
+                    var options = {
+                      amount: razorAm.toString(), 
+                      currency: "INR",
+                      receipt: mainRef.key
+                    };
+                    instance.orders.create(options, function (err, order) {
+                      if (err) {
+                        
+                        res.json({
+                          status: 0,
+                          order_key: "",
+                          razor_order_key: "",
+                          msg: "Couldn't start online payment. Please try again",
+                          temp_order_key: "",
+                          total: 0
+                        })
 
-                  let userOrderData = {
-                    u: uid,
-                    k: orderRef.key,
-                    a: area,
-                    d: dateF
-                  }
-                  
-                  bytesHelper.addOrder(userOrderData)
-                  resOrderRef.set(orderRef.key)
+                      }
+                      else {
+                        res.json({
+                          status: 2,
+                          order_key: "",
+                          razor_order_key: order.id,
+                          msg: "",
+                          temp_order_key: mainRef.key,
+                          total: subTotal
+                        })
+                      }
+                    });
 
-                }, (errorObject) => {
-                  
-                  res.json({
-                    status: 0,
-                    string: "firebase pushing error"
-                  })
+                  }, (errorObject) => {
 
-                });
+                    res.json({
+                      status: 0,
+                      order_key: "",
+                      razor_order_key: "",
+                      msg: "Couldn't place your order, Please re order.",
+                      temp_order_key: "",
+                      total: 0
+                    })
+
+                  });
+                }
+                else
+                {
+                  const orderRef = db.ref('Area/' + area + '/testing').push();
+                  const resOrderRef = db.ref('Area/' + area + '/shop_testing/' + rid).push();
+                  orderRef.set(orderOb).then(function () {
+
+                    res.json({
+                      status: 1,
+                      order_key: orderRef.key,
+                      razor_order_key: "",
+                      msg: "",
+                      temp_order_key: "",
+                      total: subTotal
+                    })
+
+                    let userOrderData = {
+                      u: uid,
+                      k: orderRef.key,
+                      a: area,
+                      d: dateF
+                    }
+
+                    bytesHelper.addOrder(userOrderData)
+                    resOrderRef.set(orderRef.key)
+
+                  }, (errorObject) => {
+
+                    res.json({
+                      status: 0,
+                      order_key: "",
+                      razor_order_key: "",
+                      msg: "Couldn't place your order, Please re order.",
+                      temp_order_key: "",
+                      total: 0
+                    })
+
+                  });
+                }
               }
               else {
+
                 res.json({
                   status: 0,
-                  string: "address is null"
+                  order_key: "",
+                  razor_order_key: "",
+                  msg: "Couldn't get your address, Please re order.",
+                  temp_order_key: "",
+                  total: 0
                 })
-
               }
             }))
           }
@@ -1092,7 +1158,11 @@ router.post('/makeOrder', (req, res) => {
             error = 1
             res.json({
               status: 0,
-              string: "food db list is empty"
+              order_key: "",
+              razor_order_key: "",
+              msg: "Some error found in your cart items, Please re order.",
+              temp_order_key: "",
+              total: 0
             })
           }
 
@@ -1101,7 +1171,11 @@ router.post('/makeOrder', (req, res) => {
           error = 1
           res.json({
             status: 0,
-            string: "food db list is empty"
+            order_key: "",
+            razor_order_key: "",
+            msg: "Some error found in your cart items, Please re order.",
+            temp_order_key: "",
+            total: 0
           })
         }
 
@@ -1114,7 +1188,11 @@ router.post('/makeOrder', (req, res) => {
     else {
       res.json({
         status: 0,
-        string: "order parsing error"
+        order_key: "",
+        razor_order_key: "",
+        msg: "Some error found in your cart items, Please re order.",
+        temp_order_key: "",
+        total: 0
       })
     }
   }
@@ -1122,7 +1200,11 @@ router.post('/makeOrder', (req, res) => {
     error = 1
     res.json({
       status: 0,
-      string: "order string is empty"
+      order_key: "",
+      razor_order_key: "",
+      msg: "Some error found in your cart items, Please re order.",
+      temp_order_key: "",
+      total: 0
     })
 
   }
@@ -1131,7 +1213,11 @@ router.post('/makeOrder', (req, res) => {
   if (error == 1) {
     res.json({
       status: 0,
-      string: "error"
+      order_key: "",
+      razor_order_key: "",
+      msg: "Some error occurred, Please re order.",
+      temp_order_key: "",
+      total: 0
     })
   }
 
@@ -1157,75 +1243,53 @@ router.post('/calcDeliveryCharge', (req, res) => {
   var deliveryCharge = 0
 
 
-    axios.get('https://maps.googleapis.com/maps/api/distancematrix/json?units=km&origins=' + resLat + ',' + resLng + '&destinations=' + userLat + ',' + userLng + '&key=AIzaSyBaxdI9cgj-Cln97faKXvBHh4q-ccyTZNY')
-      .then(mapRes => {
-        
-        if (mapRes.data.status == 'OK' && mapRes.data.rows[0].elements[0].status == 'OK') {
-          distance = parseFloat(((mapRes.data.rows[0].elements[0].distance.value)/1000).toFixed(1))
-          duration = Math.round((mapRes.data.rows[0].elements[0].duration.value)/60)
-        }
-        else {
-          distance = getDistanceFromLatLonInKm(userLat, userLng, resLat, resLng)
-        }
+  axios.get('https://maps.googleapis.com/maps/api/distancematrix/json?units=km&origins=' + resLat + ',' + resLng + '&destinations=' + userLat + ',' + userLng + '&key=AIzaSyBaxdI9cgj-Cln97faKXvBHh4q-ccyTZNY')
+    .then(mapRes => {
 
-        if (itemTotal < minFree)
-        {
-          deliveryCharge = calcDC(distance, min_ch, min_km, min_km_2, km_ch, km_ch_2)
-        }
-        else
-        {
-          deliveryCharge = 0
-        }
-        
-        res.json({
-          status: 1,
-          dc: deliveryCharge,
-          dis: distance,
-          dur: duration
-        })
-
-      })
-      .catch(err => {
+      if (mapRes.data.status == 'OK' && mapRes.data.rows[0].elements[0].status == 'OK') {
+        distance = parseFloat(((mapRes.data.rows[0].elements[0].distance.value) / 1000).toFixed(1))
+        duration = Math.round((mapRes.data.rows[0].elements[0].duration.value) / 60)
+      }
+      else {
         distance = getDistanceFromLatLonInKm(userLat, userLng, resLat, resLng)
-        if (itemTotal < minFree)
-        {
-          deliveryCharge = calcDC(distance, min_ch, min_km, min_km_2, km_ch, km_ch_2)
-        }
-        else
-        {
-          deliveryCharge = 0
-        }
+      }
 
-        res.json({
-          status: 1,
-          dc: deliveryCharge,
-          dis: distance,
-          dur: duration
-        })
+      if (itemTotal < minFree) {
+        deliveryCharge = calcDC(distance, min_ch, min_km, min_km_2, km_ch, km_ch_2)
+      }
+      else {
+        deliveryCharge = 0
+      }
 
+      res.json({
+        status: 1,
+        dc: deliveryCharge,
+        dis: distance,
+        dur: duration
       })
 
+    })
+    .catch(err => {
+      distance = getDistanceFromLatLonInKm(userLat, userLng, resLat, resLng)
+      if (itemTotal < minFree) {
+        deliveryCharge = calcDC(distance, min_ch, min_km, min_km_2, km_ch, km_ch_2)
+      }
+      else {
+        deliveryCharge = 0
+      }
+
+      res.json({
+        status: 1,
+        dc: deliveryCharge,
+        dis: distance,
+        dur: duration
+      })
+
+    })
+
 
 })
 
-router.post('/razorOrder', (req, res) => {
-
-  var options = {
-    amount: 50000,  // amount in the smallest currency unit
-    currency: "INR",
-    receipt: "order_rcptid_11"
-  };
-  instance.orders.create(options, function(err, order) {
-    if (err)
-    {
-      console.log(err)
-    }
-    else
-    {
-      console.log(order)
-    }
-  });
-})
 
 router.post('/getOrderHistory', (req, res) => {
 
@@ -1238,31 +1302,25 @@ router.post('/getOrderHistory', (req, res) => {
 
   let ts = Date.now();
   let date_ob = new Date(ts);
-  let month = date_ob.getMonth() + 1 
-  
+  let month = date_ob.getMonth() + 1
+
   let monthString = ""
-  if (month<10){monthString = "0"+month}
-  else {monthString = month.toString()}
+  if (month < 10) { monthString = "0" + month }
+  else { monthString = month.toString() }
 
   bytesHelper.getOrderHistory(uid, skip, limit).then((orderRes => {
-    if (orderRes != null)
-    {
-      if (orderRes.length > 0)
-      {
+    if (orderRes != null) {
+      if (orderRes.length > 0) {
         array = orderRes
-        if (array.length < limit)
-        {end = 1}
+        if (array.length < limit) { end = 1 }
       }
-      else
-      {end = 1}
+      else { end = 1 }
     }
-    else
-    {
+    else {
       end = 1
     }
 
-    if (array.length > 0)
-    {
+    if (array.length > 0) {
       let mm = getOrdersFromArea(array, monthString)
 
       mm.then(function (result) {
@@ -1274,8 +1332,7 @@ router.post('/getOrderHistory', (req, res) => {
         })
       })
     }
-    else
-    {
+    else {
       res.json({
         status: 0,
         end: 0,
@@ -1283,7 +1340,7 @@ router.post('/getOrderHistory', (req, res) => {
       })
     }
 
-    
+
   }))
 
 
@@ -1300,34 +1357,31 @@ router.post('/CancelOrderCustomer', (req, res) => {
   let hourString = ""
   var am = ""
 
-  if (date_ob.getHours() >= 12)
-  { 
+  if (date_ob.getHours() >= 12) {
     let hh = date_ob.getHours() - 12
     am = "pm"
-    if (hh < 10) {hourString = "0"+hh.toString()}
-    else {hourString = hh.toString()}
+    if (hh < 10) { hourString = "0" + hh.toString() }
+    else { hourString = hh.toString() }
   }
-  else
-  {
+  else {
     am = "am"
-    if (date_ob.getHours() < 10) {hourString = "0"+date_ob.getHours()}
-    else {hourString = date_ob.getHours().toString()}
+    if (date_ob.getHours() < 10) { hourString = "0" + date_ob.getHours() }
+    else { hourString = date_ob.getHours().toString() }
   }
-  
-  let minuteString = ""
-  if (date_ob.getMinutes() < 10) { minuteString = "0"+date_ob.getMinutes()}
-  else {minuteString = date_ob.getMinutes().toString()}
 
-  let timeF = hourString + ":" + minuteString +  " "+am
+  let minuteString = ""
+  if (date_ob.getMinutes() < 10) { minuteString = "0" + date_ob.getMinutes() }
+  else { minuteString = date_ob.getMinutes().toString() }
+
+  let timeF = hourString + ":" + minuteString + " " + am
 
   const db = admin.database();
   const ref = db.ref('Area/' + area + '/testing/' + oid);
 
   ref.once('value', (snapshot) => {
     let split = snapshot.val().status.split(",")
-    if (split[0] == '0')
-    {
-      
+    if (split[0] == '0') {
+
       let mao = {
         '/status': '4,Cancelled by Customer',
         '/clt': timeF
@@ -1348,7 +1402,7 @@ router.post('/CancelOrderCustomer', (req, res) => {
         resRef.set(mm)
 
       }, (errorObject) => {
-        
+
         res.json({
           status: 0,
           string: "Some Error Occurred, Please try again or contact Bytes Support"
@@ -1357,33 +1411,93 @@ router.post('/CancelOrderCustomer', (req, res) => {
       });
 
     }
-    else if (split[0] == '1')
-    {
+    else if (split[0] == '1') {
       res.json({
         status: 2,
         string: "Sorry ! Restaurant had confirmed your order just now. Please contact restaurant for cancellation"
       })
     }
-    else if (split[0] == '4')
-    {
+    else if (split[0] == '4') {
       res.json({
         status: 2,
         string: "Sorry ! Your order is already cancelled."
+      })
+    }
+    else {
+      res.json({
+        status: 0,
+        string: "Some Error Occurred, Please try again or contact Bytes Support"
+      })
+    }
+
+
+  }, (errorObject) => {
+    res.json({
+      status: 0,
+      string: "Some Error Occurred, Please try again or contact Bytes Support"
+    })
+  });
+
+
+})
+
+router.post('/completeOrder', (req, res) => {
+
+  let oid = req.body.temp
+  let paymentId = req.body.paymentId
+  let rid = req.body.rid
+  let area = req.body.area
+
+  
+  const db = admin.database();
+  const tempRef = db.ref('Area/' + area + '/temp_orders/' + oid);
+  const ref = db.ref('Area/' + area + '/testing/' + oid);
+  const resOrderRef = db.ref('Area/' + area + '/shop_testing/' + rid).push();
+
+  tempRef.once('value', (snapshot) => {
+    
+    if (snapshot.val() != null)
+    {
+      let obj = snapshot.val()
+      obj.pid = paymentId
+      ref.set(pid).then(function () {
+
+        res.json({
+          status: 1,
+          string: oid
+        })
+
+        let userOrderData = {
+          u: obj.userid,
+          k: oid,
+          a: area,
+          d: obj.date
+        }
+
+        bytesHelper.addOrder(userOrderData)
+        resOrderRef.set(oid)
+
+      }, (errorObject) => {
+
+        res.json({
+          status: 0,
+          string: "Couldn't complete your order. Please amount is debited from account, please contact bytes support"
+        })
+
       })
     }
     else
     {
       res.json({
         status: 0,
-        string: "Some Error Occurred, Please try again or contact Bytes Support"
+        string: "Couldn't complete your order. Please amount is debited from account, please contact bytes support"
       })
     }
-  
 
   }, (errorObject) => {
     res.json({
       status: 0,
-      string: "Some Error Occurred, Please try again or contact Bytes Support"
+      string: "Couldn't complete your order. Please amount is debited from account, please contact bytes support"
     })
   });
 
@@ -1462,24 +1576,20 @@ function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
 function calcDC(distance, min_ch, min_km, min_km_2, km_ch, km_ch_2) {
 
   var dc = 0
-  if (distance > min_km)
-  {
+  if (distance > min_km) {
     let extraKm = distance - min_km
-    if (extraKm > min_km_2)
-    {
+    if (extraKm > min_km_2) {
       let extraKm2 = extraKm - min_km_2
       let extraCharge2 = extraKm2 * km_ch_2
       let xcs = min_km_2 * km_ch
       dc = min_ch + xcs + extraCharge2
     }
-    else
-    {  
+    else {
       let extraCharge = extraKm * km_ch
       dc = min_ch + extraCharge
     }
   }
-  else
-  {
+  else {
     dc = min_ch
   }
   return parseFloat(dc.toFixed(2));
@@ -1589,38 +1699,33 @@ async function getOrdersFromArea(keyArray, monthString) {
 
   var orderList = []
 
-  for (var i=0;i<keyArray.length;i++)
-      {
-        let mon = (keyArray[i].d.split("-"))[1]
-        if (mon == monthString)
-        {
-          const rrr = admin.database().ref('Area/' + keyArray[i].a + '/testing/' + keyArray[i].k)
-          await rrr.once('value', (snapshot) => {
-            if (snapshot.val() != null)
-            {
-              var ob = snapshot.val()
-              ob['id'] = keyArray[i].k
-              ob['an'] = keyArray[i].a
-              ob['loc'] = "orders"
-              orderList.push(ob)
-            }
-            
-          });
+  for (var i = 0; i < keyArray.length; i++) {
+    let mon = (keyArray[i].d.split("-"))[1]
+    if (mon == monthString) {
+      const rrr = admin.database().ref('Area/' + keyArray[i].a + '/testing/' + keyArray[i].k)
+      await rrr.once('value', (snapshot) => {
+        if (snapshot.val() != null) {
+          var ob = snapshot.val()
+          ob['id'] = keyArray[i].k
+          ob['an'] = keyArray[i].a
+          ob['loc'] = "orders"
+          orderList.push(ob)
         }
-        else
-        {
-          const rrr = admin.database().ref('Area/' + keyArray[i].a + '/order_dumb/' + keyArray[i].k)
-          await rrr.once('value', (snapshot) => {
-            if (snapshot.val() != null)
-            {
-              var ob = snapshot.val()
-              ob['id'] = keyArray[i].k
-              ob['an'] = keyArray[i].a
-              ob['loc'] = "order_dumb"
-              orderList.push(ob)
-            }
-          });
+
+      });
+    }
+    else {
+      const rrr = admin.database().ref('Area/' + keyArray[i].a + '/order_dumb/' + keyArray[i].k)
+      await rrr.once('value', (snapshot) => {
+        if (snapshot.val() != null) {
+          var ob = snapshot.val()
+          ob['id'] = keyArray[i].k
+          ob['an'] = keyArray[i].a
+          ob['loc'] = "order_dumb"
+          orderList.push(ob)
         }
-      }
+      });
+    }
+  }
   return orderList
 }
