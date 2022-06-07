@@ -1046,7 +1046,7 @@ router.post('/makeOrder', (req, res) => {
                   status: "0,Order Placed",
                   paid: pm,
                   clt: "",
-                  alt: "",
+                  act: "",
                   dlt: "",
                   olt: "",
                   pm_id: ""
@@ -1445,27 +1445,29 @@ router.post('/completeOrder', (req, res) => {
 
   let oid = req.body.temp
   let paymentId = req.body.paymentId
-  let rid = req.body.rid
   let area = req.body.area
 
   
   const db = admin.database();
   const tempRef = db.ref('Area/' + area + '/temp_orders/' + oid);
   const ref = db.ref('Area/' + area + '/testing/' + oid);
-  const resOrderRef = db.ref('Area/' + area + '/shop_testing/' + rid).push();
+  
 
   tempRef.once('value', (snapshot) => {
     
+    console.log(tempRef.toString())
     if (snapshot.val() != null)
     {
       let obj = snapshot.val()
       obj.pid = paymentId
-      ref.set(pid).then(function () {
+      ref.set(obj).then(function () {
 
         res.json({
           status: 1,
           string: oid
         })
+
+        const resOrderRef = db.ref('Area/' + area + '/shop_testing/' + obj.res_id).push();
 
         let userOrderData = {
           u: obj.userid,
@@ -1481,6 +1483,7 @@ router.post('/completeOrder', (req, res) => {
 
         res.json({
           status: 0,
+          msg:1,
           string: "Couldn't complete your order. Please amount is debited from account, please contact bytes support"
         })
 
@@ -1490,6 +1493,7 @@ router.post('/completeOrder', (req, res) => {
     {
       res.json({
         status: 0,
+        msg:2,
         string: "Couldn't complete your order. Please amount is debited from account, please contact bytes support"
       })
     }
@@ -1497,6 +1501,7 @@ router.post('/completeOrder', (req, res) => {
   }, (errorObject) => {
     res.json({
       status: 0,
+      msg:3,
       string: "Couldn't complete your order. Please amount is debited from account, please contact bytes support"
     })
   });
