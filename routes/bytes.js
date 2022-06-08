@@ -249,10 +249,16 @@ router.post('/getExtraInCart', (req, res) => {
         let rStatus = 0
         let rain = 0
         let mainSwitch = childshot.val().status
-        let rainObj = childshot.val().rain
 
-        if (rainObj.ra == 1) { rain = rainObj.rc }
-        else { rain = 0 }
+        if (childshot.hasChild("rain"))
+        {
+          let rainObj = childshot.val().rain
+
+          if (rainObj.ra == 1) { rain = rainObj.rc }
+          else { rain = 0 }
+        }
+        else {rain = 0}
+        
 
         if (mainSwitch == "open") {
           // check time here
@@ -1254,6 +1260,10 @@ router.post('/calcDeliveryCharge', (req, res) => {
         distance = getDistanceFromLatLonInKm(userLat, userLng, resLat, resLng)
       }
 
+      console.log("item total: "+itemTotal)
+      console.log("minFree: "+minFree)
+      console.log("distance: "+distance)
+      console.log("minCh: "+min_ch + "," + min_km + "," +min_km_2 + "," + km_ch + "," + km_ch_2)
       if (itemTotal < minFree) {
         deliveryCharge = calcDC(distance, min_ch, min_km, min_km_2, km_ch, km_ch_2)
       }
