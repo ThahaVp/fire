@@ -1260,11 +1260,8 @@ router.post('/calcDeliveryCharge', (req, res) => {
         distance = getDistanceFromLatLonInKm(userLat, userLng, resLat, resLng)
       }
 
-      console.log("item total: "+itemTotal)
-      console.log("minFree: "+minFree)
-      console.log("distance: "+distance)
-      console.log("minCh: "+min_ch + "," + min_km + "," +min_km_2 + "," + km_ch + "," + km_ch_2)
       if (itemTotal < minFree) {
+        console.log("calculating")
         deliveryCharge = calcDC(distance, min_ch, min_km, min_km_2, km_ch, km_ch_2)
       }
       else {
@@ -1598,14 +1595,17 @@ function calcDC(distance, min_ch, min_km, min_km_2, km_ch, km_ch_2) {
       let extraCharge2 = extraKm2 * km_ch_2
       let xcs = min_km_2 * km_ch
       dc = min_ch + xcs + extraCharge2
+      console.log("dc1 = "+ dc)
     }
     else {
       let extraCharge = extraKm * km_ch
       dc = min_ch + extraCharge
+      console.log("dc2 = "+ dc)
     }
   }
   else {
     dc = min_ch
+    console.log("dc3 = "+ dc)
   }
   return parseFloat(dc.toFixed(2));
 }
