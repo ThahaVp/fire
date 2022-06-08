@@ -1265,6 +1265,7 @@ router.post('/calcDeliveryCharge', (req, res) => {
         deliveryCharge = calcDC(distance, min_ch, min_km, min_km_2, km_ch, km_ch_2)
       }
       else {
+        console.log("is greater than")
         deliveryCharge = 0
       }
 
