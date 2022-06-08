@@ -1235,10 +1235,10 @@ router.post('/calcDeliveryCharge', (req, res) => {
   let userLng = req.body.userLng
   let resLat = req.body.resLat
   let resLng = req.body.resLng
-  let itemTotal = req.body.itemTotal
-  let minFree = req.body.minFree
-  let km_ch = req.body.km_ch
-  let km_ch_2 = req.body.km_ch_2
+  let itemTotal = parseFloat(req.body.itemTotal)
+  let minFree = parseFloat(req.body.minFree)
+  let km_ch = parseFloat(req.body.km_ch)
+  let km_ch_2 = parseFloat(req.body.km_ch_2)
 
   let min_ch = 20
   let min_km = 1
