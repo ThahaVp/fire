@@ -637,11 +637,14 @@ router.post('/verifyOtp', (req, resp) => {
   let id = req.body.id
   let apiKey = "7185fab5-db6e-11ec-9c12-0200cd936042"
 
+  console.log("0")
   if (phone == "1234567890" && otp == "000000")
   {
+    console.log("1")
     bytesHelper.getUserWithNumber(phone, dev_id, type, fcm, ti).then((responce => {
       console.log(responce)
       if (responce != null) {
+        console.log("2")
         resp.json({
           status: 1,
           user_status: 1,
