@@ -428,22 +428,26 @@ router.post('/acceptOrder', (req, res) => {
           ref.set("1," + time)
           resRef.set(resMap)
           
-          var message = {
-            notification: {
-              title: "Order Accepted",
-              body: "Hi " + customer + ", Your order has accepted and will be delivered as soon its ready !"
-            },
-            android: {
+          if (fcm != "")
+          {
+            var message = {
               notification: {
-                channel_id: "Order Accepted"
-              }
-            },
-            token: fcm
+                title: "Order Accepted",
+                body: "Hi " + customer + ", Your order has accepted and will be delivered as soon its ready !"
+              },
+              android: {
+                notification: {
+                  channel_id: "Order Accepted"
+                }
+              },
+              token: fcm
+            }
+  
+            admin.messaging().send(message).catch(function (error) {
+              console.log("notification error : " + error)
+            })
           }
-
-          admin.messaging().send(message).catch(function (error) {
-            console.log("notification error : " + error)
-          })
+          
 
             
           
