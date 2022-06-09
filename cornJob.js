@@ -7,12 +7,12 @@ admin.initializeApp({
     databaseURL: "https://delivery-58fd5.firebaseio.com"
   });
 
-const job = cron.schedule("1 14 17 * * *", () => {
-    
+const job = cron.schedule("1 1 19 * * *", () => {
+
     console.log("working")
     const db = admin.database();
-  const ref = db.ref('Area/ponnani/cron');
-  ref.set(new Date().toLocaleString()).then(function () {
+  const ref = db.ref('Area/ponnani/shop/fruitify/status');
+  ref.set("open").then(function () {
     console.log("done")
   }).catch(function (error) {
   console.log("error " + error)
@@ -20,9 +20,9 @@ const job = cron.schedule("1 14 17 * * *", () => {
 
 });
 
-const secondJob = cron.schedule("* * 17 * * *", () => {
-    console.log(new Date().toLocaleString())
-});
+// const secondJob = cron.schedule("* * 17 * * *", () => {
+//     console.log(new Date().toLocaleString())
+// });
 
-  secondJob.start()
+//   secondJob.start()
   job.start()
