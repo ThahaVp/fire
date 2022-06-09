@@ -415,6 +415,19 @@ router.post('/acceptOrder', (req, res) => {
 
         var orderStatus = snapshot.val().split(',')
         if (orderStatus[0] == '0') {
+
+          res.json({
+            status: 1,
+            string: ""
+          })
+          const resRef = db.ref('Area/' + area + '/shop_order/' + res_id + '/' + res_order_key);
+            let resMap = {
+              key: orderKey,
+              accepted: ""
+            }
+          ref.set("1," + time)
+          resRef.set(resMap)
+          
           var message = {
             notification: {
               title: "Order Accepted",
@@ -428,31 +441,12 @@ router.post('/acceptOrder', (req, res) => {
             token: fcm
           }
 
-          ref.set("1," + time).then(function () {
+          admin.messaging().send(message).catch(function (error) {
+            console.log("notification error : " + error)
+          })
 
-            const resRef = db.ref('Area/' + area + '/shop_order/' + res_id + '/' + res_order_key);
-            let resMap = {
-              key: orderKey,
-              accepted: ""
-            }
-            resRef.set(resMap).then(function () {
-              res.json({
-                status: 1
-              })
-            })
-
-
-            admin.messaging().send(message).catch(function (error) {
-              console.log("notification error : " + error)
-            })
-            // sendOrderToRider(orderKey, area)
-
-          }).catch(function (error) {
-            res.json({
-              status: 0,
-              msg: "upload error " + error
-            })
-          });
+            
+          
 
         }
         else {
