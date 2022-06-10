@@ -12,43 +12,50 @@ let arr = [
     ref: "food feast",
     area: "ponnani",
     hour: 15,
-    minute: 1
+    minute: 1,
+    status: "open"
   },
   {
     ref: "harbour heritage",
     area: "ponnani",
     hour: 12,
-    minute: 30
+    minute: 30,
+    status: "open"
   },
   {
     ref: "ikkayis kuzhimandhi",
     area: "ponnani",
     hour: 11,
-    minute: 1
+    minute: 1,
+    status: "open"
   },
   {
     ref: "jawas restaurant",
     area: "ponnani",
     hour: 16,
-    minute: 1
+    minute: 1,
+    status: "open"
   },
   {
     ref: "juicy",
     area: "ponnani",
     hour: 12,
-    minute: 1
+    minute: 1,
+    status: "open"
   },
   {
     ref: "modern foods",
     area: "ponnani",
     hour: 11,
-    minute: 30
+    minute: 30,
+    status: "open"
   },
   {
     ref: "scoopso",
     area: "ponnani",
     hour: 11,
-    minute: 1
+    minute: 1,
+    status: "open"
   },
 ]
 
@@ -66,11 +73,7 @@ const job = cron.schedule("1 1,30 11,12,15,16 * * *", () => {
     let obj = arr[i]
     if (hour == obj.hour && minutes == obj.minute) {
       const ref = db.ref('Area/' + obj.area + '/shop/' + obj.ref + '/status');
-      ref.set("open").then(function () {
-        console.log("done")
-      }).catch(function (error) {
-        console.log("error " + error)
-      });
+      ref.set(obj.status)
     }
   }
 

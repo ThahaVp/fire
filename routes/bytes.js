@@ -968,6 +968,7 @@ router.post('/makeOrder', (req, res) => {
   let ts = Date.now();
   let date_ob = new Date(ts);
   let month = date_ob.getMonth() + 1
+  var am = ""
 
   let monthString = ""
   if (month < 10) { monthString = "0" + month }
@@ -977,19 +978,24 @@ router.post('/makeOrder', (req, res) => {
   if (date_ob.getDate() < 10) { dayString = "0" + date_ob.getDate() }
   else { dayString = date_ob.getDate().toString() }
 
-  let hourString = ""
-  if (date_ob.getHours() < 10) { hourString = "0" + date_ob.getHours() }
-  else { hourString = date_ob.getHours().toString() }
+  
+  if (date_ob.getHours() >= 12) {
+    let hh = date_ob.getHours() - 12
+    am = "pm"
+    if (hh < 10) { hourString = "0" + hh.toString() }
+    else { hourString = hh.toString() }
+  }
+  else {
+    am = "am"
+    if (date_ob.getHours() < 10) { hourString = "0" + date_ob.getHours() }
+    else { hourString = date_ob.getHours().toString() }
+  }
 
   let minuteString = ""
   if (date_ob.getMinutes() < 10) { minuteString = "0" + date_ob.getMinutes() }
   else { minuteString = date_ob.getMinutes().toString() }
 
-  let secondString = ""
-  if (date_ob.getSeconds() < 10) { secondString = "0" + date_ob.getSeconds() }
-  else { secondString = date_ob.getSeconds().toString() }
-
-  let timeF = hourString + ":" + minuteString + ":" + secondString
+  let timeF = hourString + ":" + minuteString + " " + am
   let dateF = dayString + "-" + monthString + "-" + date_ob.getFullYear()
 
   var subTotal = 0
@@ -1575,6 +1581,26 @@ router.post('/completeOrder', (req, res) => {
     })
   });
 
+
+})
+
+router.post('/getHelpContact', (req, res) => {
+
+  let area = req.body.area
+  const db = admin.database();
+  const ref = db.ref('Area/area_list/'+area+'/admin_contact');
+
+  ref.once('value', (snapshot) => {
+    res.json({
+      status: 1,
+      string: snapshot.val()
+    })
+  }, (errorObject) => {
+    res.json({
+      status: 0,
+      string: ""
+    })
+  });
 
 })
 
