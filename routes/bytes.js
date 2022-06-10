@@ -1593,7 +1593,7 @@ router.post('/getHelpContact', (req, res) => {
   ref.once('value', (snapshot) => {
     res.json({
       status: 1,
-      string: snapshot.val()
+      string: snapshot.val().toString()
     })
   }, (errorObject) => {
     res.json({
