@@ -345,7 +345,7 @@ router.post('/getRestaurants', (req, res) => {
             res_in_city: result.res,
             slider: result.imgs,
             min_ch: min_ch,
-            latest_vs : 1.2
+            latest_vs : 1.1
           }
         })
       })
