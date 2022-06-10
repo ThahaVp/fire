@@ -344,7 +344,8 @@ router.post('/getRestaurants', (req, res) => {
           oData: {
             res_in_city: result.res,
             slider: result.imgs,
-            min_ch: min_ch
+            min_ch: min_ch,
+            latest_vs : 1.2
           }
         })
       })
@@ -357,7 +358,8 @@ router.post('/getRestaurants', (req, res) => {
         oData: {
           res_in_city: [],
           slider: [],
-          min_ch: min_ch
+          min_ch: min_ch,
+          latest_vs : 0
         }
       })
     }
@@ -368,7 +370,8 @@ router.post('/getRestaurants', (req, res) => {
       oData: {
         res_in_city: [],
         slider: [],
-        min_ch: min_ch
+        min_ch: min_ch,
+        latest_vs : 0
       }
     })
   });
