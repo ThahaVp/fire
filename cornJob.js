@@ -64,7 +64,7 @@ const job = cron.schedule("1 1,30 11,12,15,16 * * *", () => {
   for (var i = 0; i < arr.length; i++)
   {
     let obj = arr[i]
-    if (hour == obj.hour) {
+    if (hour == obj.hour && minutes == obj.minute) {
       const ref = db.ref('Area/' + obj.area + '/shop/' + obj.ref + '/status');
       ref.set("open").then(function () {
         console.log("done")
