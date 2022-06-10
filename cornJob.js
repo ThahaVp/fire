@@ -75,10 +75,4 @@ const job = cron.schedule("1 1,30 11,12,15,16 * * *", () => {
   }
 
 });
-
-// const secondJob = cron.schedule("* * 17 * * *", () => {
-//     console.log(new Date().toLocaleString())
-// });
-
-//   secondJob.start()
 job.start()

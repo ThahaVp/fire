@@ -48,7 +48,7 @@ router.get('/getExpenses', (req, res) => {
 router.get('/testing', (req, res) => {
 
   const db = admin.database();
-  const ref = db.ref('Area/ponnani/products/harbour heritage');
+  const ref = db.ref('Area/ponnani/products/ikkayis kuzhimandhi');
 
   ref.on('value', (snapshot) => {
 
@@ -71,9 +71,6 @@ router.get('/testing', (req, res) => {
       var k = keys[i]
       // k = k.replace(/\s+/g,'%20');
       map[keys[i] + "/i"] = k + ".webp"
-
-
-
     }
 
     res.json({
@@ -1126,7 +1123,7 @@ router.post('/makeOrder', (req, res) => {
 
                 if (pm == 2)
                 {
-                  const mainRef = db.ref('Area/' + area + '/testing').push();
+                  const mainRef = db.ref('Area/' + area + '/orders').push();
                   const tempRef = db.ref('Area/' + area + '/temp_orders/' + mainRef.key);
                   tempRef.set(orderOb).then(function () {
 
@@ -1176,8 +1173,8 @@ router.post('/makeOrder', (req, res) => {
                 }
                 else
                 {
-                  const orderRef = db.ref('Area/' + area + '/testing').push();
-                  const resOrderRef = db.ref('Area/' + area + '/shop_testing/' + rid).push();
+                  const orderRef = db.ref('Area/' + area + '/orders').push();
+                  const resOrderRef = db.ref('Area/' + area + '/shop_order/' + rid).push();
                   orderRef.set(orderOb).then(function () {
 
                     res.json({
@@ -1448,7 +1445,7 @@ router.post('/CancelOrderCustomer', (req, res) => {
   let timeF = hourString + ":" + minuteString + " " + am
 
   const db = admin.database();
-  const ref = db.ref('Area/' + area + '/testing/' + oid);
+  const ref = db.ref('Area/' + area + '/orders/' + oid);
 
   ref.once('value', (snapshot) => {
     let split = snapshot.val().status.split(",")
@@ -1465,7 +1462,7 @@ router.post('/CancelOrderCustomer', (req, res) => {
           string: ""
         })
 
-        const resRef = db.ref('Area/' + area + '/shop_testing/' + rid).push();
+        const resRef = db.ref('Area/' + area + '/shop_order/' + rid).push();
         let mm = {
           key: "abc",
           accepted: "",
@@ -1522,7 +1519,7 @@ router.post('/completeOrder', (req, res) => {
   
   const db = admin.database();
   const tempRef = db.ref('Area/' + area + '/temp_orders/' + oid);
-  const ref = db.ref('Area/' + area + '/testing/' + oid);
+  const ref = db.ref('Area/' + area + '/orders/' + oid);
   
 
   tempRef.once('value', (snapshot) => {
@@ -1539,7 +1536,7 @@ router.post('/completeOrder', (req, res) => {
           string: oid
         })
 
-        const resOrderRef = db.ref('Area/' + area + '/shop_testing/' + obj.res_id).push();
+        const resOrderRef = db.ref('Area/' + area + '/shop_order/' + obj.res_id).push();
 
         let userOrderData = {
           u: obj.userid,
@@ -1779,7 +1776,7 @@ async function getOrdersFromArea(keyArray, monthString) {
   for (var i = 0; i < keyArray.length; i++) {
     let mon = (keyArray[i].d.split("-"))[1]
     if (mon == monthString) {
-      const rrr = admin.database().ref('Area/' + keyArray[i].a + '/testing/' + keyArray[i].k)
+      const rrr = admin.database().ref('Area/' + keyArray[i].a + '/orders/' + keyArray[i].k)
       await rrr.once('value', (snapshot) => {
         if (snapshot.val() != null) {
           var ob = snapshot.val()
