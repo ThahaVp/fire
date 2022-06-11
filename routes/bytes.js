@@ -1761,7 +1761,7 @@ async function getResFromAreas(areaMap) {
     });
 
     // Getting Slider Images
-    const imgRef = admin.database().ref('Area/' + each + '/new_check/home_image')
+    const imgRef = admin.database().ref('Area/' + each + '/new_check/home_image_ios')
     await imgRef.once('value', (snapshot) => {
       imgs[each] = JSON.parse(snapshot.val())
     }, (errorObject) => {

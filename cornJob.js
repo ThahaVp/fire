@@ -57,6 +57,20 @@ let arr = [
     minute: 1,
     status: "open"
   },
+  {
+    ref: "albaik",
+    area: "ponnani",
+    hour: 14,
+    minute: 1,
+    status: "open"
+  },
+  {
+    ref: "sree durga",
+    area: "ponnani",
+    hour: 12,
+    minute: 1,
+    status: "open"
+  }
 ]
 
 
