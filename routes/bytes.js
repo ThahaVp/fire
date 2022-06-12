@@ -247,15 +247,14 @@ router.post('/getExtraInCart', (req, res) => {
         let rain = 0
         let mainSwitch = childshot.val().status
 
-        if (childshot.hasChild("rain"))
-        {
+        if (childshot.hasChild("rain")) {
           let rainObj = childshot.val().rain
 
           if (rainObj.ra == 1) { rain = rainObj.rc }
           else { rain = 0 }
         }
-        else {rain = 0}
-        
+        else { rain = 0 }
+
 
         if (mainSwitch == "open") {
           // check time here
@@ -345,7 +344,7 @@ router.post('/getRestaurants', (req, res) => {
             res_in_city: result.res,
             slider: result.imgs,
             min_ch: min_ch,
-            latest_vs : 1.1
+            latest_vs: 1.1
           }
         })
       })
@@ -359,7 +358,7 @@ router.post('/getRestaurants', (req, res) => {
           res_in_city: [],
           slider: [],
           min_ch: min_ch,
-          latest_vs : 0
+          latest_vs: 0
         }
       })
     }
@@ -371,7 +370,7 @@ router.post('/getRestaurants', (req, res) => {
         res_in_city: [],
         slider: [],
         min_ch: min_ch,
-        latest_vs : 0
+        latest_vs: 0
       }
     })
   });
@@ -421,15 +420,14 @@ router.post('/acceptOrder', (req, res) => {
             string: ""
           })
           const resRef = db.ref('Area/' + area + '/shop_order/' + res_id + '/' + res_order_key);
-            let resMap = {
-              key: orderKey,
-              accepted: ""
-            }
+          let resMap = {
+            key: orderKey,
+            accepted: ""
+          }
           ref.set("1," + time)
           resRef.set(resMap)
-          
-          if (fcm != "")
-          {
+
+          if (fcm != "") {
             var message = {
               notification: {
                 title: "Order Accepted",
@@ -442,15 +440,15 @@ router.post('/acceptOrder', (req, res) => {
               },
               token: fcm
             }
-  
+
             admin.messaging().send(message).catch(function (error) {
               console.log("notification error : " + error)
             })
           }
-          
 
-            
-          
+
+
+
 
         }
         else {
@@ -591,39 +589,37 @@ router.post('/sendOtp', (req, resp) => {
   let phone = req.body.phone
   let apiKey = "7185fab5-db6e-11ec-9c12-0200cd936042"
 
-  if (phone == '1234567890')
-  {
+  if (phone == '1234567890') {
     resp.json({
       status: 1,
       string: "temp"
     })
   }
-  else
-  {
+  else {
     axios.get('https://2factor.in/API/V1/' + apiKey + '/SMS/+91' + phone + '/AUTOGEN/Bytes App Otp Template')
 
-    // Show response data
-    .then(res => {
-      if (res.data.Status == "Success") {
-        resp.json({
-          status: 1,
-          string: res.data.Details
-        })
-      }
-      else {
+      // Show response data
+      .then(res => {
+        if (res.data.Status == "Success") {
+          resp.json({
+            status: 1,
+            string: res.data.Details
+          })
+        }
+        else {
+          resp.json({
+            status: 0,
+            string: ""
+          })
+        }
+      })
+      .catch(err => {
         resp.json({
           status: 0,
+          msg: err,
           string: ""
         })
-      }
-    })
-    .catch(err => {
-      resp.json({
-        status: 0,
-        msg: err,
-        string: ""
       })
-    })
   }
 
 })
@@ -639,8 +635,7 @@ router.post('/verifyOtp', (req, resp) => {
   let fcm = req.body.fcm
   let ti = "time"
 
-  if (phone == "1234567890" && otp == "000000")
-  {
+  if (phone == "1234567890" && otp == "000000") {
     bytesHelper.getUserWithNumber(phone, dev_id, type, fcm, ti).then((responce => {
       console.log(responce)
       if (responce != null) {
@@ -665,41 +660,56 @@ router.post('/verifyOtp', (req, resp) => {
       }
     }))
   }
-  else
-  {
+  else {
     axios.get('https://2factor.in/API/V1/' + apiKey + '/SMS/VERIFY/' + id + '/' + otp)
 
-    .then(res => {
-      if (res.data.Status == "Success") {
+      .then(res => {
+        if (res.data.Status == "Success") {
 
-        bytesHelper.getUserWithNumber(phone, dev_id, type, fcm, ti).then((responce => {
-          console.log(responce)
-          if (responce != null) {
-            resp.json({
-              status: 1,
-              user_status: 1,
-              user_data: responce
-            })
-          }
-          else {
-            resp.json({
-              status: 1,
-              user_status: 0,
-              user_data: {
-                _id: "",
-                n: "",
-                e: "",
-                id: "",
-                s: ""
-              }
-            })
-          }
-        }))
+          bytesHelper.getUserWithNumber(phone, dev_id, type, fcm, ti).then((responce => {
+            console.log(responce)
+            if (responce != null) {
+              resp.json({
+                status: 1,
+                user_status: 1,
+                user_data: responce
+              })
+            }
+            else {
+              resp.json({
+                status: 1,
+                user_status: 0,
+                user_data: {
+                  _id: "",
+                  n: "",
+                  e: "",
+                  id: "",
+                  s: ""
+                }
+              })
+            }
+          }))
 
-      }
-      else {
+        }
+        else {
+          resp.json({
+            status: 2,
+            user_status: 0,
+            user_data: {
+              _id: "",
+              n: "",
+              e: "",
+              id: "",
+              s: ""
+            },
+            msg: res.data.Status
+          })
+        }
+      })
+      .catch(err => {
         resp.json({
           status: 2,
+          msg: err,
           user_status: 0,
           user_data: {
             _id: "",
@@ -707,28 +717,12 @@ router.post('/verifyOtp', (req, resp) => {
             e: "",
             id: "",
             s: ""
-          },
-          msg: res.data.Status
+          }
         })
-      }
-    })
-    .catch(err => {
-      resp.json({
-        status: 2,
-        msg: err,
-        user_status: 0,
-        user_data: {
-          _id: "",
-          n: "",
-          e: "",
-          id: "",
-          s: ""
-        }
       })
-    })
   }
 
-  
+
 
 })
 
@@ -981,7 +975,7 @@ router.post('/makeOrder', (req, res) => {
   if (date_ob.getDate() < 10) { dayString = "0" + date_ob.getDate() }
   else { dayString = date_ob.getDate().toString() }
 
-  
+
   if (date_ob.getHours() >= 12) {
     let hh = date_ob.getHours() - 12
     am = "pm"
@@ -1130,21 +1124,20 @@ router.post('/makeOrder', (req, res) => {
                   pm_id: ""
                 }
 
-                if (pm == 2)
-                {
+                if (pm == 2) {
                   const mainRef = db.ref('Area/' + area + '/orders').push();
                   const tempRef = db.ref('Area/' + area + '/temp_orders/' + mainRef.key);
                   tempRef.set(orderOb).then(function () {
 
                     let razorAm = subTotal * 100
                     var options = {
-                      amount: razorAm.toString(), 
+                      amount: razorAm.toString(),
                       currency: "INR",
                       receipt: mainRef.key
                     };
                     instance.orders.create(options, function (err, order) {
                       if (err) {
-                        
+
                         res.json({
                           status: 0,
                           order_key: "",
@@ -1180,8 +1173,7 @@ router.post('/makeOrder', (req, res) => {
 
                   });
                 }
-                else
-                {
+                else {
                   const orderRef = db.ref('Area/' + area + '/orders').push();
                   const resOrderRef = db.ref('Area/' + area + '/shop_order/' + rid).push();
                   orderRef.set(orderOb).then(function () {
@@ -1525,17 +1517,16 @@ router.post('/completeOrder', (req, res) => {
   let paymentId = req.body.paymentId
   let area = req.body.area
 
-  
+
   const db = admin.database();
   const tempRef = db.ref('Area/' + area + '/temp_orders/' + oid);
   const ref = db.ref('Area/' + area + '/orders/' + oid);
-  
+
 
   tempRef.once('value', (snapshot) => {
-    
+
     console.log(tempRef.toString())
-    if (snapshot.val() != null)
-    {
+    if (snapshot.val() != null) {
       let obj = snapshot.val()
       obj.pid = paymentId
       ref.set(obj).then(function () {
@@ -1561,17 +1552,16 @@ router.post('/completeOrder', (req, res) => {
 
         res.json({
           status: 0,
-          msg:1,
+          msg: 1,
           string: "Couldn't complete your order. Please amount is debited from account, please contact bytes support"
         })
 
       })
     }
-    else
-    {
+    else {
       res.json({
         status: 0,
-        msg:2,
+        msg: 2,
         string: "Couldn't complete your order. Please amount is debited from account, please contact bytes support"
       })
     }
@@ -1579,7 +1569,7 @@ router.post('/completeOrder', (req, res) => {
   }, (errorObject) => {
     res.json({
       status: 0,
-      msg:3,
+      msg: 3,
       string: "Couldn't complete your order. Please amount is debited from account, please contact bytes support"
     })
   });
@@ -1591,7 +1581,7 @@ router.post('/getHelpContact', (req, res) => {
 
   let area = req.body.area
   const db = admin.database();
-  const ref = db.ref('Area/area_list/'+area+'/admin_contact');
+  const ref = db.ref('Area/area_list/' + area + '/admin_contact');
 
   ref.once('value', (snapshot) => {
     res.json({
@@ -1769,27 +1759,36 @@ async function getResFromAreas(areaMap) {
     });
   }
 
+
+  console.log(imgs)
   let imgKeys = Object.keys(imgs)
   var imgArray = []
   for (var i = 0; i < imgKeys.length; i++) {
     var ob = imgs[imgKeys[i]]
-    let subKey = Object.keys(ob)
-    let resArr = allResArray[imgKeys[i]]
+    
+    if (ob != null) {
+      let subKey = Object.keys(ob)
+      let resArr = allResArray[imgKeys[i]]
 
-    for (var j = 0; j < subKey.length; j++) {
-      var subOb = ob[subKey[j]]
-      if (subOb.type == 'restaurant' && !resArr.includes(subOb.target)) {
-        continue
+      for (var j = 0; j < subKey.length; j++)
+      {
+        var subOb = ob[subKey[j]]
+        if (subOb.type == 'restaurant' && !resArr.includes(subOb.target)) {
+          continue
+        }
+
+        subOb["id"] = subKey[j]
+        subOb["an"] = imgKeys[i]
+        delete subOb.description
+
+        imgArray.push(subOb)
       }
-
-      subOb["id"] = subKey[j]
-      subOb["an"] = imgKeys[i]
-      delete subOb.description
-
-      imgArray.push(subOb)
     }
 
+
   }
+
+
 
   let mm = {
     res: resList,
