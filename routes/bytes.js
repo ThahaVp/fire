@@ -445,11 +445,6 @@ router.post('/acceptOrder', (req, res) => {
               console.log("notification error : " + error)
             })
           }
-
-
-
-
-
         }
         else {
           res.json({
@@ -637,7 +632,6 @@ router.post('/verifyOtp', (req, resp) => {
 
   if (phone == "1234567890" && otp == "000000") {
     bytesHelper.getUserWithNumber(phone, dev_id, type, fcm, ti).then((responce => {
-      console.log(responce)
       if (responce != null) {
         resp.json({
           status: 1,
@@ -667,7 +661,6 @@ router.post('/verifyOtp', (req, resp) => {
         if (res.data.Status == "Success") {
 
           bytesHelper.getUserWithNumber(phone, dev_id, type, fcm, ti).then((responce => {
-            console.log(responce)
             if (responce != null) {
               resp.json({
                 status: 1,
@@ -896,7 +889,6 @@ router.post('/addDeliveryAddress', (req, res) => {
     }
   }
 
-  console.log(data)
 
 
   if (aid != "") {
@@ -1525,7 +1517,6 @@ router.post('/completeOrder', (req, res) => {
 
   tempRef.once('value', (snapshot) => {
 
-    console.log(tempRef.toString())
     if (snapshot.val() != null) {
       let obj = snapshot.val()
       obj.pid = paymentId
@@ -1760,12 +1751,11 @@ async function getResFromAreas(areaMap) {
   }
 
 
-  console.log(imgs)
   let imgKeys = Object.keys(imgs)
   var imgArray = []
   for (var i = 0; i < imgKeys.length; i++) {
     var ob = imgs[imgKeys[i]]
-    
+
     if (ob != null) {
       let subKey = Object.keys(ob)
       let resArr = allResArray[imgKeys[i]]
