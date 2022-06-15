@@ -39,8 +39,17 @@ module.exports = {
 
     getDeliveryAddress:(uid) => {
         return new Promise(async(resolve,reject)=>{
+            let empty = []
             let result = await db.get().collection(constants.BYTES_ADDRESS).findOne({_id:ObjectId(uid)})
-            resolve(result.ad)
+            if (result != null)
+            {
+                resolve(result.ad)
+            }
+            else
+            {
+                resolve(empty)
+            }
+            
         })
     },
 

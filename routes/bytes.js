@@ -29,18 +29,36 @@ const instance = new razorpay({
 router.get('/getExpenses', (req, res) => {
 
   const db = admin.database();
-  const ref = db.ref('Area/ponnani/expenses');
+  const ref = db.ref('Area/ponnani/shop');
 
   // Attach an asynchronous callback to read the data at our posts reference
   ref.on('value', (snapshot) => {
-    res.json({
-      status: 1,
-      list: snapshot.val()
+    var map = []
+    snapshot.forEach((child) => {
+
+      if (!child.hasChild("i"))
+      {
+        console.log(child.key)
+      }
+
+      // let obj = {
+      //   a: "edappal",
+      //   id: child.key,
+      //   l: child.val().l,
+      //   lat: child.val().lat,
+      //   lng: child.val().lng
+      // }
+      // map.push(obj)
     })
+   
+    // for (var i=0;i<map.length;i++)
+    // {
+    //   const listRef = db.ref('res_list').push();
+    //   listRef.set(map[i])
+    // }
+
   }, (errorObject) => {
-    res.json({
-      status: 0
-    })
+    
   });
 
 })
@@ -48,19 +66,11 @@ router.get('/getExpenses', (req, res) => {
 router.get('/testing', (req, res) => {
 
   const db = admin.database();
-  const ref = db.ref('Area/ponnani/products/ikkayis kuzhimandhi');
+  const ref = db.ref('Area/edappal/products/cafe di kebabista');
 
   ref.on('value', (snapshot) => {
 
     var map = {}
-
-    // snapshot.forEach((child) => {
-    //   child.val().forEach((sub) => {
-
-    //     map[sub.key] = "1"
-
-    //   })
-    // })
 
     var obj = snapshot.val()
     var keys = Object.keys(obj)
