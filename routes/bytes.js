@@ -1611,6 +1611,11 @@ router.post('/removePendingOrder', (req, res) => {
   const ref = db.ref('Area/'+area+'/riders/'+rid+'/pending/'+oid);
   ref.set(null)
 
+  res.json({
+    status: 1,
+    string: ""
+  })
+
 })
 
 router.post('/acceptOrderRider', (req, res) => {
@@ -1622,6 +1627,11 @@ router.post('/acceptOrderRider', (req, res) => {
   const db = admin.database();
   const ref = db.ref('Area/'+area+'/riders/'+rid+'/pending/'+oid);
   ref.set(1)
+
+  res.json({
+    status: 1,
+    string: ""
+  })
 
 })
 
