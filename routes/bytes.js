@@ -1609,11 +1609,11 @@ router.post('/removePendingOrder', (req, res) => {
 
   const db = admin.database();
   const ref = db.ref('Area/'+area+'/riders/'+rid+'/pending/'+oid);
-  ref.set(null)
-
-  res.json({
-    status: 1,
-    string: ""
+  ref.set(null).then(function () {
+    res.json({
+      status: 1,
+      string: ""
+    })
   })
 
 })
@@ -1622,15 +1622,18 @@ router.post('/acceptOrderRider', (req, res) => {
 
   let oid = req.body.oid
   let rid = req.body.rid
+  let phone = req.body.phone
   let area = req.body.area
 
   const db = admin.database();
+  const orderRef = db.ref('Area/'+area+'/orders/'+oid+'/dboy');
   const ref = db.ref('Area/'+area+'/riders/'+rid+'/pending/'+oid);
-  ref.set(1)
-
-  res.json({
-    status: 1,
-    string: ""
+  orderRef.set(rid+","+phone).then(function () {
+    res.json({
+      status: 1,
+      string: ""
+    })
+    ref.set(1)
   })
 
 })
