@@ -1622,17 +1622,17 @@ router.post('/acceptOrderRider', (req, res) => {
 
   let oid = req.body.oid
   let rid = req.body.rid
-  let phone = req.body.phone
+  let name = req.body.name
   let area = req.body.area
 
   const db = admin.database();
   const orderRef = db.ref('Area/'+area+'/orders/'+oid+'/dboy');
   const ref = db.ref('Area/'+area+'/riders/'+rid+'/pending/'+oid);
-  orderRef.set(rid+","+phone).then(function () {
+  orderRef.set(name+","+rid).then(function () {
     res.json({
-      status: 1,
-      string: ""
-    })
+        status: 1,
+        string: ""
+      })
     ref.set(1)
   })
 
