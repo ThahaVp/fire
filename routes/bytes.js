@@ -1599,6 +1599,33 @@ router.post('/getHelpContact', (req, res) => {
 })
 
 
+//// RIDER APIS ///
+
+router.post('/removePendingOrder', (req, res) => {
+
+  let oid = req.body.oid
+  let rid = req.body.rid
+  let area = req.body.area
+
+  const db = admin.database();
+  const ref = db.ref('Area/'+area+'/riders/'+rid+'/pending/'+oid);
+  ref.set(null)
+
+})
+
+router.post('/acceptOrderRider', (req, res) => {
+
+  let oid = req.body.oid
+  let rid = req.body.rid
+  let area = req.body.area
+
+  const db = admin.database();
+  const ref = db.ref('Area/'+area+'/riders/'+rid+'/pending/'+oid);
+  ref.set(1)
+
+})
+
+
 
 
 

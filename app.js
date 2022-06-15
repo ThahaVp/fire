@@ -11,7 +11,6 @@ var adminRouter = require('./routes/admin');
 var superRouter = require('./routes/super');
 var rvRouter = require('./routes/rv');
 var bytesRouter = require('./routes/bytes');
-var bytesRiderRouter = require('./routes/bytes_rider');
 var salesRouter = require('./routes/sales');
 var session = require('express-session')
 var vhost = require('vhost')
@@ -40,7 +39,6 @@ app.use('/admin', adminRouter);
 app.use('/su', superRouter);
 app.use('/rv/api', rvRouter);
 app.use('/bytes/api', bytesRouter);
-app.use('/bytes_rider/api', bytesRiderRouter);
 app.use('/sales', salesRouter);
 
 
