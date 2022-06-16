@@ -317,7 +317,7 @@ router.post('/getRestaurants', (req, res) => {
   var userLat = req.body.lat
   var userLng = req.body.lng
   var areaMap = {}
-  let min_ch = 20
+  let min_ch = 0
 
   ref.once('value', (snapshot) => {
 
