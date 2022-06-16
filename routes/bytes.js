@@ -36,8 +36,7 @@ router.get('/getExpenses', (req, res) => {
     var map = []
     snapshot.forEach((child) => {
 
-      if (!child.hasChild("i"))
-      {
+      if (!child.hasChild("i")) {
         console.log(child.key)
       }
 
@@ -50,7 +49,7 @@ router.get('/getExpenses', (req, res) => {
       // }
       // map.push(obj)
     })
-   
+
     // for (var i=0;i<map.length;i++)
     // {
     //   const listRef = db.ref('res_list').push();
@@ -58,7 +57,7 @@ router.get('/getExpenses', (req, res) => {
     // }
 
   }, (errorObject) => {
-    
+
   });
 
 })
@@ -1465,6 +1464,15 @@ router.post('/CancelOrderCustomer', (req, res) => {
           string: ""
         })
 
+        if (snapshot.hasChild("paid") && snapshot.hasChild("pid")) {
+          let paym = parseInt(snapshot.val().paid)
+          let pid = snapshot.val().pid
+          if (paym == 2 && pid != '') {
+            instance.payments.refund(pid)
+          }
+        }
+
+
         const resRef = db.ref('Area/' + area + '/shop_order/' + rid).push();
         let mm = {
           key: "abc",
@@ -1598,6 +1606,22 @@ router.post('/getHelpContact', (req, res) => {
 
 })
 
+router.post('/refund', (req, res) => {
+
+  instance.payments.refund('pay_JhS3PIsqZaKtGi', function (err, success) {
+    if (err) {
+      res.json(err)
+    }
+    else {
+      res.json(success)
+    }
+  })
+
+
+})
+
+
+
 
 //// RIDER APIS ///
 
@@ -1608,7 +1632,7 @@ router.post('/removePendingOrder', (req, res) => {
   let area = req.body.area
 
   const db = admin.database();
-  const ref = db.ref('Area/'+area+'/riders/'+rid+'/pending/'+oid);
+  const ref = db.ref('Area/' + area + '/riders/' + rid + '/pending/' + oid);
   ref.set(null).then(function () {
     res.json({
       status: 1,
@@ -1626,15 +1650,89 @@ router.post('/acceptOrderRider', (req, res) => {
   let area = req.body.area
 
   const db = admin.database();
-  const orderRef = db.ref('Area/'+area+'/orders/'+oid+'/dboy');
-  const ref = db.ref('Area/'+area+'/riders/'+rid+'/pending/'+oid);
-  orderRef.set(name+","+rid).then(function () {
+  const orderRef = db.ref('Area/' + area + '/orders/' + oid + '/dboy');
+  const ref = db.ref('Area/' + area + '/riders/' + rid + '/pending/' + oid);
+  orderRef.set(name + "," + rid).then(function () {
     res.json({
-        status: 1,
-        string: ""
-      })
+      status: 1,
+      string: ""
+    })
     ref.set(1)
   })
+
+})
+
+router.post('/changeStatusRider', (req, res) => {
+
+  let oid = req.body.oid
+  let rid = req.body.rid
+  let name = req.body.name
+  let area = req.body.area
+
+  const db = admin.database();
+  const orderRef = db.ref('Area/' + area + '/orders/' + oid);
+
+  orderRef.once('value', (snapshot) => {
+    let temp = snapshot.val().status.split(",")
+    let status = parseInt(temp[0])
+
+    console.log(snapshot.val().dboy)
+    console.log(name + "," + rid)
+    if (snapshot.val().dboy == name + "," + rid) {
+      if (status == 1) {
+        let map = {
+          "/status": "2," + name + "/" + rid,
+          "/olt": "time"
+        }
+        orderRef.update(map).then(function () {
+          res.json({
+            status: 1,
+            string: "Make Delivered"
+          })
+        })
+      }
+      else if (status == 2) {
+        let map = {
+          "/status": "3, Delivered Successfully",
+          "/dlt": "time"
+        }
+
+        let te = snapshot.val().distance.toString()
+        var dis = 0
+        if (te != '')
+          dis = parseFloat(te)
+
+        if (dis > 0) {
+
+        }
+        else {
+          res.json({
+            status: -1,
+            string: "No Distance"
+          })
+        }
+        console.log(dis)
+        // orderRef.update(map).then(function () {
+        //   res.json({
+        //     status: 1,
+        //     string: "done"
+        //   })    
+        // })
+      }
+    }
+    else {
+      res.json({
+        status: 0,
+        string: "Rider not matched"
+      })
+    }
+  }, (errorObject) => {
+    res.json({
+      status: 0,
+      string: "Order data not found"
+    })
+  });
+
 
 })
 
@@ -1810,8 +1908,7 @@ async function getResFromAreas(areaMap) {
       let subKey = Object.keys(ob)
       let resArr = allResArray[imgKeys[i]]
 
-      for (var j = 0; j < subKey.length; j++)
-      {
+      for (var j = 0; j < subKey.length; j++) {
         var subOb = ob[subKey[j]]
         if (subOb.type == 'restaurant' && !resArr.includes(subOb.target)) {
           continue
