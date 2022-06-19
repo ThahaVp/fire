@@ -822,6 +822,58 @@ router.post('/updateUser', (req, res) => {
 
 })
 
+router.post('/updateToken', (req, res) => {
+
+  let uid = req.body.uid
+  let fcm = req.body.fcm
+  let vs = req.body.vs
+
+  let ts = Date.now();
+  let date_ob = new Date(ts);
+  let month = date_ob.getMonth() + 1
+
+  let monthString = ""
+  if (month < 10) { monthString = "0" + month }
+  else { monthString = month.toString() }
+
+  let dayString = ""
+  if (date_ob.getDate() < 10) { dayString = "0" + date_ob.getDate() }
+  else { dayString = date_ob.getDate().toString() }
+
+  let hourString = ""
+  if (date_ob.getHours() < 10) { hourString = "0" + date_ob.getHours() }
+  else { hourString = date_ob.getHours().toString() }
+
+  let minuteString = ""
+  if (date_ob.getMinutes() < 10) { minuteString = "0" + date_ob.getMinutes() }
+  else { minuteString = date_ob.getMinutes().toString() }
+
+  let secondString = ""
+  if (date_ob.getSeconds() < 10) { secondString = "0" + date_ob.getSeconds() }
+  else { secondString = date_ob.getSeconds().toString() }
+
+  let timeF = hourString + ":" + minuteString + ":" + secondString
+  let dateF = dayString + "-" + monthString + "-" + date_ob.getFullYear() + "," + timeF
+
+
+  bytesHelper.updateToken(uid, fcm, vs, dateF).then((responce => {
+    if (responce != null && responce.modifiedCount == 1) {
+      res.json({
+        status: 1,
+        string: ""
+      })
+    }
+    else {
+      res.json({
+        status: 0,
+        string: ""
+      })
+    }
+  }))
+
+
+})
+
 router.post('/getDeliveryAddress', (req, res) => {
 
   let uid = req.body.uid

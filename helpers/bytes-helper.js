@@ -182,6 +182,24 @@ module.exports = {
                 })
            
         })
+    },
+
+    updateToken:(uid, fcm, vs, lo) => {
+        return new Promise(async(resolve,reject)=>{
+            db.get().collection(constants.BYTES_USERS).updateOne(
+                { "_id": ObjectId(uid)}, 
+                { $set: {
+                    "la": lo, // last active
+                    "f": fcm,
+                    "v": vs
+                }}
+                
+               ).then((responce)=>{
+                console.log(responce)
+                   resolve(responce)
+                })
+           
+        })
     }
 
 
