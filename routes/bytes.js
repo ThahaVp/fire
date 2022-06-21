@@ -720,6 +720,9 @@ router.post('/verifyOtp', (req, resp) => {
   else {
     
     request('https://2factor.in/API/V1/' + apiKey + '/SMS/VERIFY/' + id + '/' + otp, { json: true }, (error, responce, body) => {
+      console.log(error)
+      console.log(body)
+      console.log(responce)
   if (error)
   {
     resp.json({
