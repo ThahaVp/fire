@@ -1838,8 +1838,9 @@ router.post('/changeStatusRider', (req, res) => {
   let name = req.body.name
   let area = req.body.area
 
-  var currentDate = new Date();
-  var date_ob = new Date(currentDate.getTime() + minutesToAdd * 60000);
+
+  let ts = Date.now();
+  let date_ob = new Date(ts);
 
   let month = date_ob.getMonth() + 1
   let monthString = ""
