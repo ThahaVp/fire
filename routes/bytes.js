@@ -1909,7 +1909,7 @@ router.post('/changeStatusRider', (req, res) => {
           }
       
         const riderSuccRef = db.ref('Area/' + area + '/orders_rider/' + rid+ '/' + oid);
-        riderOrderRef.set(sucMap)
+        riderSuccRef.set(sucMap)
       }
     }
     else {
