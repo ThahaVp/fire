@@ -5,6 +5,7 @@ var bytesHelper = require('../helpers/bytes-helper');
 var pdf = require('html-pdf');
 var options = { format: 'A4' };
 var razorpay = require('razorpay')
+const request = require('request');
 
 
 var admin = require("firebase-admin");
@@ -601,30 +602,56 @@ router.post('/sendOtp', (req, resp) => {
     })
   }
   else {
-    axios.get('https://2factor.in/API/V1/' + apiKey + '/SMS/+91' + phone + '/AUTOGEN/Bytes App Otp Template')
+    request('https://2factor.in/API/V1/' + apiKey + '/SMS/+91' + phone + '/AUTOGEN/Bytes App Otp Template', { json: true }, (error, responce, body) => {
+  if (error)
+  {
+    resp.json({
+      status: 0,
+      msg: error,
+      string: ""
+    })
+  }
+  else
+  {
+    if (body.Status == "Success") {
+      resp.json({
+        status: 1,
+        string: body.Details
+      })
+    }
+    else {
+      resp.json({
+        status: 0,
+        string: ""
+      })
+    }
+  }
+});
 
-      // Show response data
-      .then(res => {
-        if (res.data.Status == "Success") {
-          resp.json({
-            status: 1,
-            string: res.data.Details
-          })
-        }
-        else {
-          resp.json({
-            status: 0,
-            string: ""
-          })
-        }
-      })
-      .catch(err => {
-        resp.json({
-          status: 0,
-          msg: err,
-          string: ""
-        })
-      })
+    // axios.get('https://2factor.in/API/V1/' + apiKey + '/SMS/+91' + phone + '/AUTOGEN/Bytes App Otp Template')
+
+    //   // Show response data
+    //   .then(res => {
+        // if (res.data.Status == "Success") {
+        //   resp.json({
+        //     status: 1,
+        //     string: res.data.Details
+        //   })
+        // }
+        // else {
+        //   resp.json({
+        //     status: 0,
+        //     string: ""
+        //   })
+        // }
+    //   })
+    //   .catch(err => {
+        // resp.json({
+        //   status: 0,
+        //   msg: err,
+        //   string: ""
+        // })
+    //   })
   }
 
 })
@@ -691,38 +718,38 @@ router.post('/verifyOtp', (req, resp) => {
     }))
   }
   else {
-    axios.get('https://2factor.in/API/V1/' + apiKey + '/SMS/VERIFY/' + id + '/' + otp)
-
-      .then(res => {
-        if (res.data.Status == "Success") {
-
-          bytesHelper.getUserWithNumber(phone, dev_id, type, fcm, ti).then((responce => {
-            if (responce != null) {
-              resp.json({
-                status: 1,
-                user_status: 1,
-                user_data: responce
-              })
-            }
-            else {
-              resp.json({
-                status: 1,
-                user_status: 0,
-                user_data: {
-                  _id: "",
-                  n: "",
-                  e: "",
-                  id: "",
-                  s: ""
-                }
-              })
-            }
-          }))
-
+    
+    request('https://2factor.in/API/V1/' + apiKey + '/SMS/VERIFY/' + id + '/' + otp, { json: true }, (error, responce, body) => {
+  if (error)
+  {
+    resp.json({
+      status: 2,
+      msg: error,
+      user_status: 0,
+      user_data: {
+        _id: "",
+        n: "",
+        e: "",
+        id: "",
+        s: ""
+      }
+    })
+  }
+  else
+  {
+    if (body.Status == "Success") {
+      
+      bytesHelper.getUserWithNumber(phone, dev_id, type, fcm, ti).then((responce => {
+        if (responce != null) {
+          resp.json({
+            status: 1,
+            user_status: 1,
+            user_data: responce
+          })
         }
         else {
           resp.json({
-            status: 2,
+            status: 1,
             user_status: 0,
             user_data: {
               _id: "",
@@ -730,25 +757,87 @@ router.post('/verifyOtp', (req, resp) => {
               e: "",
               id: "",
               s: ""
-            },
-            msg: res.data.Status
+            }
           })
         }
+      }))
+    }
+    else {
+      resp.json({
+        status: 2,
+        user_status: 0,
+        user_data: {
+          _id: "",
+          n: "",
+          e: "",
+          id: "",
+          s: ""
+        },
+        msg: body.Status
       })
-      .catch(err => {
-        resp.json({
-          status: 2,
-          msg: err,
-          user_status: 0,
-          user_data: {
-            _id: "",
-            n: "",
-            e: "",
-            id: "",
-            s: ""
-          }
-        })
-      })
+    }
+  }
+});
+
+
+    // axios.get('https://2factor.in/API/V1/' + apiKey + '/SMS/VERIFY/' + id + '/' + otp)
+
+    //   .then(res => {
+    //     if (res.data.Status == "Success") {
+
+    //       bytesHelper.getUserWithNumber(phone, dev_id, type, fcm, ti).then((responce => {
+    //         if (responce != null) {
+    //           resp.json({
+    //             status: 1,
+    //             user_status: 1,
+    //             user_data: responce
+    //           })
+    //         }
+    //         else {
+    //           resp.json({
+    //             status: 1,
+    //             user_status: 0,
+    //             user_data: {
+    //               _id: "",
+    //               n: "",
+    //               e: "",
+    //               id: "",
+    //               s: ""
+    //             }
+    //           })
+    //         }
+    //       }))
+
+    //     }
+    //     else {
+    //       resp.json({
+    //         status: 2,
+    //         user_status: 0,
+    //         user_data: {
+    //           _id: "",
+    //           n: "",
+    //           e: "",
+    //           id: "",
+    //           s: ""
+    //         },
+    //         msg: res.data.Status
+    //       })
+    //     }
+    //   })
+    //   .catch(err => {
+    //     resp.json({
+    //       status: 2,
+    //       msg: err,
+    //       user_status: 0,
+    //       user_data: {
+    //         _id: "",
+    //         n: "",
+    //         e: "",
+    //         id: "",
+    //         s: ""
+    //       }
+    //     })
+    //   })
   }
 
 

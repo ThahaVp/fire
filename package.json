@@ -22,6 +22,7 @@
     "morgan": "~1.9.1",
     "node-cron": "^3.0.1",
     "razorpay": "^2.8.1",
+    "request": "^2.81.0",
     "vhost": "^3.0.2"
   },
   "devDependencies": {
