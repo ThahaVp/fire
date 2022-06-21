@@ -601,8 +601,7 @@ router.post('/sendOtp', (req, resp) => {
     })
   }
   else {
-    axios.get('https://2factor.in/API/V1/' + apiKey + '/SMS/+91' + phone)
-    // axios.get('https://2factor.in/API/V1/' + apiKey + '/SMS/+91' + phone + '/AUTOGEN/Bytes App Otp Template')
+    axios.get('https://2factor.in/API/V1/' + apiKey + '/SMS/+91' + phone + '/AUTOGEN/Bytes App Otp Template')
 
       // Show response data
       .then(res => {
