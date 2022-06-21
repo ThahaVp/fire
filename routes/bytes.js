@@ -720,7 +720,9 @@ router.post('/verifyOtp', (req, resp) => {
   else {
     
     request('https://2factor.in/API/V1/' + apiKey + '/SMS/VERIFY/' + id + '/' + otp, { json: true }, (error, responce, body) => {
-      console.log(error)
+      console.log("error "+error)  
+      console.log("body "+body)
+    console.log(error)
       console.log(body)
       console.log(responce)
   if (error)
@@ -742,7 +744,7 @@ router.post('/verifyOtp', (req, resp) => {
   {
     if (body.Status == "Success") {
       
-      bytesHelper.getUserWithNumber(phone, dev_id, type, fcm, ti).then((responce => {
+      bytesHelper.getUserWithNumber(phone, dev_id, type, fcm, dateF).then((responce => {
         if (responce != null) {
           resp.json({
             status: 1,
