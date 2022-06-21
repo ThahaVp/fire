@@ -43,6 +43,8 @@
             <!-- Page content-->
             <div class="container-fluid">
 
+                <audio id="xyz" src="/assets/audio/tune.mp3" preload="auto"></audio>
+
                 <div class="col-xl-10  col-lg-12 mt-3">
                     <div class="card">
                         <div class="card-header">
@@ -158,6 +160,15 @@
                                             <td class="text-muted">Oct 16, 2017</td>
                                             </td>
                                         </tr>
+
+                                        <tr>
+                                            <td>
+                                                <input type="button" value="start" onclick="ringSound()">
+                                            </td>
+                                            <td>
+                                                <input type="button" value="stop" onclick="stopSound()">
+                                            </td>
+                                        </tr>
                                         
                                     </tbody>
                                 </table>
@@ -172,6 +183,23 @@
         </div>
     </div>
 
+
+
+
     </body>
+
+    <script>
+        var aud = document.getElementById('xyz')
+        
+function ringSound() {
+    aud.loop = true
+    aud.play()
+        }
+
+function stopSound() {
+    aud.loop = false
+        }
+
+    </script>
 
 </html>

@@ -318,6 +318,7 @@ router.post('/getRestaurants', (req, res) => {
   var userLng = req.body.lng
   var areaMap = {}
   let min_ch = 20
+  let latest_vs = 1.1
 
   ref.once('value', (snapshot) => {
 
@@ -353,7 +354,7 @@ router.post('/getRestaurants', (req, res) => {
             res_in_city: result.res,
             slider: result.imgs,
             min_ch: min_ch,
-            latest_vs: 1.1
+            latest_vs: latest_vs
           }
         })
       })
@@ -600,7 +601,8 @@ router.post('/sendOtp', (req, resp) => {
     })
   }
   else {
-    axios.get('https://2factor.in/API/V1/' + apiKey + '/SMS/+91' + phone + '/AUTOGEN/Bytes App Otp Template')
+    axios.get('https://2factor.in/API/V1/' + apiKey + '/SMS/+91' + phone)
+    // axios.get('https://2factor.in/API/V1/' + apiKey + '/SMS/+91' + phone + '/AUTOGEN/Bytes App Otp Template')
 
       // Show response data
       .then(res => {
@@ -637,10 +639,36 @@ router.post('/verifyOtp', (req, resp) => {
   let dev_id = req.body.device_id
   let type = parseInt(req.body.type)
   let fcm = req.body.fcm
-  let ti = "time"
+  
+  let ts = Date.now();
+  let date_ob = new Date(ts);
+  let month = date_ob.getMonth() + 1
+
+  let monthString = ""
+  if (month < 10) { monthString = "0" + month }
+  else { monthString = month.toString() }
+
+  let dayString = ""
+  if (date_ob.getDate() < 10) { dayString = "0" + date_ob.getDate() }
+  else { dayString = date_ob.getDate().toString() }
+
+  let hourString = ""
+  if (date_ob.getHours() < 10) { hourString = "0" + date_ob.getHours() }
+  else { hourString = date_ob.getHours().toString() }
+
+  let minuteString = ""
+  if (date_ob.getMinutes() < 10) { minuteString = "0" + date_ob.getMinutes() }
+  else { minuteString = date_ob.getMinutes().toString() }
+
+  let secondString = ""
+  if (date_ob.getSeconds() < 10) { secondString = "0" + date_ob.getSeconds() }
+  else { secondString = date_ob.getSeconds().toString() }
+
+  let timeF = hourString + ":" + minuteString + ":" + secondString
+  let dateF = dayString + "-" + monthString + "-" + date_ob.getFullYear() + "," + timeF
 
   if (phone == "1234567890" && otp == "000000") {
-    bytesHelper.getUserWithNumber(phone, dev_id, type, fcm, ti).then((responce => {
+    bytesHelper.getUserWithNumber(phone, dev_id, type, fcm, dateF).then((responce => {
       if (responce != null) {
         resp.json({
           status: 1,
@@ -1754,22 +1782,14 @@ router.post('/changeStatusRider', (req, res) => {
         if (te != '')
           dis = parseFloat(te)
 
-        if (dis > 0) {
-
-        }
-        else {
+        orderRef.update(map).then(function () {
           res.json({
-            status: -1,
-            string: "No Distance"
-          })
-        }
-        console.log(dis)
-        // orderRef.update(map).then(function () {
-        //   res.json({
-        //     status: 1,
-        //     string: "done"
-        //   })    
-        // })
+            status: 1,
+            string: "done"
+          })    
+        })
+
+        const riderOrderRef = db.ref('Area/' + area + '/orders_rider/' + rid+ '/' + oid);
       }
     }
     else {
