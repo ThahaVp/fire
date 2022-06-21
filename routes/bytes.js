@@ -1838,6 +1838,27 @@ router.post('/changeStatusRider', (req, res) => {
   let name = req.body.name
   let area = req.body.area
 
+  var currentDate = new Date();
+  var date_ob = new Date(currentDate.getTime() + minutesToAdd * 60000);
+
+  let month = date_ob.getMonth() + 1
+  let monthString = ""
+  if (month < 10) { monthString = "0" + month }
+  else { monthString = month.toString() }
+
+  let dayString = ""
+  if (date_ob.getDate() < 10) { dayString = "0" + date_ob.getDate() }
+  else { dayString = date_ob.getDate().toString() }
+
+  var hours = date_ob.getHours();
+  var minutes = date_ob.getMinutes();
+  var ampm = hours >= 12 ? 'pm' : 'am';
+  hours = hours % 12;
+  hours = hours ? hours : 12; // the hour '0' should be '12'
+  minutes = minutes < 10 ? '0' + minutes : minutes;
+  var time = hours + ':' + minutes + ' ' + ampm;
+  let dateF = dayString + "-" + monthString + "-" + date_ob.getFullYear()
+
   const db = admin.database();
   const orderRef = db.ref('Area/' + area + '/orders/' + oid);
 
@@ -1851,7 +1872,7 @@ router.post('/changeStatusRider', (req, res) => {
       if (status == 1) {
         let map = {
           "/status": "2," + name + "/" + rid,
-          "/olt": "time"
+          "/olt": time
         }
         orderRef.update(map).then(function () {
           res.json({
@@ -1863,13 +1884,11 @@ router.post('/changeStatusRider', (req, res) => {
       else if (status == 2) {
         let map = {
           "/status": "3, Delivered Successfully",
-          "/dlt": "time"
+          "/dlt": time
         }
 
-        let te = snapshot.val().distance.toString()
-        var dis = 0
-        if (te != '')
-          dis = parseFloat(te)
+        const riderOrderRef = db.ref('Area/' + area + '/riders/' + rid+ '/' + "pending/"+oid);
+        riderOrderRef.set(null)
 
         orderRef.update(map).then(function () {
           res.json({
@@ -1878,7 +1897,18 @@ router.post('/changeStatusRider', (req, res) => {
           })    
         })
 
-        const riderOrderRef = db.ref('Area/' + area + '/orders_rider/' + rid+ '/' + oid);
+        let te = snapshot.val().distance.toString()
+        var dis = 0
+        if (te != '')
+          dis = parseFloat(te)
+
+          let sucMap = {
+            "date": dateF,
+            "distance": dis
+          }
+      
+        const riderSuccRef = db.ref('Area/' + area + '/orders_rider/' + rid+ '/' + oid);
+        riderOrderRef.set(sucMap)
       }
     }
     else {
