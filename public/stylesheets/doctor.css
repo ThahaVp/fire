@@ -1,0 +1,72 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+:root {
+    --bottom-0: 470%;
+    --bottom-1: 470%;
+    --bottom-2: 470%;
+    --bottom-3: 470%;
+    --bottom-4: 470%;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
+body {
+  width: 100vw;
+  min-height: 100vh;
+ display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.numbers-wrapper {
+  height: 100px;
+  width: auto;
+  overflow-y: hidden;
+  padding: 10px;
+  border-radius: 10px;
+display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #e7e9ee;
+  
+}
+
+.nums {
+      transition: bottom .7s;
+      opacity: .92;
+      color: rgb(28, 119, 230);
+      display: flex;
+      flex-direction: column-reverse;
+      align-items: center;
+      font-size: 7rem;
+      line-height: 95px;
+      font-weight: bold;
+      position: relative;
+      margin: 12px;
+  }
+
+span {
+          margin: 5px;
+          user-select: none;
+      }
+
+.nums:nth-child(1) {
+  bottom: var(--bottom-0);
+}
+
+.nums:nth-child(2) {
+  bottom: var(--bottom-1);
+}
+
+.nums:nth-child(3) {
+  bottom: var(--bottom-2);
+}
+

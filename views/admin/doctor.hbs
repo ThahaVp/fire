@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    
+    <link href="/stylesheets/doctor.css" rel="stylesheet" />
+    {{!-- <link href="/stylesheets/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css"/> --}}
+    <script src="/javascripts/doctor.js"></script>
+    <script src="/javascripts/bootstrap.bundle.min.js"></script>
+</head>
+
+<body>
+  <div class="d-flex" id="wrapper">
+
+    <div class="numbers-wrapper">
+   <div class="nums">
+      <span>0</span>
+      <span>1</span>
+      <span>2</span>
+      <span>3</span>
+      <span>4</span>
+      <span>5</span>
+      <span>6</span>
+      <span>7</span>
+      <span>8</span>
+      <span>9</span>
+   </div>
+   <div class="nums">
+      <span>0</span>
+      <span>1</span>
+      <span>2</span>
+      <span>3</span>
+      <span>4</span>
+      <span>5</span>
+      <span>6</span>
+      <span>7</span>
+      <span>8</span>
+      <span>9</span>
+   </div>
+   <div class="nums">
+      <span>0</span>
+      <span>1</span>
+      <span>2</span>
+      <span>3</span>
+      <span>4</span>
+      <span>5</span>
+      <span>6</span>
+      <span>7</span>
+      <span>8</span>
+      <span>9</span>
+   </div>
+   
+</div>
+    
+</div>
+
+
+</body>
+
+ 
+
+</html>
+
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.8.3/firebase-app.js";
+  //import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.8.3/firebase-analytics.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDofytVOT7wqTnwD3vTkaL_OJToL0zqt9o",
+    authDomain: "bytesonline-1fd63.firebaseapp.com",
+    projectId: "bytesonline-1fd63",
+    storageBucket: "bytesonline-1fd63.appspot.com",
+    messagingSenderId: "447673902304",
+    appId: "1:447673902304:web:43494c7951de765baddc85",
+    measurementId: "G-RXJGYDMKF7",
+    databaseURL: "https://bytesonline-1fd63-default-rtdb.asia-southeast1.firebasedatabase.app",
+  };
+
+
+  const app = initializeApp(firebaseConfig);
+
+import {getDatabase, ref, onValue}
+from "https://www.gstatic.com/firebasejs/9.8.3/firebase-database.js"
+const db = getDatabase();
+
+const starCountRef = ref(db, 'area/doctor/token');
+onValue(starCountRef, (snapshot) => {
+  const data = snapshot.val();
+
+  if (data != null)
+  {
+      startSetNumbers(""+data)
+  }
+  
+});
+
+</script>

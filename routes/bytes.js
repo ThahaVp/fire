@@ -33,7 +33,7 @@ router.get('/getExpenses', (req, res) => {
   const ref = db.ref('Area/ponnani/shop');
 
   // Attach an asynchronous callback to read the data at our posts reference
-  ref.on('value', (snapshot) => {
+  ref.once('value', (snapshot) => {
     var map = []
     snapshot.forEach((child) => {
 
@@ -319,7 +319,7 @@ router.post('/getRestaurants', (req, res) => {
   var userLng = req.body.lng
   var areaMap = {}
   let min_ch = 20
-  let latest_vs = 1.1
+  let latest_vs = 1.3
 
   ref.once('value', (snapshot) => {
 

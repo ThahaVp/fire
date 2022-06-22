@@ -163,11 +163,9 @@
 
                                         <tr>
                                             <td>
-                                                <input type="button" value="start" onclick="ringSound()">
+                                                <input type="button" value="start" onclick="startSound()">
                                             </td>
-                                            <td>
-                                                <input type="button" value="stop" onclick="stopSound()">
-                                            </td>
+                                            
                                         </tr>
                                         
                                     </tbody>
@@ -190,10 +188,15 @@
 
     <script>
         var aud = document.getElementById('xyz')
+
+        function startSound()
+        {
+            aud.play()
+        }
         
 function ringSound() {
-    aud.loop = true
     aud.play()
+    aud.loop = true
         }
 
 function stopSound() {
@@ -202,4 +205,54 @@ function stopSound() {
 
     </script>
 
+  <script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.8.3/firebase-app.js";
+  //import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.8.3/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyDofytVOT7wqTnwD3vTkaL_OJToL0zqt9o",
+    authDomain: "bytesonline-1fd63.firebaseapp.com",
+    projectId: "bytesonline-1fd63",
+    storageBucket: "bytesonline-1fd63.appspot.com",
+    messagingSenderId: "447673902304",
+    appId: "1:447673902304:web:43494c7951de765baddc85",
+    measurementId: "G-RXJGYDMKF7",
+    databaseURL: "https://bytesonline-1fd63-default-rtdb.asia-southeast1.firebasedatabase.app",
+  };
+
+  
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  //const analytics = getAnalytics(app);
+
+import {getDatabase, ref, onValue}
+from "https://www.gstatic.com/firebasejs/9.8.3/firebase-database.js"
+const db = getDatabase();
+
+const starCountRef = ref(db, 'area/shop/ring');
+onValue(starCountRef, (snapshot) => {
+  const data = snapshot.val();
+  if (data != null)
+  {
+    if (data == true)
+    {
+        ringSound()
+    }
+    else
+    {
+        stopSound()
+    }
+  }
+  
+});
+
+
+
+</script>
 </html>
