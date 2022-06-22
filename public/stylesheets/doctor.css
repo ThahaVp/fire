@@ -2,6 +2,7 @@
   padding: 0;
   margin: 0;
 }
+
 :root {
     --bottom-0: 470%;
     --bottom-1: 470%;
@@ -29,6 +30,7 @@ body {
 .numbers-wrapper {
   height: 100px;
   width: auto;
+  box-sizing: content-box;
   overflow-y: hidden;
   padding: 10px;
   border-radius: 10px;
@@ -46,7 +48,7 @@ display: flex;
       display: flex;
       flex-direction: column-reverse;
       align-items: center;
-      font-size: 7rem;
+      font-size: 6.5rem;
       line-height: 95px;
       font-weight: bold;
       position: relative;
@@ -68,5 +70,34 @@ span {
 
 .nums:nth-child(3) {
   bottom: var(--bottom-2);
+}
+
+.overlay1 {
+  position: relative;
+  z-index: 1;
+}
+.overlay1::before {
+  content: "";
+  display: block;
+  position: absolute;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: #30bab6;
+  background: -webkit-linear-gradient(top, #009efd, #2af598);
+  background: -o-linear-gradient(top, #009efd, #2af598);
+  background: -moz-linear-gradient(top, #009efd, #2af598);
+  background: linear-gradient(top, #009efd, #2af598);
+  opacity: 0.8;
+}
+
+.bg-img1 {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 100%;
+    min-height: 100vh;
 }
 
