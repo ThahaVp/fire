@@ -8,7 +8,7 @@ module.exports = {
     doLogin:(superData)=>{
         return new Promise(async(resolve, reject)=>{
             var responce = {}
-            let superMan = await db.get().collection(constants.SUPER_COLLECTION).findOne({id:superData})
+            let superMan = await db.get().collection(constants.SALES_USERS).findOne({id:superData})
             if(superMan)
             {
                 responce.user = superMan
@@ -24,6 +24,8 @@ module.exports = {
         })
         
     },
+
+    
 
     addStore:(data, others)=>{
         return new Promise((resolve, reject)=>{
@@ -106,5 +108,27 @@ module.exports = {
                 resolve(responce)
             }
         })
-    }
+    },
+
+
+    ///// DOCTOR //////
+
+    addService:(data, others)=>{
+        return new Promise((resolve, reject)=>{
+            db.get().collection(constants.TOKEN_SERVICE_COLLECTION).insertOne(data).then((responce)=>{
+                 if (responce.insertedId != null)
+                 {
+                    others._id = objectId(responce.insertedId)
+                    db.get().collection(constants.TOKEN_SERVICE_ADMIN_COLLECTION).insertOne(others).then((res)=>{
+                        resolve({id: responce.insertedId, status: 1})
+                   })
+                 }
+                 else
+                 {
+                    resolve({id: "", status: 0})
+                 }
+                 
+            })
+        })
+    },
 }

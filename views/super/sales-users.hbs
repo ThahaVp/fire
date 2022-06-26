@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <!-- Favicon-->
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+  
+  <link href="/stylesheets/style.css" rel="stylesheet" />
+    <link href="/stylesheets/map-styles.css" rel="stylesheet" />
+    <link href="/stylesheets/bootstrap.min.css" rel="stylesheet" />
+
+</head>
+
+<body>
+<section>
+    <div class="container-fluid">
+<div class="d-grid gap-2 d-md-flex mt-4">
+  <a href= "add-sales-user"><button class="btn btn-success me-md-2" type="button">Add New Sales User</button></a>
+</div>
+
+<div class="col-xl-8  col-lg-12 mt-3">
+    
+    <div class="mb-3">
+          <label for="des" class="form-label">Phone</label>
+          <input type="text"  class="" id="des" name="a">
+        </div>
+
+<div class="mb-3">
+          <label for="des" class="form-label">Area</label>
+          <input type="text"  class="" id="des" name="a">
+        </div>
+
+        <div class="mb-3">
+          <label for="des" class="form-label">District</label>
+          <input type="text"  class="" id="des" name="a">
+        </div>
+
+        <button type="button" class="btn btn-primary mt-2 btn-sm">Search with filter</button>
+</div>
+
+      <div class="col-xl-8  col-lg-12 mt-3">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title" style="margin:0">Sales Users</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive text-nowrap">
+                                <table class="table table-striped table-sm">
+                                    <thead>
+                                        <tr class="text-muted">
+                                            <th>ID</th>
+                                            <th>Name</th>
+                                            <th>Area</th>
+                                            <th>District</th>
+                                            <th>Last Login</th>
+                                            <th>Created</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {{#each data}}
+                                        <tr>
+                                            <td><span class="badge bg-secondary" style="cursor: pointer;">{{this.id}}</span>
+                                            <td>{{this.n}}</td>
+                                            <td>{{this.a}}</td>
+                                            <td>{{this.d}}</td>
+                                            <td class="text-muted">{{this.ll}}</td>
+                                            <td class="text-muted">{{this.ct}}</td>
+                                        </tr>
+                                        {{/each}}
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>  
+
+      </div>  
+</section>
+
+    <script src="/javascripts/jquery-1.12.4.min.js"></script>
+    <script src="/javascripts/bootstrap.bundle.min.js"></script>
+    
+ 
+    
+</body>
+
+</html>

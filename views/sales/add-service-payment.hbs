@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <!-- Favicon-->
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+  
+  <link href="/stylesheets/style.css" rel="stylesheet" />
+    <link href="/stylesheets/map-styles.css" rel="stylesheet" />
+    <link href="/stylesheets/bootstrap.min.css" rel="stylesheet" />
+
+</head>
+
+<body>
+
+ <!-- Navbar -->
+<nav class="navbar navbar-light bg-light">
+  <div class="container-fluid">
+
+WAIT ZERO
+<div class="gap-2 d-md-flex justify-content-end">
+  
+  <button class="btn btn-light" type="button">My Account</button>
+  <button class="btn btn-dark me-md-2" type="button">Logout</button>
+</div>
+
+
+  </div>
+</nav>
+<!-- Navbar -->
+
+  <div class="container mt-4">
+    <div class="col-lg-6 mb-2">
+
+      <h3 class="text-center">Add Payment Method</h3>
+
+      <form class="mt-5">
+      
+        <div class="mb-3">
+
+          <label for="name" class="form-label">Title</label>
+          <input type="name" class="form-control" id="name">
+        </div>
+
+        <div class="mb-3">
+          <label for="name" class="form-label">Description</label>
+          <input type="name" class="form-control" id="description">
+        </div>
+
+      
+        <p id="error-text" class="text-danger mt-4"></p>
+
+<input type="button" onclick="submitServiceData()" id="submit-btn" class="btn btn-primary mb-5" value="Done"></button>
+      </form>
+    </div>
+
+  </div>
+
+
+
+  
+    <script src="/javascripts/sales-script.js"></script>
+    <script src="/javascripts/jquery-1.12.4.min.js"></script>
+    <script src="/javascripts/bootstrap.bundle.min.js"></script>
+    
+  
+
+<script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBaxdI9cgj-Cln97faKXvBHh4q-ccyTZNY&callback=initMap&libraries=&v=weekly"
+      async
+    ></script>
+
+    
+</body>
+
+</html>

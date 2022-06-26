@@ -17,7 +17,12 @@ module.exports = {
     BYTES_ADDRESS: 'bytes_address',
     BYTES_ORDERS_KEYS: 'bytes_order_keys',
 
-    COUNTERS:'counters'
+    COUNTERS:'counters',
+
+    TOKEN_SERVICE_COLLECTION:'token_services',
+    TOKEN_SERVICE_ADMIN_COLLECTION:'token_services_admin',
+
+    SALES_USERS:'sales_users'
 
 
 }

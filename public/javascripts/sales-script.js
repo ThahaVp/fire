@@ -65,6 +65,68 @@ function submitStoreData() {
 
 }
 
+function submitServiceData() {
+
+
+  if (lat != null && lng != null && street_address != null 
+    && document.querySelector('input[name="inlineRadioOptions"]:checked') != null) {
+
+    const storeName = document.getElementById("name").value.trim().replace(/(^\w|\s\w)/g, m => m.toUpperCase())
+    const storePlace = document.getElementById("place").value.trim().replace(/(^\w|\s\w)/g, m => m.toUpperCase())
+    const storeDescription = document.getElementById("description").value.trim().replace(/(^\w|\s\w)/g, m => m.toUpperCase())
+    const ManagerName = document.getElementById("manager_name").value.trim().replace(/(^\w|\s\w)/g, m => m.toUpperCase())
+    const ManagerContact = document.getElementById("manager_contact").value.trim()
+    const type = document.querySelector('input[name="inlineRadioOptions"]:checked').value;
+    
+
+      if (storeName != "" && storeDescription != "" && storePlace!= ""
+    && ManagerName!= "" && ManagerContact!= "" && type != "") {
+
+      document.getElementById("error-text").innerHTML = "Please wait.."
+      document.getElementById("submit-btn").value="Submitting Data";
+      document.getElementById("submit-btn").disabled = true;
+
+  
+
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", 'http://localhost:3000/sales/add-service/'+lat+'/'+lng, true);
+      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+      xhr.onreadystatechange = function () {
+        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+          var res = JSON.parse(this.response)
+          console.log(res)
+          if (res.status == 1)
+          {
+             window.open("/sales/add-service-payment/"+res.id, "_self");
+          }
+          
+
+        }
+      }
+
+      xhr.send(
+        "pl=" + storePlace +
+        "&lat=" + lat +
+        "&lng=" + lng +
+        "&title=" + storeName +
+        "&description=" + storeDescription +
+        "&type=" + parseInt(type) +
+        "&man_name=" + ManagerName +
+        "&man_cont=" + ManagerContact
+      );
+    }
+    else
+  {
+    document.getElementById("error-text").innerHTML = "Please fill all the required * fields"
+  }
+  }
+  else
+  {
+    document.getElementById("error-text").innerHTML = "Please fill all the required * fields"
+  }
+
+}
+
 function getAddress() {
   document.getElementById("location-div").innerHTML = "Set Location"
   street_address = null
@@ -230,6 +292,15 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
       : "Error: Your browser doesn't support geolocation."
   );
   infoWindow.open(map);
+}
+
+function showPassword() {
+  var x = document.getElementById("passField");
+  if (x.type === "password") {
+    x.type = "text";
+  } else {
+    x.type = "password";
+  }
 }
 
 

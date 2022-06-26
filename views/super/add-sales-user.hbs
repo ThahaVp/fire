@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <!-- Favicon-->
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+  
+  <link href="/stylesheets/style.css" rel="stylesheet" />
+    <link href="/stylesheets/map-styles.css" rel="stylesheet" />
+    <link href="/stylesheets/bootstrap.min.css" rel="stylesheet" />
+
+</head>
+
+<body>
+
+<section>
+  <div class="container mt-4">
+    <div class="col-lg-6 mb-2">
+
+      <h2 class="text-center">Add Sales User</h2>
+
+      <form action="/su/add-sales-user" method="post" enctype="multipart/form-data ">
+        <div class="mb-3">
+          <label for="name" class="form-label">Name</label>
+          <input type="name" class="form-control" name="n">
+        </div>
+
+        <div class="mb-3">
+          <label for="des" class="form-label">Area</label>
+          <input type="text"  class="form-control" id="des" name="a">
+        </div>
+
+        <div class="mb-3">
+          <select class="form-select">
+  <option selected>-- Select Disrtict --</option>
+  <option value="1">Alappuzha</option>
+  <option value="2">Ernakulam</option>
+  <option value="3">Idukki</option>
+  <option value="3">Kannur</option>
+  <option value="3">Kasaragod</option>
+  <option value="3">Kollam</option>
+  <option value="3">Kottayam</option>
+  <option value="3">Kozhikode</option>
+  <option value="3">Malappuram</option>
+  <option value="3">Palakkad</option>
+  <option value="3">Pathanamthitta</option>
+  <option value="3">Thiruvananthapuram</option>
+  <option value="3">Thrissur</option>
+  <option value="3">Wayanad</option>
+</select>
+        </div>
+      
+    
+
+        <div class="mb-3">
+          <label for="price" class="form-label">Phone</label>
+          <input type="number" class="form-control" name="id">
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-4 ">Submit</button>
+      </form>
+    </div>
+
+  </div>
+</section>
+
+    <script src="/javascripts/jquery-1.12.4.min.js"></script>
+    <script src="/javascripts/bootstrap.bundle.min.js"></script>
+    
+ 
+    
+</body>
+
+</html>

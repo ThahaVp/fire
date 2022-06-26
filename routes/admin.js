@@ -72,8 +72,8 @@ router.post("/edit-product/:id", (req,res)=>{
 ///// DOCTOR ///////
 router.get('/doctor', async(req,res)=>{
   res.render('admin/doctor')
-
 })
+
 
 // API
 // router.get('/api/test', (req,res)=>{

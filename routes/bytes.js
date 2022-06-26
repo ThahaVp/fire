@@ -68,7 +68,7 @@ router.get('/testing', (req, res) => {
   const db = admin.database();
   const ref = db.ref('Area/edappal/products/cafe di kebabista');
 
-  ref.on('value', (snapshot) => {
+  ref.once('value', (snapshot) => {
 
     var map = {}
 
@@ -104,7 +104,7 @@ router.get('/refFix', (req, res) => {
   const db = admin.database();
   const ref = db.ref('Area/ponnani/shop_order/jawas restaurant');
 
-  ref.on('value', (snapshot) => {
+  ref.once('value', (snapshot) => {
 
     var map = {}
 
@@ -133,7 +133,7 @@ router.get('/findNoImages', (req, res) => {
   const db = admin.database();
   const ref = db.ref('Area/ponnani/products/albaik');
 
-  ref.on('value', (snapshot) => {
+  ref.once('value', (snapshot) => {
 
 
     var obj = snapshot.val()
@@ -1184,7 +1184,7 @@ router.post('/makeOrder', (req, res) => {
       const ref = db.ref('Area/' + area + '/products/' + rid);
 
 
-      ref.on('value', (snapshot) => {
+      ref.once('value', (snapshot) => {
 
         var foodListDb = []
 
@@ -1294,7 +1294,8 @@ router.post('/makeOrder', (req, res) => {
                   pm_id: ""
                 }
 
-                if (pm == 2) {
+                if (pm == 2)
+                {
                   const mainRef = db.ref('Area/' + area + '/orders').push();
                   const tempRef = db.ref('Area/' + area + '/temp_orders/' + mainRef.key);
                   tempRef.set(orderOb).then(function () {
