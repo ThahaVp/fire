@@ -173,6 +173,8 @@ router.post('/getFoods', (req, res) => {
         var obj = child.val()
         obj.qty = 0
         obj.key = child.key
+        obj.a = parseInt(child.val().a)
+        obj.p = parseInt(child.val().p)
         list.push(obj)
       }
     })
