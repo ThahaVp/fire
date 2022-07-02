@@ -175,6 +175,8 @@ router.post('/getFoods', (req, res) => {
         obj.key = child.key
         obj.a = parseInt(child.val().a)
         obj.p = parseInt(child.val().p)
+        if (obj.i == null)
+          obj.i = ""
         list.push(obj)
       }
     })
