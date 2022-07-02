@@ -5,14 +5,46 @@ var salesHelper = require('../helpers/sales-helper');
 const { route } = require('./user');
 
 router.get("/add-store", (req,res)=>{
-  res.render('sales/add-store', {logged:true,});
+  res.render('sales/add-store');
 })
+
+router.get('/add-new-service', (req,res)=>{
+  let salesData = req.session.salesData
+      if (req.session.salesLogged && salesData != null)
+      {
+        res.render('sales/add-new-service')
+      }
+      else
+      res.status(404).send('page not found')
+  
+})
+
+router.get('/dashboard', (req,res)=>{
+  let salesData = req.session.salesData
+      if (req.session.salesLogged && salesData != null)
+      {
+        res.render('sales/dashboard', {salesData: salesData})
+      }
+      else
+      res.status(404).send('page not found')
+  
+})
+
+
 
 router.get("/:ww/", (req,res)=>{
   salesHelper.doLogin(req.params.ww).then((responce)=>{
     if(responce.status && responce.user != null)
     {
-      res.render('sales/sales-login', {Data: responce.user})
+      let salesData = req.session.salesData
+      if (req.session.salesLogged && salesData != null)
+      {
+        res.render('sales/dashboard', { salesData: salesData })
+      }
+      else
+      {
+        res.render('sales/sales-login', {data: responce.user})
+      }
     }
     else
     {
@@ -20,6 +52,22 @@ router.get("/:ww/", (req,res)=>{
     }
   })
 })
+
+
+
+router.post('/login', (req, res) => {
+
+  salesHelper.checkKey(req.body).then((responce) => {
+    if (responce.status && responce.user != null) {
+      req.session.salesData = responce.user
+      req.session.salesLogged = true
+      res.redirect('/sales/dashboard')
+    }
+    else {
+      res.status(404).send('page not found')
+    }
+  })
+});
 
 
 router.get("/add-billing/:ww/:lat/:lng/", (req,res)=>{
@@ -109,9 +157,6 @@ router.post('/add-order-billing', (req, res) => {
 ///// DOCTOR ///////
 
 
-router.get('/add-new-service', async(req,res)=>{
-  res.render('sales/add-new-service')
-})
 
 router.post('/add-service/:lat/:lng/', (req, res) => {
 
@@ -167,8 +212,6 @@ router.post('/add-service/:lat/:lng/', (req, res) => {
 router.get("/add-service-payment/:ww/", (req,res)=>{
   res.render('sales/add-service-payment', {logged:true, ww: req.params.ww,});  
 })
-
-
 
 
 

@@ -1870,8 +1870,6 @@ router.post('/changeStatusRider', (req, res) => {
     let temp = snapshot.val().status.split(",")
     let status = parseInt(temp[0])
 
-    console.log(snapshot.val().dboy)
-    console.log(name + "," + rid)
     if (snapshot.val().dboy == name + "," + rid) {
       if (status == 1) {
         let map = {
@@ -2075,6 +2073,8 @@ async function getResFromAreas(areaMap) {
           var rounded = Math.round(dd * 10) / 10
           obj.dis = rounded
           obj.an = each
+          if (obj.i == null)
+            obj.i = ""
           resList.push(obj)
         }
 

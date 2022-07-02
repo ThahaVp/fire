@@ -63,32 +63,16 @@ module.exports = {
         })
     },
 
-    checkKey:(superData)=>{
+    checkKey:(data)=>{
         return new Promise(async(resolve, reject)=>{
             var responce = {}
-            let superMan = await db.get().collection(constants.SUPER_COLLECTION).findOne({_id:objectId(superData._id)})
-            if(superMan)
+            let salesMan = await db.get().collection(constants.SALES_USERS).findOne({_id:objectId(data._id)})
+            if(salesMan)
             {
-                if(superMan.key == "")
-                {
-                    let newKey = await bcrpt.hash(superData.key, 10)
-                    db.get().collection(constants.SUPER_COLLECTION).updateOne({_id:objectId(superData._id)},
-                    {
-                        $set:{
-                            key:newKey
-                        }
-                    }).then(()=>{
-                        responce.user = superMan
-                        responce.status = true  
-                        resolve(responce)
-                    })                    
-                }
-                else
-                {
-                    bcrpt.compare(superData.key, superMan.key).then((status)=>{
+                    bcrpt.compare(data.key, salesMan.key).then((status)=>{
                         if(status)
                         {
-                            responce.user = superMan
+                            responce.user = salesMan
                             responce.status = true  
                             resolve(responce)
                         }
@@ -99,7 +83,6 @@ module.exports = {
                             resolve(responce)
                         }
                     })
-                }
             }
             else
             {

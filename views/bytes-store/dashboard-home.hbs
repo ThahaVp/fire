@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    
+    <link href="/stylesheets/style.css" rel="stylesheet" />
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css"/>
+    <link href="/stylesheets/bootstrap.min.css" rel="stylesheet" />
+    <script src="/javascripts/scripts.js"></script>
+    <script src="/javascripts/bootstrap.bundle.min.js"></script>
+</head>
+
+<body>
+
+  
+  <div class="d-flex" id="wrapper">
+        <!-- Sidebar-->
+        <div class="border-end bg-white" id="sidebar-wrapper">
+            <div class="sidebar-heading border-bottom bg-light">Bytes Online</div>
+            <div class="list-group list-group-flush">
+                <a class="list-group-item list-group-item-action list-group-item-dark p-3" href="">Home</a>
+                <a class="list-group-item list-group-item-action list-group-item-light p-3" href="orders">Orders</a>
+                <a class="list-group-item list-group-item-action list-group-item-light p-3" href="menu">Menu</a>
+                <a class="list-group-item list-group-item-action list-group-item-light p-3" href="settings">Settings</a>
+                <a class="list-group-item list-group-item-action list-group-item-light p-3" href="website-settings">Website</a>
+            </div>
+        </div>
+        <!-- Page content wrapper-->
+        <div id="page-content-wrapper">
+            <!-- Top navigation-->
+            <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+                <div class="container-fluid">
+                    <button class="btn" id="sidebarToggle"><span class="navbar-toggler-icon"></span></button>
+
+                </div>
+            </nav>
+            <!-- Page content-->
+            
+            <div class="container-fluid">
+                <div class="col-12 col-xl-6 card mt-3 p-3">
+
+<h3 style="margin-top: -5px;margin-bottom: 0">{{data.title}}</h3>
+                    <p>{{data.place}}, {{data.area}}</p>
+                    
+
+                    <div style="display: flex;" class="mt-3">
+                        <div class="online-indicator">
+                            <span class="blink"></span>
+                        </div>
+                        <div>
+                            <p class="online-text">Open Now</p>
+                            <p class="text-muted sub-sup-font-size">Ready to recieve orders</p>
+                        </div>
+
+                    </div>
+
+
+                    <!-- <div style="display: flex;" class="mt-3">
+                        <div class="offline-indicator">
+
+                        </div>
+                        <p class="offline-text">Closed now</p>
+                    </div> -->
+</div>
+
+
+
+                <div class="col-xl-8  col-lg-12 mt-3">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title" style="margin:0">Recent Orders</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive text-nowrap">
+                                <table class="table table-striped table-sm">
+                                    <thead>
+                                        <tr class="text-muted">
+                                            <th>Order ID</th>
+                                            <th>Status</th>
+                                            <th>Amount</th>
+                                            <th>Customer</th>
+                                            <th>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><a href="javascript:void(0)" class="text-muted" style="text-decoration: none;">Order #26589</a></td>
+                                            <td><span class="badge bg-success">Paid</span>
+                                                <td>&#8377;45.00</td>
+                                                <td>Herman Beck</td>
+                                            <td class="text-muted">Oct 16, 2017</td>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td><a href="javascript:void(0)" class="text-muted" style="text-decoration: none;">Order #26589</a></td>
+                                            <td><span class="badge bg-danger">Food ready</span>
+                                                <td>&#8377;45.00</td>
+                                                <td>Herman Beck</td>
+                                            <td class="text-muted">Oct 16, 2017</td>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td><a href="javascript:void(0)" class="text-muted" style="text-decoration: none;">Order #26589</a></td>
+                                            <td><span class="badge bg-success">Paid</span>
+                                                <td>&#8377;45.00</td>
+                                                <td>Herman Beck</td>
+                                            <td class="text-muted">Oct 16, 2017</td>
+                                            </td>
+                                        </tr>
+
+
+                                        <tr>
+                                            <td><a href="javascript:void(0)" class="text-muted" style="text-decoration: none;">Order #26589</a></td>
+                                            <td><span class="badge bg-secondary">Cancelled</span>
+                                                <td>&#8377;45.00</td>
+                                                <td>Herman Beck</td>
+                                            <td class="text-muted">Oct 16, 2017</td>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td><a href="javascript:void(0)" class="text-muted" style="text-decoration: none;">Order #26589</a></td>
+                                            <td><span class="badge bg-success">Paid</span>
+                                                <td>&#8377;45.00</td>
+                                                <td>Herman Beck</td>
+                                            <td class="text-muted">Oct 16, 2017</td>
+                                            </td>
+                                        </tr>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
+
+

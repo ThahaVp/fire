@@ -28,16 +28,9 @@
                             <h2 class="fw-bold mb-2 text-uppercase">Login</h2>
                             <form action="/su/login" method="post">
                                 <p class="text-white-50">Please enter your password!</p>
-                                {{#if loginErr}}
-                                <p class="text" style="color:red">Password not matching !</p>
-                                {{/if}}
-
+                                
                                 <input type="text" name="_id" value="{{suData._id}}"
                                     style="visibility:hidden; height:0px" />
-
-                                <input type="text" name="id" value="{{suData.id}}"
-                                    style="visibility: hidden; height:0px" />
-
 
                                 <div class="form-outline form-white mb-5">
                                     <input type="password" name="key" class="form-control form-control"
@@ -62,19 +55,10 @@
 </section>
 
 
+<script src="/javascripts/super-script.js"></script>
     <script src="/javascripts/jquery-1.12.4.min.js"></script>
     <script src="/javascripts/bootstrap.bundle.min.js"></script>
 
-    <script>
-        function showPassword() {
-  var x = document.getElementById("passField");
-  if (x.type === "password") {
-    x.type = "text";
-  } else {
-    x.type = "password";
-  }
-}
-    </script>
 
     
 </body>

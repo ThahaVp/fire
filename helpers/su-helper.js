@@ -42,18 +42,29 @@ module.exports = {
     },
 
     addSalesUser:(data)=>{
-        return new Promise((resolve, reject)=>{
-            db.get().collection(constants.SALES_USERS).insertOne(data).then((responce)=>{
-                 if (responce.insertedId != null)
-                 {
-                    resolve(responce.insertedId)
-                 }
-                 else
-                 {
-                     reject()
-                 }
-                 
-            })
+        return new Promise(async(resolve,reject)=>{
+            let user = await db.get().collection(constants.SALES_USERS).findOne({id:data.id})
+            if (user == null)
+            {
+                delete data.re_pass
+                console.log(data.key)
+                let newKay = await bcrpt.hash(data.key, 10)
+                data.key = newKay
+                console.log(data)
+                db.get().collection(constants.SALES_USERS).insertOne(data).then((responce)=>{
+                    if (responce.insertedId != null)
+                    {
+                       resolve(1)
+                    }
+                    else
+                    {
+                        resolve(0)
+                    }
+                    
+               })
+            }
+            else {resolve(-1)}
+            
         })
     },
 

@@ -2,12 +2,12 @@
 <html lang="en">
 
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <!-- Favicon-->
-  <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
-  
-  <link href="/stylesheets/style.css" rel="stylesheet" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+
+    <link href="/stylesheets/style.css" rel="stylesheet" />
     <link href="/stylesheets/map-styles.css" rel="stylesheet" />
     <link href="/stylesheets/bootstrap.min.css" rel="stylesheet" />
 
@@ -16,68 +16,70 @@
 
 <body>
 
- <!-- Navbar -->
-<nav class="navbar navbar-light bg-light">
-  <div class="container-fluid">
+    <!-- Navbar -->
+    <nav class="navbar navbar-light bg-light">
+        <div class="container-fluid">
 
-WAIT ZERO
-<div class="gap-2 d-md-flex justify-content-end">
-  
-  <button class="btn btn-light" type="button">My Account</button>
-  <button class="btn btn-dark me-md-2" type="button">Logout</button>
-</div>
+            WAIT ZERO
+            <div class="gap-2 d-md-flex justify-content-end">
 
-
-  </div>
-</nav>
-<!-- Navbar -->
-
-<section>
-
-    <div class="container py-5 h-100">
-        <div class="row d-flex justify-content-center align-items-center h-100">
-            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-                <div class="card bg-dark text-white" style="border-radius: 1rem;">
-                    <div class="card-body p-5">
-
-                        <div class="mb-md-5 mt-md-4">
-
-                            <h2 class="fw-bold mb-2 text-uppercase">Sales Login</h2>
-                            <form action="e" method="post">
-                                <p class="text-white-50 mb-5">Please enter your  password!</p>
-                                
-                
-
-                                <div class="form-outline form-white mb-5">
-                                    <input type="password" name="key" class="form-control form-control"
-                                        placeholder="Password" id="passField"/>
-                                        <input type="checkbox" onclick="showPassword()" class="mt-3">  Show Password
-                                </div>
-
-                            
-                            <p class="text" style="color:red"></p>
-                                <button class="btn btn-outline-light btn-lg px-5" type="submit">Login</button>
-
-                                
-
-                            </form>
-                        </div>
-
-
-
-                    </div>
-                </div>
+                <button class="btn btn-light" type="button">My Account</button>
+                <button class="btn btn-dark me-md-2" type="button">Logout</button>
             </div>
 
-        </div>
-    </div>
-</section>
 
- <script src="/javascripts/sales-script.js"></script>
+        </div>
+    </nav>
+    <!-- Navbar -->
+
+    <section>
+
+        <div class="container py-5 h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                    <div class="card bg-dark text-white" style="border-radius: 1rem;">
+                        <div class="card-body p-5">
+
+                            <div class="mb-md-5 mt-md-4">
+
+                                <h2 class="fw-bold mb-2 text-uppercase">Sales Login</h2>
+                                <form action="/sales/login" method="post">
+                                    <p class="text-white-50 mb-5">Please enter your password!</p>
+
+                                    <input type="text" name="_id" value="{{data._id}}"
+                                        style="visibility:hidden; height:0px" />
+
+
+                                    <div class="form-outline form-white mb-5">
+                                        <input type="password" name="key" class="form-control form-control"
+                                            placeholder="Password" id="passField" />
+                                        <input type="checkbox" onclick="showPassword()" class="mt-3"> Show Password
+                                    </div>
+
+
+                                    <p class="text" style="color:red"></p>
+                                    <button class="btn btn-outline-light btn-lg px-5" type="submit">Login</button>
+
+
+
+                                </form>
+                            </div>
+
+
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <script src="/javascripts/sales-script.js"></script>
     <script src="/javascripts/jquery-1.12.4.min.js"></script>
     <script src="/javascripts/bootstrap.bundle.min.js"></script>
 
-    
+
 </body>
 
 </html>
