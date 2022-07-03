@@ -12,6 +12,16 @@ a
   text-decoration: none;
 }
 
+.card
+{
+  border: 0 !important;
+}
+
+.order-div
+{
+  cursor: pointer;
+}
+
 .bytes-width
 {
   width: 100%;

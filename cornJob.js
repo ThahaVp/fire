@@ -70,8 +70,17 @@ let arr = [
     hour: 12,
     minute: 1,
     status: "open"
+  },
+  {
+    ref: "dxb",
+    area: "ponnani",
+    hour: 15,
+    minute: 1,
+    status: "open"
   }
 ]
+
+const weekday = ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"];
 
 
 const job = cron.schedule("1 1,30 11,12,15,16 * * *", () => {
@@ -81,6 +90,8 @@ const job = cron.schedule("1 1,30 11,12,15,16 * * *", () => {
   let minutes = date_ob.getMinutes()
   let hour = date_ob.getHours()
 
+  let day = weekday[date_ob.getDay()];
+
   const db = admin.database();
   for (var i = 0; i < arr.length; i++)
   {
@@ -88,6 +99,29 @@ const job = cron.schedule("1 1,30 11,12,15,16 * * *", () => {
     if (hour == obj.hour && minutes == obj.minute) {
       const ref = db.ref('Area/' + obj.area + '/shop/' + obj.ref + '/status');
       ref.set(obj.status)
+    }
+
+    if (obj.ref == "albaik")
+    {
+      const food2 = db.ref('Area/' + obj.area + '/products/' + obj.ref + '/5397/a');
+      const food1 = db.ref('Area/' + obj.area + '/products/' + obj.ref + '/5398/a');
+      if (day == "monday" || day == "wednesday" || day == "friday")
+      {
+        food1.set(1)
+      }
+      else
+      {
+        food1.set(0)
+      }
+      if (day == "thursday")
+      {
+        food2.set(1)
+      }
+      else
+      {
+        food2.set(0)
+      }
+      
     }
   }
 

@@ -15,13 +15,24 @@ if (!admin.apps.length) {
 
 router.get("/:area/:rid", (req,res)=>{
   const db = admin.database();
-  const ref = db.ref('Area/'+req.params.area+'/shop/'+req.params.rid);
+  let rid = req.params.rid.replace("_"," ")
+  const ref = db.ref('Area/'+req.params.area+'/shop/'+rid);
 
   ref.once('value', (snapshot) => {
     if (snapshot.val() != null)
     {
       var obj = snapshot.val()
+      obj.an = req.params.area.replace(/(^\w|\s\w)/g, m => m.toUpperCase())
       obj.area = req.params.area
+      obj.rid = rid
+      if (obj.status == 'open')
+      {
+        obj.sta = true
+      }
+      else
+      {
+        obj.sta = false
+      }
       res.render('bytes-store/dashboard-home', {data: obj});
     }
     else
