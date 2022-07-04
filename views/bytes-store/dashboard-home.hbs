@@ -10,14 +10,14 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css" />
     <link href="/stylesheets/bootstrap.min.css" rel="stylesheet" />
-    <script src="/javascripts/scripts.js"></script>
-    <script src="/javascripts/bootstrap.bundle.min.js"></script>
+    
 </head>
+
 
 
 <body>
 
-
+<audio id="alert_aud" src="/assets/audio/tune.mp3" preload="auto"></audio>
     <div class="d-flex" id="wrapper">
         <!-- Sidebar-->
         <div class="border-end bg-white" id="sidebar-wrapper">
@@ -70,7 +70,11 @@
 
 
 
-                <h5 class="mt-4" style="margin:0">Recent Orders</h5>
+<div class="d-flex flex-row mt-4">
+<h5 style="margin:0">Recent Orders</h5>
+<input type="button" value="Mute Sound" id="mute_btn" onclick="muteOrder()" class="btn btn-sm btn-danger" style="margin-left:20px; visibility:hidden"/>
+</div>
+                
                 <div class="row mb-5" id="recent_div">
 
                 
@@ -84,9 +88,44 @@
         </div>
     </div>
 
+
 </body>
 
+<script>
+    var aud = document.getElementById('alert_aud')
+    var mutnteB = document.getElementById('mute_btn')
+
+function muteOrder()
+    {
+        aud.loop = false
+    mutnteB.style.visibility = "hidden"
+    }
+
+    function readyAlert()
+    {
+        aud.play()
+    }
+
+      function ringSound()
+    {
+    aud.play()
+    aud.loop = true
+    mutnteB.style.visibility = "visible"
+    }
+
+    function stopRing()
+    {
+    aud.loop = false
+    mutnteB.style.visibility = "hidden"
+    }
+
+
+  
+</script>
+
 <script type="module">
+
+var orderKeyArray = []
 
 navigator.usb.getDevices()
 .then(devices => {
@@ -123,32 +162,93 @@ navigator.usb.getDevices()
             var keysArray = []
             let keys = Object.keys(keysObj)
             if (keys.length > 0) {
+                let lastN = keys.length - 1
                 for (var i = 0; i < keys.length; i++) {
-                    if ('key' in keysObj[keys[i]]) {
-                        keysArray.push(keysObj[keys[i]].key)
-                    }
-                    else
+                    if (typeof keysObj[keys[i]] == 'string')
                     {
                         keysArray.push(keysObj[keys[i]])
+                        if (i == lastN)
+                        {
+                            ringSound()
+                        }
+                    }
+                    else if ('key' in keysObj[keys[i]]) {
+                        if (keysObj[keys[i]].key != "abc")
+                        keysArray.push(keysObj[keys[i]].key)
+
+                        if (i == lastN)
+                        {
+                            stopRing()
+                        }
                     }
                 }
                 keysArray.reverse()
-
-
-                let mm = getRecentOrders(keysArray.slice(0,10), "{{data.area}}")
-                mm.then(function (result) {
-                    if (result != null)
-                    {
-                        setTimeout(function(){
-                            displayOrder(result)
-                    },1000)
-                        
-                    }
+                if (JSON.stringify(orderKeyArray) != JSON.stringify(keysArray))
+                {
+                    orderKeyArray = keysArray
+                    var bn = 0
+                    if (orderKeyArray.length > 1)
+                    bn = {{data.loid}} + (orderKeyArray.length - 1)
                     else
+                    bn = {{data.loid}}
+                    document.getElementById("recent_div").innerHTML = '<div class="col-12 mt-5 text-center"><p class="text-muted">Loading Recent Orders</p></div>'
+                    
+                    let tempArray = [
                     {
+                     status: "0,Order Placed",
+                     date: "03-06-2022",
+                     time: "03:16 pm",
+                     loid: 1011,
+                     food: '[{"Extra":"","Id":"-McLLaYP2XXmYt16rWFz","Price":90,"Qty":2,"Strike":"0","Title":"നാടൻ ബീഫ് പൊതിച്ചോറ്","subID":"-McLLaYP2XXmYt16rWFz"}]',
+                     item_total: 304
+                    },
+                    {
+                     status: "1,03:40 pm",
+                     date: "03-06-2022",
+                     time: "03:16 pm",
+                     loid: 1010,
+                     food: '[{"Extra":"","Id":"-McLLaYP2XXmYt16rWFz","Price":90,"Qty":2,"Strike":"0","Title":"നാടൻ ബീഫ് പൊതിച്ചോറ്","subID":"-McLLaYP2XXmYt16rWFz"}]',
+                     item_total: 201
+                    },
+                    {
+                     status: "2,Thaha/7034524312",
+                     date: "03-06-2022",
+                     time: "03:16 pm",
+                     loid: 1009,
+                     food: '[{"Extra":"","Id":"-McLLaYP2XXmYt16rWFz","Price":90,"Qty":2,"Strike":"0","Title":"നാടൻ ബീഫ് പൊതിച്ചോറ്","subID":"-McLLaYP2XXmYt16rWFz"}]',
+                     item_total: 201
+                    },
+                    {
+                     status: "3,delivered",
+                     date: "03-06-2022",
+                     time: "03:16 pm",
+                     loid: 1009,
+                     food: '[{"Extra":"","Id":"-McLLaYP2XXmYt16rWFz","Price":90,"Qty":2,"Strike":"0","Title":"നാടൻ ബീഫ് പൊതിച്ചോറ്","subID":"-McLLaYP2XXmYt16rWFz"}]',
+                     item_total: 201
+                    },
+                    {
+                     status: "4,Cancelled by Customer",
+                     date: "03-06-2022",
+                     time: "03:16 pm",
+                     loid: 1009,
+                     food: '[{"Extra":"","Id":"-McLLaYP2XXmYt16rWFz","Price":90,"Qty":2,"Strike":"0","Title":"നാടൻ ബീഫ് പൊതിച്ചോറ്","subID":"-McLLaYP2XXmYt16rWFz"}]',
+                     item_total: 201
+                    }]
+                    displayOrder(tempArray)
+                //let mm = getRecentOrders(orderKeyArray.slice(0,1), "{{data.area}}", bn)
+                //mm.then(function (result) {
+                    //if (result != null)
+                    //{
+                        //displayOrder(result)
+                    //}
+//                    else
+                //    {
 
-                    }
-                })
+                //    }
+                //})
+                }
+
+                
             }
             else {
                 document.getElementById("recent_div").innerHTML = '<div class="col-12 mt-5 text-center"><p class="text-muted">No Recent Orders</p></div>'
@@ -159,9 +259,12 @@ navigator.usb.getDevices()
         }
     });
 
+  
+
     function displayOrder(array)
     {
         const targetDiv = document.getElementById("recent_div");
+        targetDiv.innerHTML = ''
         for (var i=0;i<array.length;i++)
         {
             let obc = array[i]
@@ -173,21 +276,39 @@ navigator.usb.getDevices()
                 foodString += foodArray[y].Qty + " X " + foodArray[y].Title + " - &#8377;"+ to +"<br>"
                 console.log(foodArray[y])
             }
-            targetDiv.innerHTML += '<div class="col-12  col-lg-6 mt-2 order-div"><div class="card mt-4"><div class="card-body"><div class="d-flex justify-content-between"><p class="text-muted" style="font-size: 12px !important;">'+ obc.date +'<br>'+obc.time+'</p><p>&#8377; '+ obc.item_total +'</p></div><p>'+ foodString +'</p><div class="d-flex justify-content-center mt-4"><input type="button" class="btn btn-primary" value="Accept Order"></div></div></div></div>';
+            let xx = obc.status.split(",")
+            if (xx[0] == '0')
+            targetDiv.innerHTML += '<div class="col-12  col-lg-6 mt-2 order-div"><div class="card mt-4"><div class="card-body"><div class="d-flex justify-content-between"><p class="text-muted" style="font-size: 12px !important;">'+ obc.date +'<br>'+obc.time+'</p><p>&#8377; '+ obc.item_total +'</p></div><p>'+ foodString +'</p><div class="d-flex justify-content-between mt-2"><input type="button" class="btn btn-link btn-sm" value="Customer"><input type="button" class="btn btn-danger btn-sm" value="Confirm Order"/><input type="button" class="btn btn-link btn-sm" value="Reject Order"></div></div><p class="text-light text-center bg-danger p-1" style="margin:0;font-size:12px !important">Waiting for your confirmation</p></div></div>';
+            else if (xx[0] == '1')
+            targetDiv.innerHTML += '<div class="col-12  col-lg-6 mt-2 order-div"><div class="card mt-4"><div class="card-body"><div class="d-flex justify-content-between"><p class="text-muted" style="font-size: 12px !important;">'+ obc.date +'<br>'+obc.time+'</p><p>&#8377; '+ obc.item_total +'</p></div><p>'+ foodString +'</p><div class="d-flex justify-content-between mt-2"><input type="button" class="btn btn-link btn-sm" value="Customer"></div></div><p class="text-light text-center bg-primary p-1" style="margin:0;font-size:12px !important">Preparing food (ready by '+xx[1]+')</p></div></div>';
+            else if (xx[0] == '2')
+            targetDiv.innerHTML += '<div class="col-12  col-lg-6 mt-2 order-div"><div class="card mt-4"><div class="card-body"><div class="d-flex justify-content-between"><p class="text-muted" style="font-size: 12px !important;">'+ obc.date +'<br>'+obc.time+'</p><p>&#8377; '+ obc.item_total +'</p></div><p>'+ foodString +'</p><div class="d-flex justify-content-between mt-2"><input type="button" class="btn btn-link btn-sm" value="Call Customer"><input type="button" class="btn btn-link btn-sm" value="Delivery Boy"></div></div><p class="text-light text-center bg-primary p-1" style="margin:0;font-size:12px !important">Out For Delivery</p></div></div>';
+            else if (xx[0] == '3')
+            targetDiv.innerHTML += '<div class="col-12  col-lg-6 mt-2 order-div"><div class="card mt-4"><div class="card-body"><div class="d-flex justify-content-between"><p class="text-muted" style="font-size: 12px !important;">'+ obc.date +'<br>'+obc.time+'</p><p class="text-muted">BY'+ obc.loid +'</p><p>&#8377; '+ obc.item_total +'</p></div><p style="margin:0">'+ foodString +'</p></div><p class="text-light text-center bg-success p-1" style="margin:0;font-size:12px !important">Delivered Successfully</p></div></div>';
+            else
+            targetDiv.innerHTML += '<div class="col-12  col-lg-6 mt-2 order-div"><div class="card mt-4"><div class="card-body"><div class="d-flex justify-content-between"><p class="text-muted" style="font-size: 12px !important;">'+ obc.date +'<br>'+obc.time+'</p><p class="text-muted">BY'+ obc.loid +'</p><p>&#8377; '+ obc.item_total +'</p></div><p style="margin:0">'+ foodString +'</p></div><p class="text-light text-center bg-dark p-1" style="margin:0;font-size:12px !important">'+xx[1]+'</p></div></div>';
+
         }
     }
 
 
-    async function getRecentOrders(keyArray, area) {
+    async function getRecentOrders(keyArray, area, loid) {
         var orderList = []
         for (var i = 0; i < keyArray.length; i++) {
             let ss = 'Area/' + area + '/orders/' + keyArray[i]
             const dbRef = ref(getDatabase());
-            get(child(dbRef, ss)).then((snapshot) => {
+            await get(child(dbRef, ss)).then((snapshot) => {
                 if (snapshot.exists()) {
-                    let obb = snapshot.val()
+                    let obb = {}
+                    obb.status = snapshot.val().status
+                    obb.date = snapshot.val().date
+                    obb.time = snapshot.val().time
+                    obb.food = snapshot.val().food
+                    obb.loid = loid + keyArray.length - i
+                    obb.item_total = snapshot.val().item_total
                     obb.key = snapshot.key
                     orderList.push(obb)
+                    
                 }
             }).catch((error) => {
                 console.error(error);
@@ -197,8 +318,46 @@ navigator.usb.getDevices()
         return orderList
     }
 
+    var modalWrap = null;
+const showModal = () => {
+  if (modalWrap !== null) {
+    modalWrap.remove();
+  }
+
+  modalWrap = document.createElement('div');
+  modalWrap.innerHTML = `
+    
+
+  <div class="modal fade" tabindex="-1" id="alertModel" role="dialog" data-keyboard="false"  data-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+      <p>Enable order alert sound first and check wheather everything works fine</p>
+      <div class="d-grid gap-2">
+  <button class="btn btn-success" id="start_alert" type="button" onclick="readyAlert()" data-bs-dismiss="modal">Enable Order Alert</button>
+</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  `;
+
+  document.body.append(modalWrap);
+  var modal = new bootstrap.Modal(modalWrap.querySelector('.modal'));
+  modal.show();
+}
+
+if (!{{data.sta}})
+{
+    showModal()
+}
+
+
 </script>
 
-
-
+<script src="/javascripts/scripts.js"></script>
+<script src="/javascripts/jquery-1.12.4.min.js"></script>
+    <script src="/javascripts/bootstrap.bundle.min.js"></script>
+    
 </html>

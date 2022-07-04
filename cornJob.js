@@ -105,13 +105,16 @@ const job = cron.schedule("1 1,30 11,12,15,16 * * *", () => {
     {
       const food2 = db.ref('Area/' + obj.area + '/products/' + obj.ref + '/5397/a');
       const food1 = db.ref('Area/' + obj.area + '/products/' + obj.ref + '/5398/a');
+      const food3 = db.ref('Area/' + obj.area + '/products/' + obj.ref + '/5400/a');
       if (day == "monday" || day == "wednesday" || day == "friday")
       {
         food1.set(1)
+        food3.set(1)
       }
       else
       {
         food1.set(0)
+        food3.set(0)
       }
       if (day == "thursday")
       {

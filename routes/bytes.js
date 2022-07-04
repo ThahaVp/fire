@@ -27,6 +27,27 @@ const instance = new razorpay({
   key_secret: RKetSecret
 })
 
+router.get('/xx', (req, res) => {
+
+  const db = admin.database();
+  const ref = db.ref('Area/ponnani/products/juicy');
+
+  ref.once('value', (snapshot) => {
+    var map = {}
+    var obj = snapshot.val()
+    var keys = Object.keys(obj)
+
+    for (var i = 0; i < keys.length; i++) {
+      var k = keys[i]
+      map[keys[i] + "/d"] = "Price includes parcel charge from juicy"
+    }
+  
+    ref.update(map)
+
+})
+
+})
+
 router.get('/getExpenses', (req, res) => {
 
   const db = admin.database();
